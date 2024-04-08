@@ -1,0 +1,86 @@
+<!-- Copied from OATemplate project by OABuilder 03/03/24 06:30 AM -->
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+<title>Layout Flex</title>
+<meta charset="utf-8">
+
+<meta content="text/html; charset=UFT-8" http-equiv=Content-Type>
+<meta http-equiv="Content-Language" content="en-us" />
+<meta http-equiv="Expires" content="Tue, 20 Aug 1996 14:25:27 GMT">
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<link rel="shortcut icon" type="image" href="image/icon.gif" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="vendor/bootstrap-5.3.1/css/bootstrap.css">
+
+<script type="text/javascript" src="vendor/bootstrap-5.3.1/js/bootstrap.bundle.js"></script>
+
+
+<style>
+.div1 {
+  border: solid thin green;
+  height: 200px;
+  margin-top: 3rem;
+}
+
+div div {
+  border: solid thin red;
+}
+
+div div div {
+  border: solid thin blue;
+}
+</style>
+
+</head>
+
+<body>
+
+  Using flex-row as an example:
+  <p>
+
+    align-items-start = vertical align for each item item<br> <span class="ps-4">can use align-self-stretch to use available vert space</span>
+  <p>justify-content-start = hortizontal spacing
+  <p>align-content-stretch = vertical align for content
+  <p>
+  
+  
+    <div class="div1 container-fluid">
+      <div class="row row-cols-auto align-items-start justify-content-start align-content-stretch gap-1 row-gap-1 h-100">
+        <div class="col">AAAAAAA:</div>
+        <div class="col">BBBBBBB:</div>
+        <div class="col align-self-stretch">CCCCCCC:</div>
+        <div class="col align-self-stretch">DDDDDDD:</div>
+        <div class="col">EEEEEEE:</div>
+        <div class="col align-self-center">FFFFFFF:</div>
+      </div>
+    </div>
+
+    <div class="div1 container-fluid">
+      <div class="row row-cols-auto align-items-start justify-content-between align-content-stretch gap-1 row-gap-1 h-100">
+        <div class="col">AAAAAAA:</div>
+        <div class="col">BBBBBBB:</div>
+        <div class="col flex-grow-1 align-self-stretch">CCCCCCC:</div>
+        <div class="col">DDDDDDD:</div>
+        <div class="col">EEEEEEE:</div>
+        <div class="col Xalign-self-center">FFFFFFF:</div>
+      </div>
+    </div>
+
+    <div class="div1 container-fluid">
+      <div class="row row-cols-auto align-items-start justify-content-end gap-1 row-gap-1 h-100">
+        <div class="col ">AAAAAAA:</div>
+        <div class="col">BBBBBBB:</div>
+        <div class="col flex-grow-1 align-self-stretch">CCCCCCC:</div>
+        <div class="col ">DDDDDDD:</div>
+        <div class="col">EEEEEEE:</div>
+        <div class="col align-self-stretch">FFFFFFF:</div>
+      </div>
+    </div>
+
+</body>
+</html>
+

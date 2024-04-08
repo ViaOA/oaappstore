@@ -1,0 +1,321 @@
+<!-- Copied from OATemplate project by OABuilder 03/03/24 06:30 AM -->
+
+
+    qqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+NEEDS TO BE Put on the TOP of test.html
+
+
+
+
+
+    <fieldset class="mt-1 p-3 border bg-light">
+      <legend class="fs-3">Demo InputText</legend>
+
+      <div class="row row-cols-auto align-items-start g-3">
+        <div class="">
+          <label id="lbl" for="txtText" class="col-form-label-lg">Test Label</label>
+        </div>
+
+        <div class="">
+          <input id="txtText" type="Text" class="form-control" list="datalistOptions">
+          <div class="form-text">this is help description for the text component.</div>
+
+          <datalist id="datalistOptions">
+            <option value="San Francisco">
+            <option value="New York">
+            <option value="Seattle">
+            <option value="Los Angeles">
+            <option value="Chicago">
+          </datalist>
+        </div>
+      </div>
+    </fieldset>
+
+    <hr class="">
+
+    <fieldset class="mt-3 p-3 border bg-light">
+      <legend class="fs-6 fw-semibold">Commands</legend>
+      <div class="row row-cols-auto justify-content-sm-start align-items-center g-3">
+        <div>
+          <input type=submit value="submit" class="btn btn-sm btn-primary text-nowrap">
+        </div>
+        <div>
+          <input id="cmdDoAjaxSubmit" type=button value="Ajax Submit" class='btn btn-sm btn-secondary text-nowrap'>
+        </div>
+        <div class="">
+          <input id="chkFormDebug" type="checkbox" class="btn-check">
+          <label for="chkFormDebug" class="btn btn-sm btn-outline-secondary">Debug</label>
+        </div>
+        <!-- was
+          <div class="form-check">
+            <input id="chkFormDebug" type="checkbox" class="form-check-input"> 
+            <label for="chkFormDebug" class="form-check-label">Debug</label>
+          </div>
+           -->
+        <div>
+          <span id="cmdReloadMessage">Page reload is needed</span>
+        </div>
+      </div>
+    </fieldset>
+
+    <hr class="mt-1">
+
+
+
+qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+checkboxes and inputs
+
+
+      <!-- Label + Input -->
+      <div class="row pt-1 gx-1">
+        <label id='lblId' for="eleId" class="col-form-label col-sm-2 col-lg-1 text-truncate">Id:</label>
+        <div class="col-sm-10 col-lg-7">
+          <div class="d-md-flex">
+            <span id="eleId" class="form-control bg-light" style="max-width: 12em;">idTest</span>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row pt-1 gx-2">
+        <label id='lblValue' for="eleValue" class="col-form-label col-sm-2 col-lg-1 text-sm-end text-truncate">Value:</label>
+        <div class="col-sm col-lg">
+          <div class="d-md-flex">
+            <span id="eleValue" class="form-control bg-light" style="max-width: 20em;">Test value here</span> <span class="form-text ms-1 opacity-50 align-self-end">(read only)</span>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div class="row pt-1 gx-2">
+        <div class="col-sm-2 col-lg-1 d-flex justify-content-sm-end">
+          <label id='lblLabelId' for="txtLabelId" class="col-form-label text-truncate">Value:</label>
+        </div>
+        <div class="col-sm-10 col-lg-11">
+          <input id="txtLabelId" type="text" class="form-control" style="max-width: 20em;" size=10>
+        </div>
+      </div>
+
+
+
+
+
+
+    qqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+NEEDS TO BE Put on the end of test.html
+
+
+
+
+
+    <div class="row pt-1 gx-2">
+      <div class="col-sm-2 col-lg-1 d-flex justify-content-sm-end">
+        <label id="lblAccessKey" for="txtAccessKey" class="col-form-label text-nowrap">Access Key:</label>
+      </div>
+      <div class="col-sm-10 col-lg-11">
+        <input id="txtAccessKey" type="text" class="form-control" style="max-width: 10em;" size=10 autocomplete="off">
+      </div>
+    </div>
+
+
+    <div class="row pt-1 gx-2">
+
+      <div class="form-floating mb-3">
+        <input id="txtAccessKey" type="text" class="form-control" style="max-width: 10em;" size=10 placeholder="Access Key" autocomplete="off">
+        <label id="lblAccessKey" for="txtAccessKey" class="col-form-label text-truncate">Access Key</label>
+      </div>
+
+    </div>
+
+    </fieldset>
+
+    qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+
+
+
+
+    <!-- text -->
+    <table>
+      <tr>
+        <td><label id="lblSize">
+            Size
+            <input id="txtSize" type="text">
+          </label>
+          <p>
+      <tr>
+        <td><label id="lblMinLength">
+            MinLength
+            <input id="txtMinLength" type="text">
+          </label>
+          <p>
+        <td><label id="lblMaxLength">
+            MaxLength
+            <input id="txtMaxLength" type="text">
+          </label>
+          <p>
+    </table>
+
+
+    <label id="lblTitle">
+      Title
+      <input id="txtTitle" type="text" size=20>
+    </label>
+    <p>
+      <label id="lblFloatLabel">
+        Float Label
+        <input id="txtFloatLabel" type="text" size=20>
+      </label>
+    <p>
+      <label id="lblPlaceHolder">
+        PlaceHolder
+        <input id="txtPlaceHolder" type="text" size=20>
+      </label>
+    <p>
+      <label id="lblToolTipText">
+        ToolTipText
+        <input id="txtToolTipText" type="text" size=20>
+      </label>
+    <p>
+
+      <!-- text -->
+      <label id="lblPattern">
+        Pattern (regex)
+        <input id="txtPattern" type="text" size=20>
+      </label>
+    <p>
+      <label id="lblAutoComplete">
+        AutoComplete
+        <input id="txtAutoComplete" type="text" size=20>
+      </label>
+    <p>
+
+      <label id="lblStyle">
+        Add Style
+        <input id="txtStyle" type="text" size=20>
+      </label>
+    <p>
+
+
+
+      <!-- range* -->
+      <label id="lblMin">
+        min
+        <input id="txtMin" type="text">
+      </label>
+    <p>
+      <label id="lblMax">
+        max
+        <input id="txtMax" type="text">
+      </label>
+    <p>
+      <label id="lblStep">
+        step
+        <input id="txtStep" type="text">
+      </label>
+    <p>
+
+      <!-- text, textarea -->
+      <label id="lblDataList">
+        DataList
+        <input id="txtDataList" type="text">
+      </label>
+    <p>
+
+      <!-- img -->
+      <label id="lblSrc">
+        Src
+        <input id="txtSrc" type="text">
+      </label>
+    <p>
+
+
+
+      <!-- textarea -->
+      <label id="lblCols">
+        Cols
+        <input id="txtCols" type="number">
+      </label>
+    <p>
+      <label id="lblRows">
+        Rows
+        <input id="txtRows" type="number">
+      </label>
+    <p>
+
+
+
+      <!-- file -->
+      <label id="lblAccept">
+        Accept
+        <input id="txtAccept" type="text">
+      </label>
+    <p>
+      <label id="lblCapture">
+        Capture
+        <input id="txtCapture" type="text">
+      </label>
+    <p>
+      <label id="lblMaxFileSize">
+        MaxFileSize
+        <input id="txtMaxFileSize" type="number">
+      </label>
+    <p>
+
+
+      <!-- text -->
+      <label id="lblInnerHtml">
+        InnerHtml
+        <input id="txtInnerHtml" type="text">
+      </label>
+    <p>
+
+      <!-- link -->
+      <label id="lblHref">
+        Href
+        <input id="txtHref" type="text">
+      </label>
+    <p>
+      <label id="lblTarget">
+        Target
+        <input id="txtTarget" type="text">
+      </label>
+    <p>
+
+
+      <legend>CSS / Style</legend>
+      <!-- css -->
+    <table>
+      <tr>
+        <td><label id="lblHeight">
+            Height
+            <input id="txtHeight" type="text">
+          </label>
+        <td><label id="lblWidth">
+            Width
+            <input id="txtWidth" type="text">
+          </label>
+      <tr>
+        <td><label id="lblMinHeight">
+            MinHeight
+            <input id="txtMinHeight" type="text">
+          </label>
+        <td><label id="lblMinWidth">
+            MinWidth
+            <input id="txtMinWidth" type="text">
+          </label>
+      <tr>
+        <td><label id="lblMaxHeight">
+            MaxHeight
+            <input id="txtMaxHeight" type="text">
+          </label>
+          <p>
+        <td><label id="lblMaxWidth">
+            MaxWidth
+            <input id="txtMaxWidth" type="text">
+          </label>
+    </table>
+
+  </div>
+</body>
+</html>

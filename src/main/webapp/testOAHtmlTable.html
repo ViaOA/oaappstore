@@ -1,0 +1,224 @@
+<!-- Copied from OATemplate project by OABuilder 03/03/24 06:30 AM -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Keyboard-Navigable Table</title>
+
+<script type="text/javascript" language="javascript" src="vendor/jquery-3.1.1/jquery.js"></script>
+
+
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+    td {
+      border: 1px solid black;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+    }
+    td:focus-within {
+      background-color: highlight;
+    }
+    tr:focus-within {
+      outline: 4px solid green;
+    }
+  </style>
+
+</head>
+
+
+<body>
+  <table id="table">
+    <tr class='oatableSelected'>
+      <td id="table_0_0" tabindex="0">Cell 1</td>
+      <td id='table_0_1' tabindex="0">Cell 2</td>
+      <td id='table_0_2' tabindex="0">Cell 3</td>
+    </tr>
+    <tr>
+      <td id='table_1_0' tabindex="0">Cell 4</td>
+      <td id='table_1_1' tabindex="0">Cell 5</td>
+      <td id='table_1_2' tabindex="0">Cell 6</td>
+    </tr>
+    <tr>
+      <td id='table_2_0' tabindex="0">Cell 7</td>
+      <td id='table_2_1' tabindex="0"><input value='inputhere'></td>
+      <td id='table_2_2' tabindex="0">Cell 9</td>
+    </tr>
+  </table>
+
+  
+<script>
+
+//qqqqqqqqq also get focus qqqqqqqqqqqq
+$('#table tr td').on('focus', function(event) {
+    var ss = $(this).attr('id').split('_');
+    if (ss == undefined) return true;
+    var row = ss[ss.length -2];
+    var col = ss[ss.length -1];
+    var isActiveRow = $(this).parent().hasClass('oatableSelected');
+
+    console.log("focus, event="+event+", row="+row+", col="+col+", isActiveRow="+isActiveRow); //qqqqqqq 
+    
+    if (isActiveRow) return true;
+    
+    $('#oacommand').val($(this).attr('id'));
+//    ajaxSubmit();
+    $('#oacommand').val('');
+    return true;    
+});
+
+
+// qqqqqq later, allow mouse clicks with keydown
+$('#table tr td').on('click', function(event) {
+    if ($(this).parent().hasClass('oatableSelected')) return true;
+
+    var ss = $(this).attr('id').split('_');
+    if (ss == undefined) return true;
+    var row = ss[ss.length -2];
+    var col = ss[ss.length -1];
+
+    var keys = '';
+    if (event.shiftKey) keys += '[SHIFT]';
+    if (event.ctrlKey) keys += '[CTRL]';
+    if (event.altKey) keys += '[ALT]';
+    if (keys.length == 0) return true;
+    keys = 'KEYS='+keys;
+    
+    console.log("focus, event="+event+", row="+row+", col="+col+", keys="+keys); //qqqqqqq 
+    
+    $('#oacommand').val($(this).attr('id'));
+    $('#oaparam').val(keys);
+//    ajaxSubmit();
+    $('#oacommand').val('');
+    $('#oaparam').val('');
+    return true;    
+});
+
+
+$('#table').on('keydown', 'tr td', function(event) {
+    var ss = $(this).attr('id').split('_');
+    if (ss == undefined) return true;
+    var row = ss[ss.length -2];
+    var col = ss[ss.length -1];
+    
+    const totalRows = event.delegateTarget.tBodies[0].rows.length;
+    const totalCols = event.delegateTarget.tBodies[0].rows[0].cells.length;
+    
+    var keys = '';
+    if (event.shiftKey) keys += '[SHIFT]';
+    if (event.ctrlKey) keys += '[CTRL]';
+    if (event.altKey) keys += '[ALT]';
+    var bNeedsToAjax = false;
+    if (keys.length > 0) {
+        keys = 'KEYS='+keys;
+        bNeedsToAjax = true;
+    }
+    
+    var bEnd = true;
+    var bBeg = true;
+    if (event.target.tagName === 'INPUT' && event.target.type === 'text') {
+      var p1 = event.target.selectionStart;
+      var p2 = event.target.selectionEnd;
+      if (p2 < p1) {
+          var p3 = p1;
+          p1 = p2;
+          p2 = p3;
+      }
+      
+      bBeg = p1 == 0 && p2 == 0;
+      bEnd = p2 == event.target.value.length && p1 == p2;
+    }
+    
+    switch (event.which) {
+    case 38: 
+      keys += '[UP]';
+      if (row == 0) return false;
+      row--;
+      break
+    case 33: keys += '[PGUP]';
+      if (row == 0) return false;
+      row=0;
+      break;
+    case 40: keys += '[DOWN]';
+      if (row+1 == totalRows) return false;
+      row++;
+      break;
+    case 34: keys += '[PGDN]';
+      if (row+1 == totalRows) return false;
+      row = totalRows-1;
+      break;
+    case 39: keys += '[RIGHT]';
+      if (col+1 == totalCols) return true;
+      if (!bEnd) return true;
+      col++;
+      break;
+    case 35: keys += '[END]';
+      if (col+1 == totalCols) return true;
+      if (!bEnd) return true;
+      col = totalCols-1;
+      break;
+    case 36: keys += '[HOME]';
+      if (col == 0) return false;
+      if (!bBeg) return true;
+      col = 0;
+      break;
+    case 37: keys += '[LEFT]';
+      if (col == 0) return false;
+      if (!bBeg) return true;
+      col--;
+      break;
+    default:
+      return true;
+    }  
+
+    // if special keys 
+    if (bNeedsToAjax) {
+        //qqqqqqqqqq todo: add keyboard extra keys
+        $('#oacommand').val($(this).attr('id'));
+        $('#oaparam').val(keys);
+        ajaxSubmit();
+        $('#oacommand').val('');
+        $('#oaparam').val('');
+    }
+    $('#table_'+row+'_'+col).focus(); //qqqqqqq t=tableId 
+    return false;    
+});
+
+
+</script>  
+  
+  
+  
+  
+  <script>
+/*  ChatGPT example
+    const cells = document.querySelectorAll("td");
+
+    cells.forEach(cell =>  {
+      cell.addEventListener("keydown", event => {
+        const key = event.key;
+        const currentCellIndex = Array.from(cells).indexOf(cell);
+
+        let nextCellIndex;
+
+        if (key === "ArrowUp" && currentCellIndex > 2) {
+          nextCellIndex = currentCellIndex - 3;
+        } else if (key === "ArrowDown" && currentCellIndex < 6) {
+          nextCellIndex = currentCellIndex + 3;
+        } else if (key === "ArrowLeft" && currentCellIndex % 3 !== 0) {
+          nextCellIndex = currentCellIndex - 1;
+        } else if (key === "ArrowRight" && currentCellIndex % 3 !== 2) {
+          nextCellIndex = currentCellIndex + 1;
+        }
+
+        if (nextCellIndex !== undefined) {
+          cells[nextCellIndex].focus();
+        }
+      });
+    });
+*/    
+  </script>
+  
+</body>
+</html>

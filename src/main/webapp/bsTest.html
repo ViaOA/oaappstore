@@ -1,0 +1,343 @@
+<!-- Copied from OATemplate project by OABuilder 03/03/24 06:30 AM -->
+<!DOCTYPE html>
+<html lang="enUS">
+
+<head>
+<TITLE>OAAppStore</TITLE>
+<meta charset="utf-8">
+
+<meta content="text/html; charset=UFT-8" http-equiv=Content-Type>
+<meta http-equiv="Content-Language" content="en-us" />
+<meta http-equiv="Expires" content="Tue, 20 Aug 1996 14:25:27 GMT">
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<link rel="shortcut icon" type="image" href="image/icon.gif" />
+
+<meta name="author" content="xxx">
+<meta name="description" content="xxx">
+<meta name="generator" content="xxx">
+<meta name="keywords" content="abc,xyz,etc">
+<meta name="application-name" content="xxx">
+<meta name="robots" content="index,follow">
+<meta name="publisher" content="xxx">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="vendor/bootstrap-5.3.1/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="vendor/viaoa/oawebTest.css">
+
+<script type="text/javascript" src="vendor/bootstrap-5.3.1/js/bootstrap.bundle.js"></script>
+
+<link rel="stylesheet" href="vendor/bootstrap-icons/font/bootstrap-icons.css">
+<!-- qqq use CDN  -->
+
+<style>
+.debug {
+  border: thin solid red;
+}
+</style>
+
+</head>
+<body>
+
+
+
+
+  <!-- container -->
+  <div class="container-md">
+
+    <!-- medium -->
+    <div class="col-12 col-lg-10 col-xl-9 shadow">
+
+      <fieldset class="mt-0 p-0 border bg-light p-3">
+        <legend class="fs-6 fw-semibold">Property Editor</legend>
+
+        <!-- 2 columns -->
+        <div class="row mt-3 row-cols-1 row-cols-md-2">
+
+          <div class="col">
+            <!-- column #1 of 2 -->
+            <div class="row gx-1 gy-2">
+
+              <label id='lblId' for="txtLabelId1" class="col-sm-3 col-md-4 col-form-label text-truncate">1User Last Name:</label>
+              <div class="col-auto">
+                <input id="txtLabelId1" type="text" class="form-control" size=5>
+              </div>
+              <div class="col-sm-auto w-100 d-none d-sm-block g-0"></div>
+
+              <label id='lblId' for="txtLabelId2" class="col-sm-3 col-md-4 col-form-label text-truncate">Last Name:</label>
+              <div class="col-auto">
+                <input id="txtLabelId2" type="text" class="form-control" size=15>
+              </div>
+              <div class="col-sm-auto w-100 d-none d-sm-block g-0"></div>
+
+              <label id='lblId' for="txtLabelId3" class="col-sm-3 col-md-4 col-form-label text-truncate">2User Last Name:</label>
+              <div class="col-auto">
+                <input id="txtLabelId3" type="text" class="form-control" size=25>
+              </div>
+              <div class="col-sm-auto w-100 d-none d-sm-block g-0"></div>
+
+              <label id='lblId' for="txtLabelId4" class="col-sm-3 col-md-4 col-form-label text-truncate">Last Name:</label>
+              <div class="col-auto">
+                <input id="txtLabelId4" type="text" class="form-control" size=35>
+              </div>
+              <div class="col-sm-auto w-100 d-none d-sm-block g-0"></div>
+
+              <label id='lblId' for="txtLabelId5" class="col-sm-3 col-md-4 col-form-label text-truncate">2User Last Name:</label>
+              <div class="col-auto">
+                <input id="txtLabelId5" type="text" class="form-control" size=55>
+              </div>
+              <div class="col-sm-auto w-100 d-none d-sm-block g-0"></div>
+
+            </div>
+          </div>
+          <!-- column #1 of 2 -->
+
+
+          <div class="col border-start border-1">
+            <!-- column #2 of 2 -->
+            <div class="row gx-1 gy-2">
+
+              <label id='lblId' for="txtLabelIda" class="col-sm-3 col-md-4 col-form-label text-truncate ">aUser Last Name:</label>
+              <div class="col-auto">
+                <input id="txtLabelIda" type="text" class="form-control" size=15>
+              </div>
+              <div class="col-sm-auto w-100 d-none d-sm-block g-0"></div>
+
+              <label id='lblId' for="txtLabelIdb" class="col-sm-3 col-md-4 col-form-label text-truncate ">bUser Last Name:</label>
+              <div class="col-auto">
+                <input id="txtLabelIdb" type="text" class="form-control" size=15>
+              </div>
+              <div class="col-sm-auto w-100 d-none d-sm-block g-0"></div>
+
+              <label id='lblId' for="txtLabelIdc" class="col-sm-3 col-md-4 col-form-label text-truncate "> cUser Last Name: </label>
+              <div class="col-auto">
+                <input id="txtLabelIdc" type="text" class="form-control" size=15>
+              </div>
+              <div class="col-sm-auto w-100 d-none d-sm-block g-0"></div>
+
+            </div>
+          </div>
+
+          <!-- 2 columns -->
+        </div>
+
+        <hr>
+
+        <!-- checkboxes -->
+        <div class="row mt-3 ms-3 row-cols-sm-2 row-cols-md-3">
+          <div class="form-check text-nowrap">
+            <input id="chkEnabled" type="checkbox" class="form-check-input">
+            <label id='lblEnabled' for="chkEnabled" class="form-check-label">Enabled</label>
+          </div>
+
+          <div class="form-check text-nowrap">
+            <input id="chkVisible" type="checkbox" class="form-check-input">
+            <label id='lblVisible' for="chkVisible" class="form-check-label">Visible</label>
+          </div>
+
+          <div class="form-check text-nowrap">
+            <input id="chkHidden" type="checkbox" class="form-check-input">
+            <label id='lblHidden' for="chkHidden" class="form-check-label">Hidden</label>
+          </div>
+
+          <div class="form-check text-nowrap">
+            <input id="chkReadOnly" type="checkbox" class="form-check-input">
+            <label id='lblReadOnly' for="chkReadOnly" class="form-check-label">Read Only</label>
+          </div>
+
+          <div class="form-check text-nowrap">
+            <input id="chkSubmit" type="checkbox" class="form-check-input">
+            <label id='lblSubmit' for="chkSubmit" class="form-check-label">Submit</label>
+          </div>
+
+          <div class="form-check text-nowrap">
+            <input id="chkAjaxSubmit" type="checkbox" class="form-check-input">
+            <label id='lblAjaxSubmit' for="chkAjaxSubmit" class="form-check-label">Ajax Submit</label>
+          </div>
+
+          <div class="form-check text-nowrap">
+            <input id="chkRequired" type="checkbox" class="form-check-input">
+            <label id='lblRequired' for="chkRequired" class="form-check-label">Required</label>
+          </div>
+
+          <div class="form-check text-nowrap">
+            <input id="chkSpellCheck" type="checkbox" class="form-check-input">
+            <label id='lblSpellCheck' for="chkSpellCheck" class="form-check-label">Spell Check</label>
+          </div>
+
+          <div class="form-check text-nowrap">
+            <input id="chkMultiple" type="checkbox" class="form-check-input">
+            <label id='lblMultiple' for="chkMultiple" class="form-check-label">Multiple</label>
+          </div>
+        </div>
+
+
+        <hr>
+
+
+        <!-- textarea qqqqqqqqqqqqqq -->
+
+        <div class="row mt-3 row-cols-1">
+          <label id='lblId' for="txta" class="col col-form-label">Job Description:</label>
+          <div class="col">
+            <textarea id="txta" class="form-control" rows="5"></textarea>
+          </div>
+        </div>
+
+
+
+
+        <!-- more 2 columns -->
+        <div class="row mt-3 row-cols-1 row-cols-md-2">
+          <div class="col">
+            <!-- column #1 of 2 -->
+            <div class="row gx-1 gy-2">
+              <label id='lblId' for="sel" class="col-auto col-form-label">Test HtmlSelect:</label>
+              <div class="col-auto">
+                <select id="sel" class="col-auto form-control">
+                  <option>test option to select</option>
+                  <option>another option to select</option>
+                </select>
+              </div>
+              <div class="col-sm-auto w-100 d-none d-sm-block g-0"></div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="row mt-3 row-cols-1">
+          <div class="col">
+
+            <div class="border border-1 border-dark border-opacity-25">
+              <ul id="myTab" class="nav nav-tabs">
+                <li class="nav-item">
+                  <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button">Home</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button">Profile</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button">Contact</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="disabled-tab" data-bs-toggle="tab" data-bs-target="#disabled-tab-pane" type="button" disabled>Disabled</button>
+                </li>
+              </ul>
+              
+              
+              <div id="myTabContent" class="tab-content overflow-auto" style="height: 25vh;">
+
+                <div id="home-tab-pane" class="tab-pane fade show active overflow-auto" tabindex="0">
+                  XXX asdfadfaf<br>asfad asdf fasd f addf ad fa f<br> asdfadfaf<br>asfad asdf fasd f addf ad fa f<br> asdfadfaf<br>asfad asdf fasd f addf ad fa f<br> asdf adfaf<br>asfad asdf fasd f addf ad fa f<br> asdfadfaf<br>asfad asdf
+                  fasd f addf ad fa f<br> asdf adfaf<br>asfad asdf fasd f addf ad fa f<br> asdfa dfaf<br>asfad asdf fasd f addf ad fa f<br> asdf adfaf<br>asfad asdf fasd f addf ad fa f<br>
+                </div>
+                <div class="tab-pane fade" id="profile-tab-pane" tabindex="0" >
+                  ... profile info ...
+                </div>
+
+
+                <div id="contact-tab-pane" class="tab-pane fade w-100 h-100" tabindex="0">
+                  <div class="d-flex row-cols-auto h-100">
+                    <div class="bg-info" style="min-width: 12ch;">
+                      left
+                    </div>
+                    <div class="flex-fill d-flex flex-column text-center bg-body-tertiary ">
+                      <div class="flex-grow-1">center main div</div>
+                      <div class="flex-grow-0 mb-2" >center bottom div</div>
+                    </div>
+                    <div class="bg-dark-subtle" style="min-width: 12ch;">
+                      right div
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="tab-pane fade" id="disabled-tab-pane" tabindex="0">... disabled</div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3 row-cols-1">
+            <div class="col">
+              <!-- split button -->
+              <div class="btn-group shadow">
+                <button type="button" class="btn btn-secondary">Split Command Button Here</button>
+                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                  <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="#">Action</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">Another action</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                  </li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">Separated link</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="row mt-3 row-cols-1">
+            <div class="col">
+              <!-- Button for Modal dialog -->
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTest">Launch demo modal</button>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="alert alert-info alert-dismissible mt-2">
+          <div>alert message goes here</div>
+          <div>or anything else</div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+
+        <h5>ICONS</h5>
+        <div class="row justify-content-center align-items-center border border-2 border-dark">
+          <svg fill="yellow" class="col mw-100 mh-100" Xstyle="height: 15vw;">
+            <use xlink:href="vendor/bootstrap-icons/bootstrap-icons.svg#heart-fill" />
+          </svg>
+          <div class="col d-flex justify-content-center align-content-center">
+            <i class="bi bi-bootstrap-fill text-danger fst-normal text-truncate" style="font-size: 48px;"> Vince</i>
+          </div>
+        </div>
+
+
+      </fieldset>
+    </div>
+    <!-- medium -->
+  </div>
+  <!-- container -->
+
+  <!-- Modal dialog -->
+  <div class="modal fade" id="modalTest" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">...</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Another close Button</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <p>
+</body>
+</html>

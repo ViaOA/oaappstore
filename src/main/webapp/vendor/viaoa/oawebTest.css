@@ -1,0 +1,627 @@
+.oaBindableX {
+  border: 5px blue solid !important;
+  background: red !important;
+}
+
+#oaWait {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 40%;
+  background: white;
+  border: 1px silver solid;
+  padding: 5px 15px;
+}
+
+/* customizable listing, this is a demo only, not used by oajsp java components */
+.oaListing li {
+  cursor: pointer;
+  float: right;
+  margin: 0 10px 0 0;
+  -moz-transition: all 0.25s linear 0s;
+  background-color: #333;
+  background-image: -moz-linear-gradient(#666, #333);
+  background-repeat: repeat-x;
+  border: 0 none;
+  border-radius: 0.25em 0.25em 0.25em 0.25em;
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.1), 0 -2px 0 0 rgba(0, 0, 0, 0.2)
+    inset;
+  color: #ccc;
+  display: inline-block;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+  line-height: 35px;
+  padding: 0px 12px;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+  list-style-type: none;
+}
+
+.oaListing li:hover {
+  -moz-transition: all 0.25s linear 0s;
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.1), 0 -2px 0 0 rgba(0, 0, 0, 0.2)
+    inset, 0 12px 24px 2px #666 inset;
+  color: #fff;
+}
+
+.oaSelected {
+  color: #fff;
+  background-color: #204d74;
+  border-color: #122b40;
+}
+
+.todo {
+  border: 3px red dashed;
+  background: yellow;
+  font-weight: bold;
+  font-size: 12pt;
+  padding: 12px;
+}
+
+.oaDebug {
+  border: 3px red dotted !important;
+  background: cyan !important;
+}
+
+.oaDebug .oaSubmit {
+  border: 6px green dotted !important;
+  background: yellow !important;
+}
+
+.oaSubmit {
+  
+}
+
+form.oaDebug {
+  border: 5px red dashed;
+}
+
+oaMissingImage {
+  visibility: hidden;
+}
+
+/** OAForm css =========================================== */
+
+/** use for form/session messages to display */
+#oaFormMessage {
+  text-align: center;
+  border: 1px blue solid;
+}
+/** use for form/session error messages to display */
+#oaFormErrorMessage {
+  text-align: center;
+  border: 2px red solid;
+}
+/** use for form/session hidden messages to display */
+#oaFormHiddenMessage {
+  text-align: center;
+  color: silver;
+  border: 1px silver solid;
+}
+
+/** use for form/session snackbar messages to display */
+#oaFormSnackbarMessage {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1040;
+  left: 50%;
+  bottom: 30px;
+}
+
+#oaformDialog {
+  display: none;
+}
+
+#oaFormProcess {
+  display: none;
+}
+
+/** OA|JSP componeents css ============================== */
+/** used to represent a component that is required */
+.oaRequired {
+  border: 1px orange solid;
+}
+/** used to represent a component that has an error */
+.oaError {
+  border: 2px red solid;
+}
+
+/*  =====================================  
+    OAHtmlTable.java  
+    =====================================  
+*/
+table.oatable {
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+table.oatable thead {
+  position: sticky;
+  left: 0px;
+  top: 0;
+}
+
+table.oatable thead th.oatableColumnCount {
+  text-align: center;
+  padding: 0;
+}
+
+table.oatable thead th {
+  border-bottom: thin solid black;
+}
+
+table.oatable th {
+  font-weight: bold;
+  padding: 5px 2px;
+  text-align: left;
+  font-size: 11pt; 
+  text-indent: 2px;
+}
+
+
+table.oatable tr {
+  font-size: 11pt;
+}
+
+table.oatable td {
+  padding: 1px 2px;
+}
+
+table.oatable tbody tr td.oaNoTextOverflow {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+table.oatable tbody tr td .oaFitColumnSize {
+  width: 100%;
+  height: 100%;
+  border: none;
+  box-sizing: border-box;
+  padding: 2px;
+  color: black;
+}
+
+table.oatable tbody tr td.oatableColumnCount {
+  text-align: center;
+  font-weight: 500;
+}
+
+table.oatable tbody tr td:hover {
+  cursor: pointer;
+  border: 1px solid black;
+  border-radius: 3px;
+}
+
+
+
+/*  =====================================  
+    OATablePager.java -  
+    =====================================  
+*/
+
+/* outer container for TablePager */
+.oatablePager {
+  text-align: left;
+  white-space: nowrap;
+  padding: 0px 3px;
+  margin: 5px 0 !important;
+  background: #f7f7f7;
+}
+
+/* messsage that displays count */
+.oatablePagerMsg {
+  font-size: 9pt;
+  color: #666;
+  padding: 5px;
+  font-weight: bold;
+  text-align: right;
+}
+/* convert unordered list into a hort list */
+ul.oatablePager {
+  display: inline-block;
+  padding: 0px 4px;
+}
+
+ul.oatablePager li {
+  display: inline-block;
+}
+
+/* previous arrows */
+ul.oatablePager li.oatablePagerDisable {
+  color: silver;
+}
+
+ul.oatablePager li.oatablePagerDisable:hover {
+  background: #ccc;
+}
+
+/* each clickable page */
+ul.oatablePager li {
+  background: #eee;
+  padding: 2px 8px;
+  margin: 3px;
+  border: 1px #efefef solid;
+  font-size: 10pt;
+  text-align: center;
+  font-weight: bold;
+  color: #777;
+  list-style: none;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  -khtml-border-radius: 5px;
+}
+
+ul.oatablePager li.oatablePagerSelected {
+  background: #777;
+  color: white;
+}
+
+ul.oatablePager li.oatablePagerSelected:hover {
+  background: #777;
+  color: white;
+}
+
+ul.oatablePager li:hover {
+  background: #012542;
+  color: #ccc;
+}
+
+/* scrolling area */
+div.oatableScroller {
+  overflow: auto;
+}
+
+/* outside scroller container: fixed heading, pager (head/foot) */
+div.oatableScroller1 {
+  position: relative;
+  padding-top: 1.88em; /* room to have a fixed heading */
+  overflow: hidden;
+}
+
+/* outside scroller container, with pager at the top */
+div.oatableScroller1c {
+  position: relative;
+  padding-top: 4.1em;
+  overflow: hidden;
+  border: 1px black solid;
+}
+
+/* outside scroller container, with pager at the bottom */
+div.oatableScroller1b {
+  position: relative;
+  padding-top: 1.88em;
+  padding-bottom: 2.2em;
+  overflow: hidden;
+  border: 1px black solid;
+}
+
+/* outside scroller container, with pager at the top & bottom */
+div.oatableScroller1a {
+  position: relative;
+  padding-top: 4em;
+  padding-bottom: 2.2em;
+  overflow: hidden;
+  border: 1px black solid;
+}
+
+/*  =====================================  
+    OAList.java -  
+    =====================================
+*/
+.oaList {
+  border: 1px black solid;
+  padding: 4px;
+  cursor: pointer;
+  list-style-type: none;
+  max-height: 16em;
+  overflow: auto;
+}
+
+/**qqqqqqqqqqqqqqqqqqq added to gohi5 project, compare with Head to make sure that there are no other changes */
+.oaList li {
+  text-align: left;
+  display: block;
+}
+
+.oaList.oaIndent li {
+  margin-left: 14px;
+}
+
+.oaList li:hover {
+  color: #fff;
+  background: black;
+}
+
+.oaList li.oaHeading {
+  margin-left: 0px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: default;
+}
+
+.oaList li.oaHeading:hover {
+  color: inherit;
+  background: inherit;
+}
+
+/*  =====================================  
+    OAPopupList.java - uses oaList
+    =====================================
+*/
+div.oaPopupListOuterWrapper {
+  display: inline-block;
+}
+/* popup container that contains the oalist */
+div.oaPopupListWrapper {
+  display: none;
+  z-index: 100;
+  position: absolute;
+  background-color: white;
+}
+/* text inside of the component that controls the popup, ex: button text*/
+div.oaPopupListOuterWrapper .oaPopupListText {
+  display: inline-block;
+}
+
+div.oaPopupListOuterWrapper .oaPopupListText.oaPopupListTextSized {
+  vertical-align: middle;
+  max-width: 100%;
+  width: 100%;
+  float: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: -19px;
+}
+
+div.oaPopupListOuterWrapper .oaCaret {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: right;
+  float: right;
+  margin: 10px 1px 10px 8px;
+}
+
+div.oaPopupListOuterWrapper .oaList {
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+
+.oaGrid {
+  
+}
+
+.oaGridCell {
+  cursor: pointer;
+}
+
+.oaGridCell .oatableSelected {
+  
+}
+
+/* bootstrap addon class "auto-clear" used by oagrid to manage float clearing to the left. */
+@media ( min-width :1200px) {
+  .auto-clear .col-lg-1:nth-child(12n+1) {
+    clear: left;
+  }
+  .auto-clear .col-lg-2:nth-child(6n+1) {
+    clear: left;
+  }
+  .auto-clear .col-lg-3:nth-child(4n+1) {
+    clear: left;
+  }
+  .auto-clear .col-lg-4:nth-child(3n+1) {
+    clear: left;
+  }
+  .auto-clear .col-lg-6:nth-child(odd) {
+    clear: left;
+  }
+}
+
+@media ( min-width :992px) and (max-width:1199px) {
+  .auto-clear .col-md-1:nth-child(12n+1) {
+    clear: left;
+  }
+  .auto-clear .col-md-2:nth-child(6n+1) {
+    clear: left;
+  }
+  .auto-clear .col-md-3:nth-child(4n+1) {
+    clear: left;
+  }
+  .auto-clear .col-md-4:nth-child(3n+1) {
+    clear: left;
+  }
+  .auto-clear .col-md-6:nth-child(odd) {
+    clear: left;
+  }
+}
+
+@media ( min-width :768px) and (max-width:991px) {
+  .auto-clear .col-sm-1:nth-child(12n+1) {
+    clear: left;
+  }
+  .auto-clear .col-sm-2:nth-child(6n+1) {
+    clear: left;
+  }
+  .auto-clear .col-sm-3:nth-child(4n+1) {
+    clear: left;
+  }
+  .auto-clear .col-sm-4:nth-child(3n+1) {
+    clear: left;
+  }
+  .auto-clear .col-sm-6:nth-child(odd) {
+    clear: left;
+  }
+}
+
+@media ( max-width :767px) {
+  .auto-clear .col-xs-1:nth-child(12n+1) {
+    clear: left;
+  }
+  .auto-clear .col-xs-2:nth-child(6n+1) {
+    clear: left;
+  }
+  .auto-clear .col-xs-3:nth-child(4n+1) {
+    clear: left;
+  }
+  .auto-clear .col-xs-4:nth-child(3n+1) {
+    clear: left;
+  }
+  .auto-clear .col-xs-6:nth-child(odd) {
+    clear: left;
+  }
+}
+
+/* effects */
+.oaShadow {
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+  transition: box-shadow .3s;
+}
+
+.oaMouseOverShadow {
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);
+  transform: translateY(0px);
+  -webkit-transform: translateY(0px);
+  -moz-transform: translateY(0px);
+  transition: box-shadow .4s, transform .4s;
+  -webkit-transition: box-shadow .4s, -webkit-transform .4s;
+}
+
+.oaMouseOverShadow:hover {
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+  -webkit-transform: translateY(-5px);
+  -moz-transform: translateY(-5px);
+  transition: box-shadow .2s, transform .2s;
+  -webkit-transition: box-shadow .2s, -webkit-transform .2s;
+}
+
+.oaPopup {
+  display: none;
+  position: fixed;
+  border: 2px black solid;
+  padding: 2px;
+  margin: 1px;
+  z-index: 1050;
+  background-color: rgba(255, 255, 255, 1.0);
+  overflow: auto;
+}
+
+.oaHide {
+  display: none;
+}
+
+.oaTextNoWrap {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.oaCaret {
+  border-top-color: #000 !important;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 2px;
+  vertical-align: middle;
+  border-top: 4px dashed;
+  border-top: 4px solid \9;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+}
+
+/* textarea */
+.oaTextAreaWrap {
+  display: inline-block;
+}
+
+.oaTextAreaMessage {
+  padding: 2px 15px;
+  font-style: italic;
+  font-size: 10.5px;
+}
+
+/* textfield */
+.oaTextFieldWrap {
+  display: inline-block;
+  white-space: nowrap;
+  position: relative;
+}
+
+.oaTextFieldWithClear {
+  padding-right: 14px;
+}
+
+.oaTextFieldClear {
+  visibility: hidden;
+  position: relative;
+  left: -21px;
+  top: 1px;
+  padding: 5px 2px;
+}
+
+.oaTextFieldClear:hover {
+  color: white;
+  background-color: gray;
+}
+
+.twitter-typeahead {
+  width: 100%;
+}
+
+.tt-hint, .tt-input, .tt-menu {
+  max-height: 16em;
+  overflow: auto;
+  width: 100%;
+}
+
+input.tt-input {
+  min-width: 10em;
+}
+
+.bootstrap-tagsinput input {
+  min-width: 12em;
+}
+
+/* float label */
+.oaFloatLabel {
+  position: absolute;
+}
+
+.oaFloatLabel+span {
+  position: relative;
+  margin: 0 2px;
+}
+
+.oaFloatLabel+span {
+  opacity: 0;
+  top: auto;
+  left: auto;
+  font-size: auto;
+}
+
+.oaFloatLabel+span.active {
+  opacity: 1;
+  top: -14px;
+  left: 4px;
+  font-size: 12px;
+  background: white;
+  transition: all 0.5s ease-out;
+}
+
+.oaFloatLabel:focus+span.active {
+  color: #66afe9;
+}

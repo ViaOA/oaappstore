@@ -1,0 +1,286 @@
+
+20211205 
+
+Install Derby
+copy derby.jar & derbytools.jar from vvia project/lib to runtime/server
+
+IJ command:
+windows:
+	java -cp ./derby.jar;./derbytools.jar;. -Dij.protocol=jdbc:derby: org.apache.derby.tools.ij
+linux:
+	java -cp ./derby.jar:./derbytools.jar:. -D"ij.protocol=jdbc:derby:" org.apache.derby.tools.ij
+
+
+
+
+*****************************    
+Updating Derby Database with changes from model*.sql file
+    $proj = C:\Users\vvia\git\oaAppStore
+    cd $proj
+    copy changes\model_yyyyMMdd.sql runtime\server 
+    cd runtime\server
+    ij
+    ij> connect 'database';
+    ij> autocommit off;
+    ij> run 'model_yyyyMMdd.sql';
+    ij> commit;
+    ij> quit;
+*****************************    
+
+
+
+
+
+20200331    
+    https://builds.apache.org/job/Derby-docs/lastSuccessfulBuild/artifact/trunk/out/ref/rrefattribcollation.html
+
+    ij> connect 'jdbc:derby:database;create=true;territory=en_US;collation=TERRITORY_BASED:SECONDARY';
+
+
+
+    ij> connect 'jdbc:derby:databaseNEW;createFrom=database;territory=en_US;collation=TERRITORY_BASED:SECONDARY';
+
+
+
+
+20180813 
+    database collation for = and like operators
+        http://db.apache.org/derby/docs/10.4/devguide/cdevcollation.html
+
+
+https://wiki.apache.org/db-derby/UsesOfDerby
+
+Lucene, which is a full-text search engine.
+    https://wiki.apache.org/db-derby/LuceneIntegration
+    
+    
+Updating Derby Database with changes from model*.sql file
+    go to directory above your database directory
+    copy the sql file ("modelXxx.sql") file to this directory
+    C:\Projects\java\Hifive\runtime\server>ij
+    ij> connect 'database';
+    ij> autocommit off;
+    ij> run 'modelXxx.sql';
+    ij> commit;
+    ij> quit;
+
+NOTE* on derby LIKE and case
+    like is case sensitive ???   2018:not sure, see below (case insensitive)
+            sql += "ucase(" + SalesOrder.PROPERTY_Project + ") like ?";
+            args = OAArray.add(Object.class, args, "%"+s.toUpperCase()+"%");
+    Example:
+        Object[] args = new Object[0];
+        String name = itemSearch.getName();
+        if (!OAString.isEmpty(name)) {
+            name = name.replace("*", "%");
+            if (name.indexOf("%") < 0) name = "%" + name + "%"; 
+            name = name.toUpperCase();
+            if (sql.length() > 0) sql += " AND ";
+            sql += "ucase("+Item.PROPERTY_Name + ") LIKE ?";
+            args = OAArray.add(Object.class, args, name);
+         }
+
+
+**** NOTE !!!!!!! ==> sql output can be truncated - example: the output for dblook
+
+==========================
+Upgrading VP to Derby 10.6
+==========================
+
+** NOTE ** qqqqqq Client phone, pmsId and email column length need to be increased by 25
+
+Files needed (10.6):
+  derby.jar
+  derbytools.jar
+  
+20110127: for new sites, run the conversion outlined at bottom of doc
+  this is what was used for Safari
+    
+  
+1: ij
+2: connect 'database';
+3: java -cp ".;lib\*" org.apache.derby.tools.dblook -d 'jdbc:derby:database' > create_new_db.sql
+      * note: the lines in this file get truncated, it will have to be edited and repaired 
+4: run '/projects/java/vetplan/doc/derby/export_old_db.sql'
+5: exit ij, rename 'database' to 'database_old'
+6: ij
+7: run '/projects/java/vetplan/doc/derby/create_new_db.sql'
+     - this will connect and create to database 
+8: run '/projects/java/vetplan/doc/derby/import_old_db.sql'
+
+**>> update db structure with latest changes - run this after DB is reloaded
+9: run 'model_Open.sql';
+
+**>> load images from images directory
+10: java -cp "lib/*" com.vetplan.process.TransferImages 0 0
+    * where '0' '0' is the starting points (section, and start pos), in case it is being ran after a crash
+    total images => 2,876,252
+  
+  
+==============================
+  IJ command - derby command line utility 
+==============================
+java -cp ".;c:\projects\java\jars\*" -Dij.protocol=jdbc:derby: org.apache.derby.tools.ij
+
+==============================
+  DBLOOK command - generates db scheme
+==============================
+java -cp ".;c:\projects\java\jars\*" org.apache.derby.tools.dblook -d 'jdbc:derby:database' > database.sql
+      * note: the lines in this file get truncated, it will have to be edited and repaired 
+
+
+
+==============================
+  create new database - (case insensitive)
+==============================
+ 
+ij> connect 'jdbc:derby:database;create=true;territory=en_US;collation=TERRITORY_BASED:SECONDARY';
+
+Notes:
+    TERRITORY_BASED:PRIMARY - too 'loose', would allow '1-773' to equal '17-73'
+    ex: SECONDARY - allows 'aa' = 'Aa'
+
+-- run DDL commands
+ij> run 'model.sql';         
+
+
+==============================
+  list tables
+==============================
+ij>show tables in APP;
+SELECT t.tablename from sys.sysschemas s, sys.systables t where CAST(s.schemaname AS VARCHAR(128)) = 'APP' AND s.schemaid = t.schemaid;
+
+
+==============================
+  list table info
+==============================
+ij>describe TABLE;
+
+==============================
+  verify tables
+==============================
+SELECT t.tablename, SYSCS_UTIL.SYSCS_CHECK_TABLE('APP', t.tablename) from sys.sysschemas s, sys.systables t where CAST(s.schemaname AS VARCHAR(128)) = 'APP' AND s.schemaid = t.schemaid;
+
+==============================
+  Compress Data in a table
+==============================
+call SYSCS_UTIL.SYSCS_COMPRESS_TABLE('APP', 'ORDERTABLE', 0);
+
+-- generate script for all tables
+select 'call SYSCS_UTIL.SYSCS_COMPRESS_TABLE(''APP'', ''' || t.tablename || ''', 0);' from sys.sysschemas s, sys.systables t where CAST(s.schemaname AS VARCHAR(128)) = 'APP' AND s.schemaid = t.schemaid order by t.tablename; 
+
+
+
+
+==============================
+  Logging on seperate device
+==============================
+edit service.properties
+logDevice=C\:\\temp\\logfiles           
+-- copy the original directory 'log' to this location
+
+
+==============================
+   backup with rollforward support 
+==============================
+ij>call SYSCS_UTIL.SYSCS_BACKUP_DATABASE_AND_ENABLE_LOG_ARCHIVE_MODE('./dbbackup', 1);   // this will create a database directory under backup. The '1' will remove old log files
+
+
+call SYSCS_UTIL.SYSCS_BACKUP_DATABASE_AND_ENABLE_LOG_ARCHIVE_MODE('./dbbackup', 1);
+
+==============================
+    restore, roll forward
+==============================
+ij>connect 'jdbc:derby:database;rollForwardRecoveryFrom=./dbbackup/database';  
+
+
+
+
+==============================
+==============================
+   Converting to new Derby
+==============================
+
+1) use old version of Derby jar files
+
+A> dump scheme/sql to recreate database
+java -cp ".;c:\projects\java\jars\*" org.apache.derby.tools.dblook -d 'jdbc:derby:database' > database.sql
+      * note: the lines in this file get truncated, it will have to be edited and repaired 
+
+B> generate commands to use for export/importing table to text files
+-- generate commands, one for each table
+
+-- export/import all tables, by creating a script to run:
+
+export:
+select 'call SYSCS_UTIL.SYSCS_EXPORT_TABLE(null, ''' || t.tablename || ''', ''' || t.tablename || '.txt'', null, null, null);' from sys.sysschemas s, sys.systables t where CAST(s.schemaname AS VARCHAR(128)) = 'APP' AND s.schemaid = t.schemaid order by t.tablename; 
+> this will display the commands to dump all of the tables.  cut/paste and save the output to file export.sql
+  ** note: lines can be truncated, and end with a "&"
+
+
+import:
+select 'call SYSCS_UTIL.SYSCS_IMPORT_TABLE(null, ''' || t.tablename || ''', ''' || t.tablename || '.txt'', null, null, null, 0);' from sys.sysschemas s, sys.systables t where CAST(s.schemaname AS VARCHAR(128)) = 'APP' AND s.schemaid = t.schemaid order by t.tablename; 
+> this will display the commands to dump all of the tables.  cut/paste and save output to file import.sql
+
+C> dump data
+-- use generated commands to export data (you can paste about 5 lines at a time into ij)
+ij> run 'export.sql';
+      ** note: might want to use new version of derby jar files - since old version will not export clob columns
+
+
+2) use new version of Derby jar files
+
+A> create new database
+ij>connect 'jdbc:derby:NewDBName;create=true;territory=en_US;collation=TERRITORY_BASED';         
+
+
+B> create new scheme
+ij>run 'database.sql';
+
+
+C> import data
+-- use generated commands to import data (you can paste about 5 lines at a time into ij)
+ij> run 'import.sql';
+
+
+
+
+===================
+   MISC Commands
+===================
+
+>> export query to text file
+call SYSCS_UTIL.SYSCS_EXPORT_QUERY('select A.name, a.city, a.state, a.zip, A.A.contact, A.email, B.dateValue, B.dateComplete, B.dateClosed, B.project from salescustomer A, salesorder B where A.salesorderid = B.id and email is not null', 'SALESCUSTOMER.txt', null, null, null);
+
+>> export one table:
+call SYSCS_UTIL.SYSCS_EXPORT_TABLE(null,'ITEM', 'DB_Item.txt', null, null, null)
+
+>> import one table:
+call SYSCS_UTIL.SYSCS_IMPORT_TABLE(null, 'ITEM', 'DB_Item.txt', null, null, null, 0)
+
+
+>> show constraints
+all: SELECT c.constraintname, t.tablename FROM sys.sysconstraints c, sys.systables t WHERE c.tableid = t.tableid AND CAST(t.tablename AS VARCHAR(64)) = 'PHONE';
+
+SELECT c.constraintname, type FROM sys.sysconstraints c, sys.systables t WHERE c.tableid = t.tableid AND CAST(t.tablename AS VARCHAR(64)) = 'PHONE';
+
+>> indexes
+show indexes from phone;
+
+>> drop fkey
+alter table imagestore drop constraint fkimagestorelogoprogram;
+
+>> remove index
+DROP INDEX RewardCardProgram ON ProgramCard (ProgramId);
+
+>> http://wiki.apache.org/db-derby/DatabaseConsistencyCheck
+
+
+>> cheat sheet :)
+describe ProgramAwardType;
+SELECT c.constraintname, type FROM sys.sysconstraints c, sys.systables t WHERE c.tableid = t.tableid AND CAST(t.tablename AS VARCHAR(64)) = 'ProgramAwardType';
+show indexes from ProgramAwardType;
+
+
+
+

@@ -1,0 +1,218 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                      http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+	version="4.0">
+
+
+<!--  20180221 this is not complete, but has all of the jetty servlets in it and additional plasshoulder settings, see todo comments -->
+
+	<display-name>OAAppStore project</display-name>
+	<description>OAAppStore project</description>
+	<icon>
+<!-- todo: get correct size for images -->	
+		<large-icon>icon.gif</large-icon>
+		<small-icon>icon.gif</small-icon>
+	</icon>
+
+<!-- todo: setup error pages-->   
+	<error-page>
+		<exception-type>java.exception.NullPointerException</exception-type>
+		<location>/npeerror.html</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/404.html</location>
+	</error-page>
+	<error-page>
+		<location>/error.html</location>
+	</error-page>
+
+	<context-param>
+		<param-name>Webmaster</param-name>
+<!-- todo: -->   
+		<param-value>webmaster@example.com</param-value>
+	</context-param>
+
+	<session-config>
+		<session-timeout>30</session-timeout>
+		<cookie-config>
+<!-- todo: test-->   
+			<secure>true</secure>
+			<http-only>true</http-only>
+		</cookie-config>
+	</session-config>
+
+
+	<jsp-config>
+<!-- todo: bring in some taglibs -->   
+		<taglib>
+			<taglib-uri>aaa</taglib-uri>
+			<taglib-location>bbb</taglib-location>
+		</taglib>
+	</jsp-config>
+
+	<servlet>
+		<servlet-name>json</servlet-name>
+		<servlet-class>com.viaoa.servlet.JsonServlet</servlet-class>
+		<init-param>
+			<param-name>packageName</param-name>
+			<param-value>com.viaoa.appstore.model.oa</param-value>
+		</init-param>
+		<load-on-startup>3</load-on-startup>
+
+<!-- todo: sample only -->   
+		<security-role-ref>
+			<role-name>admin</role-name>
+			<role-link>admin</role-link>
+		</security-role-ref>
+	</servlet>
+
+<!-- todo: need to allow for directory browsing for /lib and /src -->   
+
+	<servlet>
+		<servlet-name>default</servlet-name>
+		<servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>0</param-value>
+		</init-param>
+		<init-param>
+			<param-name>listings</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>startup</servlet-name>
+		<servlet-class>com.viaoa.appstore.servlet.StartupServlet</servlet-class>
+		<init-param>
+			<param-name>runType</param-name>
+			<param-value>server</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>hello</servlet-name>
+		<servlet-class>com.viaoa.appstore.servlet.HelloServlet</servlet-class>
+		<load-on-startup>4</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>image</servlet-name>
+		<servlet-class>com.viaoa.servlet.ImageServlet</servlet-class>
+		<init-param>
+			<param-name>packageName</param-name>
+			<param-value>com.viaoa.appstore.model.oa</param-value>
+		</init-param>
+		<load-on-startup>3</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>pdf</servlet-name>
+		<servlet-class>com.viaoa.servlet.PdfServlet</servlet-class>
+		<init-param>
+			<param-name>packageName</param-name>
+			<param-value>com.viaoa.appstore.model.oa</param-value>
+		</init-param>
+		<load-on-startup>3</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>jnlp</servlet-name>
+		<servlet-class>com.viaoa.servlet.JNLPServlet</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>security</servlet-name>
+		<servlet-class>com.viaoa.servlet.SecurityServlet</servlet-class>
+		<init-param>
+			<param-name>userId</param-name>
+			<param-value></param-value>
+		</init-param>
+		<init-param>
+			<param-name>password</param-name>
+			<param-value></param-value>
+		</init-param>
+		<load-on-startup>3</load-on-startup>
+		<enabled>false</enabled>
+	</servlet>
+
+	<servlet>
+		<servlet-name>uploads</servlet-name>
+		<servlet-class>com.viaoa.servlet.UploadeServlet</servlet-class>
+		<enabled>false</enabled>
+		<multipart-config>
+<!-- todo: test -->   
+			<location>/uploads</location>
+			<max-file-size>5m</max-file-size>
+			<file-size-threshold>500k</file-size-threshold>
+			<max-request-size>2m</max-request-size>
+		</multipart-config>
+	</servlet>
+
+
+
+
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>hello</servlet-name>
+		<url-pattern>/servlet/hello</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>image</servlet-name>
+		<url-pattern>/servlet/img</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>json</servlet-name>
+		<url-pattern>/servlet/json</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>pdf</servlet-name>
+		<url-pattern>/servlet/pdf</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>security</servlet-name>
+		<url-pattern>/servlet/security</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jnlp</servlet-name>
+		<url-pattern>*.jnlp</url-pattern>
+	</servlet-mapping>
+
+
+	<security-role>
+		<description>security role</description>
+		<role-name>admin</role-name>
+	</security-role>
+	<security-constraint>
+		<display-name>security constraint</display-name>
+		<auth-constraint>
+			admin
+		</auth-constraint>
+	</security-constraint>
+
+	<login-config>
+		<auth-method>BASIC</auth-method>
+	</login-config>
+
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+</web-app>

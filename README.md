@@ -1,1 +1,4 @@
-OA Application Store
+oaAppStore
+==========
+
+OAAppStore project created by OABuilder.

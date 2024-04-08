@@ -1,0 +1,591 @@
+<!-- Copied from OATemplate project by OABuilder 03/03/24 06:30 AM -->
+
+<html>
+  <head>
+    <style type="text/css">
+      <!--
+        body { font-size: 11.5pt; font-family: Arial }
+
+        table { border-width: 0;}
+        table th, td { border-width: 0;}
+
+        table#outer
+        { 
+            padding:0; 
+            border-spacing:0;
+
+            border-top-style:solid;  
+            border-top-color:silver;
+            border-top-width: 2px;
+
+            border-left-width: 1px;
+            border-bottom-width: 1px;
+            border-right-width: 1px;
+           
+            margin-left: 0px;
+        }
+        table#outer
+
+        table.order
+        { 
+            padding:0; 
+            border-spacing:1;
+            border-style:solid;  
+            border-color:silver;
+            border-top-width: 0px;
+            border-left-width: 0px;
+            border-bottom-width: 0px;
+            border-right-width: 0px;
+            margin-left: 15px;
+        }
+        table.order th 
+        {
+            font-weight:450; 
+            font-size:9.75pt;
+            text-align: left;
+            margin-right: 5px; 
+        }
+        table.order td 
+        {
+            font-size:9.5pt; 
+            margin-right: 0px;
+        }
+        
+
+        
+
+        /*  SalesOrder Items  */
+        table#items
+        { 
+            padding:0; 
+            border-spacing:0;
+            border-style:solid;  
+            border-color:silver;
+        }
+        
+        table#items td 
+        {
+            font-weight:normal; 
+            font-size:9.0pt; 
+        }
+        
+        table#items th 
+        { 
+            border-top-width: 1; 
+            border-style: solid; 
+            border-right-width: 1; 
+            color: white; 
+            border-color: silver; 
+            background-color: gray; 
+            border-left-width: 1; 
+            font-size: 10.0pt; 
+            border-bottom-width: 1 
+        }
+        table#items tr  
+        { 
+            border-style:solid;  
+            border-color:silver; 
+            border-right-width:1; 
+            border-bottom-width:1; 
+            border-left-width:1; 
+            border-top-width:1; 
+        }
+      -->
+    </style>
+  </head>
+  <body>
+
+
+<table id="outer" width="100%">
+<tr>
+    <th style="background: gray; color:white;">
+        Customer Sales Order Information
+        <%=if draft%>
+            <br><H1>DRAFT Only</H1>
+        <%=ifend draft%>
+    </th>
+</tr>
+<tr valign="top">
+<td>   
+    <table class="inner" cellpadding="0" cellspacing="0">
+    <tr>
+        <td>
+    <table class="order">
+      <tr>
+        <th>
+            Customer:
+        </th>
+        <td>
+            <%=SalesCustomer.name%>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+            <%=SalesCustomer.Address%>
+            <%=if SalesCustomer.Address2%>
+                <br><%=SalesCustomer.Address2%>
+            <%=ifend SalesCustomer.Address2%>
+            <%=if SalesCustomer.Address3%>
+                <br><%=SalesCustomer.Address3%>
+            <%=ifend SalesCustomer.Address3%>
+            <br>
+            <%=SalesCustomer.city%> <%=SalesCustomer.state%>  <%=SalesCustomer.zip%>
+        </td>
+      </tr>
+      <tr>
+        <th>
+            Project:
+        </th>
+        <td>
+            <%=project%>
+        </td>
+      </tr>
+      <tr>
+        <th>
+            Contact:
+        </th>
+        <td>
+            <%=SalesCustomer.contact%>
+        </td>
+      </tr>
+      <tr>
+        <th>
+            Phone:
+        </th>
+        <td>
+            <nobr><%=SalesCustomer.phone, "L((###) ###-####)"%>
+            <%=if SalesCustomer.phone2%>
+                <br><nobr><%=SalesCustomer.phone2, "L((###) ###-####)"%>
+            <%=ifend SalesCustomer.phone2%>
+            <%=if SalesCustomer.fax%>
+                <br>fax: <%=SalesCustomer.fax, "L((###) ###-####)"%>
+            <%=ifend SalesCustomer.fax%>
+            </nobr>
+        </td>
+      </tr>
+      <tr>
+        <th>
+            Email:
+        </th>
+        <td>
+            <%=SalesCustomer.email%>
+        </td>
+      </tr>
+    </table>
+
+    
+    </td>
+    <td width="25">
+        &nbsp;
+    </td>
+    <td>
+    
+    
+    <table class="order">
+      <tr><td>&nbsp;</td></tr>
+      <tr>
+        <th>
+            <nobr>Shipping Address</nobr>
+        </th>
+      </tr>
+      <tr>
+        <td>
+            <nobr><%=SalesCustomer.ShipTo.Address%></nobr>
+            <%=if SalesCustomer.ShipTo.Address2%>
+                <br>
+                <nobr><%=SalesCustomer.ShipTo.Address2%></nobr>
+            <%=ifend SalesCustomer.ShipTo.Address2%>
+            <%=if SalesCustomer.ShipTo.Address3%>
+                <br>
+                <nobr><%=SalesCustomer.ShipTo.Address3%></nobr>
+            <%=ifend SalesCustomer.ShipTo.Address3%>
+            <br>
+            <nobr><%=SalesCustomer.ShipTo.city%> <%=SalesCustomer.ShipTo.state%>  <%=SalesCustomer.ShipTo.zip%></nobr>
+        </td>
+      </tr>
+    </table>
+    
+    
+    
+    </td>
+    <td width="25">
+        &nbsp;
+    </td>
+    <td>
+    
+    
+    
+    <table class="order">
+      <tr>
+        <th>
+            <nobr>Date Created:</nobr>
+        </th>
+        <td>
+           <%=Date%> 
+        </td>
+      </tr>
+
+
+      <%=if LastRevisedDate%>
+      <tr>
+        <th>
+            <nobr>Date Revised:</nobr>
+        </th>
+        <td>
+           <%=LastRevisedDate%> 
+        </td>
+      </tr>
+      <%=ifend LastRevisedDate%>
+
+      <tr>
+        <th>
+            <nobr>Sales Rep:</nobr> 
+        </th>
+        <td>
+            <nobr><%=SalesPersonUser.fullName%></nobr>
+            
+            <%=if SalesPersonUser.phoneWork%>
+                <br><%=SalesPersonUser.phoneWork, "L((###) ###-####)"%>
+            <%=ifend SalesPersonUser.phoneWork%>
+        </td>
+      </tr>
+      <tr>
+        <th>
+            Color:
+        </th>
+        <td>
+           <%=Color%> 
+        </td>
+      </tr>
+      <tr>
+        <th>
+            Texture:  
+        </th>
+        <td>
+           <%=Texture%> 
+        </td>
+      </tr>
+      <tr>
+        <th>
+           Code:   
+        </th>
+        <td>
+           <nobr><%=PriceCode.name%></nobr> 
+        </td>
+      </tr>
+      <tr>
+        <th>
+           Sample #:   
+        </th>
+        <td>
+           <nobr><%=sample%></nobr> 
+        </td>
+      </tr>
+    </table>
+    </td>
+    </tr>
+    </table>
+</td>
+</tr>
+
+<tr>
+    <th style="background: gray; color:white;">
+        Order Item Information
+    </th>
+</tr>
+<tr>
+<td>   
+    <table id="items" width='85%'>
+      <tr header='true'>
+        <th style="text-align:right">
+           #
+        </th>
+        <th style="text-align:left">
+            Location
+        </th>
+        <th style="text-align:right">
+            <nobr>Qty&nbsp;&nbsp;</nobr>
+        </th>
+        <th style="text-align:left">
+            Item
+        </th>
+        <th style="text-align:right">
+            Unit Price
+        </th>
+        <th style="text-align:right">
+            Unit Wt
+        </th>
+        <th style="text-align:left">
+            Service
+        </th>
+        <th style="text-align:right">
+            Service Price
+        </th>
+        <th style="text-align:right">
+            Total Price
+        </th>
+      </tr>
+      
+      <%=foreach SalesOrderItems%>
+      
+      <tr valign="top">
+        <td style="text-align:right">
+            <%=count$, "R,"%>
+        </td>
+        
+        <td>
+            <!-- this is intercepted by callback -->
+            <nobr><%=split$location%></nobr>
+        </td>
+        <td style="text-align:right">
+            <%=if Quantity%>
+                <nobr>
+                    <%=Quantity, "R,"%>
+                    &nbsp;&nbsp;
+                </nobr>
+            <%=ifend Quantity%>
+        </td>
+        <td>
+            <nobr>
+                <%=if CustomItem%>
+                    <nobr><%=itemDescription%></nobr>
+                <%=ifend CustomItem%>
+
+                <%=ifnot CustomItem%>
+                    <%=item.name%>
+                <%=ifnotend CustomItem%>
+                
+                <%=if itemAddOns%>
+                    <nobr> <%=itemAddOns.code%></nobr>
+                <%=ifend itemAddOns%>
+            </nobr>
+        </td>
+        
+        
+        <td style="text-align:right">
+            <%=if Quantity%>
+                <%=itemSellPrice, "R2,$"%>
+            <%=ifend Quantity%>
+        </td>
+        <td style="text-align:right">
+            <%=if Quantity%>
+                <%=unitWeight, "R,"%>
+            <%=ifend Quantity%>
+        </td>
+        <td style="text-align:left">
+            <nobr><%=split$ServiceCode.name%></nobr>
+        </td>
+        <td style="text-align:right">
+            <%=if ServiceCode%>
+                <%=servicePrice, "R2,$"%>
+            <%=ifend ServiceCode%>
+        </td>
+        <td style="text-align:right">
+            <%=if totalSellPrice%>
+                <%=totalSellPrice, "R2,$"%>
+            <%=ifend totalSellPrice%>
+        </td>
+      </tr>
+
+      <%=if Note%>
+      <tr>
+        <td colspan='3' style="text-align:right">
+            <i style='font-size:8.5pt;'>*Comment:</i>&nbsp;
+        </td>
+        <td colspan='6'>
+           <nobr><%=note%></nobr>
+        </td>
+      </tr>
+      <%=ifend Note%>
+
+
+      <%=foreachend SalesOrderItems%>
+    </table>
+
+</td>
+</tr>
+
+</table>
+
+<div pagebreak='no'>
+
+<table id="outer" width="100%">
+
+
+<tr>
+    <th style="background: gray; color:white;">
+        Sales Order Totals
+    </th>
+</tr>
+<tr>
+<td>   
+
+    <table class="inner">
+    <tr>
+        <td>
+
+    <table class="order">
+      <tr>
+        <th>
+            Total weight:  
+        </th>
+        <td align="right">
+           <%=TotalWeight, "R,"%> lbs 
+        </td>
+      </tr>
+      <tr>
+        <th>
+            <nobr>Total Material:</nobr>
+        </th>
+        <td align="right">
+           <%=TotalItemSellPrice, "R2,$"%> 
+        </td>
+      </tr>
+      
+      <%=if DiscountPercent%>
+      <tr>
+        <th>
+            <nobr>Prepay Discount:</nobr>
+        </th>
+        <td align="right">
+           <%=DiscountPercent, "R2"%>% 
+        </td>
+      </tr>
+      <tr>
+        <th>
+            <nobr>Discount:</nobr>
+        </th>
+        <td align="right">
+           <%=totalItemDiscount, "R2,$"%> 
+        </td>
+      </tr>
+      <%=ifend DiscountPercent%>
+      
+      
+      <%=if TotalService%>
+      <tr>
+        <th>
+            <nobr>Service Charges:</nobr>  
+        </th>
+        <td align="right">
+           <%=TotalService, "R2,$"%> 
+        </td>
+      </tr>
+      <%=ifend TotalService%>
+    </table>
+    
+    </td>
+    <td width="50">
+        &nbsp;
+    </td>
+    <td>    
+    
+
+    <table class="order">
+      <tr>
+        <th>
+            Order Sub Total:
+        </th>
+        <td align="right">
+           <%=TotalBeforeTax, "R2,$"%> 
+        </td>
+      </tr>
+      
+      <%=if TaxRate%>
+      <tr>
+        <th>
+            <nbsp>Tax Rate:</nbsp>
+        </th>
+        <td align="right">
+           <%=TaxRate, "R2"%>% 
+        </td>
+      </tr>
+      <tr>
+        <th>
+            Total Taxes:
+        </th>
+        <td align="right">
+           <%=ifnot ShippingPrice%>
+               <u>
+           <%=ifnotend ShippingPrice%>
+           <%=TotalTax, "R2,$"%> 
+           <%=ifnot ShippingPrice%>
+               </u>
+           <%=ifnotend ShippingPrice%>
+        </td>
+        
+      </tr>
+      <%=ifend TaxRate%>
+
+      <%=if ShippingPrice%>
+      <tr>
+        <th>
+            <nobr>Shipping Charges:</nobr>
+        </th>
+        <td align="right">
+           <u><%=ShippingPrice, "R2,$"%></u> 
+        </td>
+      </tr>
+      <%=ifend ShippingPrice%>
+      <tr>
+        <th>
+            <%=ifnot TaxRate%>
+                <b>*</b>
+            <%=ifnotend TaxRate%>
+            Order Total:
+            
+        </th>
+        <td align="right">
+           <b><%=TotalOrder, "R2,$"%></b> 
+        </td>
+      </tr>
+      
+      <%=ifnot TaxRate%>
+      <tr>
+        <td colspan='2'>
+            <br>
+            <b>* Note:</b> <i>Total does not include taxes.</i>            
+        </td>
+      </tr>
+      <%=ifnotend TaxRate%>
+
+    </table>
+    </td>
+    </tr>
+    </table>
+
+</td>
+</tr>
+</table>
+<br>
+
+
+<div style="margin-left: 50px; margin-right: 50px; " >
+<%=ifnot draft%>
+
+I have reviewed this order estimate and the products and quantities are accurate 
+and cover the scope of the work requested.  I also confirm that I have reviewed 
+the delivery information.  I acknowledge that the designs may be 
+proprietary to Concrete Designs Inc. and are protected under copyright and other 
+state and federal laws and I agree not to duplicate the designs or have them 
+duplicated.  This estimate will be incorporated into the contract and shall prevail over 
+any other terms.  No liquidated damage clauses apply.  This bid is good for thirty days 
+and is contingent upon fair and reasonable contract terms.
+<br><br>  
+This order and all change orders will be signed by an authorized representative.  By signing this, I am stating that I am an authorized representative.  
+   <br><br>
+   <nobr style="margin-left: 25px">Authorized Signature: ____________________________________&nbsp;&nbsp;&nbsp; Date: ___________</nobr>
+<%=ifnotend draft%>
+
+<%=if draft%>
+<H1>DRAFT Only</H1>
+<%=ifend draft%>
+
+</div>
+
+
+  
+</div>
+  
+  </body>
+</html>

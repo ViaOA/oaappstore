@@ -1,0 +1,11 @@
+<%@ include file="jspHeader.jspf" %>
+<%
+    // make sure USER is logged in amd role is manager
+    
+		if (employee == null) {
+		    // Note: response.sendRedirect() will keep processing the page.  jsp:forward will return from the page
+		    %>
+		        <jsp:forward page="login.jsp" />
+		    <%
+		}
+%>

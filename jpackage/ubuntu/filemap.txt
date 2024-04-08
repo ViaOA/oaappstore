@@ -1,0 +1,3 @@
+extension=obx
+mime-type=application/oabuilder
+description=OABuilder software model

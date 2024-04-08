@@ -1,0 +1,69 @@
+<!-- Copied from OATemplate project by OABuilder 03/03/24 06:30 AM -->
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bootstrap Tree View</title>
+
+
+<link rel="stylesheet" href="vendor/bootstrap-3.3.7/css/bootstrap.css">
+
+
+<link href="./css/bootstrap-treeview.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-4">
+        <div id="treeview10" class=""></div>
+      </div>
+      <div class="col-sm-4"></div>
+      <div class="col-sm-4"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript" language="javascript" src="vendor/jquery-3.1.1/jquery.js"></script>
+
+
+  <script src="./js/bootstrap-treeview.js"></script>
+  <script type="text/javascript">
+  $(function() {
+      var defaultData = [ {
+          text : 'Parent 1',
+          nodes : [ {
+              text : 'Child one goes here long one abcdefg hijklmno wxyz',
+              nodes : [ {
+                  text : 'Grandchild 1'
+              }, {
+                  text : 'Grandchild 2',
+                  oaid : 123
+              } ]
+          }, {
+              text : 'Child 2'
+          } ]
+      }, {
+          text : 'Parent 2'
+      }, {
+          text : 'Parent 3'
+      }, {
+          text : 'Parent 4'
+      }, {
+          text : 'Parent 5'
+      } ];
+
+      $('#treeview10').treeview({
+          Xcolor : "#428bca",
+          enableLinks : false,
+          levels : 1,
+          data : defaultData,
+          onNodeSelected : function(event, node) {
+              // ajax submit
+              var x = 4;
+              x++;
+              alert("yo "+node.oaid)
+          }
+      });
+  });
+</script>
+</body>
+</html>

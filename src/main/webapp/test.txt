@@ -1,0 +1,75 @@
+
+JSP oaajax.jsp
+realPath=C:\Users\vvia\git\oaAppStore\src\main\webapp\test, servletPath=/oaajax.jsp, pathInfo=null, pathTranslated=null
+requestURI=/oaajax.jsp, serverName=localhost serverPort=8080
+param: name=oaform  value=oaHtmlTable
+  Key: jsDate: Values[0]: Mon Aug 07 2023 17:00:42 GMT-0400 (Eastern Daylight Time)
+  Key: oaajaxid: Values[0]: 0
+  Key: oaform: Values[0]: oaHtmlTable
+  Key: jsDateSupportsDST: Values[0]: true
+  Key: oaparam: Values[0]: 
+  Key: jsTzRawOffset: Values[0]: 300
+  Key: oachanged: Values[0]: 
+  Key: oaFormProcessClosed: Values[0]: 
+  Key: oacommand: Values[0]: tableAppUser_0_1
+318) onSubmitCompleted
+JSP oaajax.jsp, returning js=  $('#tableAppUser').html(`<colgroup><col style='width: 3rem;width:3rem;'><col style='width: 12rem;width:12rem;'><col style='width: 15rem;width:15rem;'><col style='width: 28rem;width:28rem;'></colgroup><thead><tr><th class='oatableColumnCount'>#</th><th>First</th><th>Last</th><th>Full Name</th></tr></thead><tbody>
+<tr id='tableAppUser_0'><td id='tableAppUser_0_0' tabindex=0>1</td><td id='tableAppUser_0_1' class='oaNoTextOverflow' tabindex=0></td><td id='tableAppUser_0_2' class='oaNoTextOverflow' tabindex=0></td><td id='tableAppUser_0_3' class='oaNoTextOverflow' tabindex=0></td></tr>
+<tr id='tableAppUser_1' hidden style='display: none;'><td id='tableAppUser_1_0'>2</td><td id='tableAppUser_1_1'><input type='text' id='tableAppUserFirstName' class='oaFitColumnSize' style='visibility: hidden;'></td><td id='tableAppUser_1_2'><input type='text' id='tableAppUserLastName' class='oaFitColumnSize' style='visibility: hidden;'></td><td id='tableAppUser_1_3'></td></tr>
+</tbody>
+`);
+$('#tableAppUser_0_1').focus();
+
+  $('#tableAppUserFirstName').attr('name', 'tableAppUserFirstName');
+$('#tableAppUserFirstName').attr('type', 'text');
+$('#tableAppUserFirstName').blur(function() {$(this).removeClass('oaError');}); 
+
+  $('#tableAppUserFirstName').val('');
+$('#tableAppUserFirstName')[0].oaPrevValue = $('#tableAppUserFirstName').val();
+$('#tableAppUserFirstName').attr('size', 12);
+$('#tableAppUserFirstName').attr('maxlength', 30);
+
+  $('#tableAppUserLastName').attr('name', 'tableAppUserLastName');
+$('#tableAppUserLastName').attr('type', 'text');
+$('#tableAppUserLastName').blur(function() {$(this).removeClass('oaError');}); 
+
+  $('#tableAppUserLastName').val('');
+$('#tableAppUserLastName')[0].oaPrevValue = $('#tableAppUserLastName').val();
+$('#tableAppUserLastName').attr('size', 12);
+$('#tableAppUserLastName').attr('maxlength', 55);
+
+  $('#tableAppUserFullName').attr('name', 'tableAppUserFullName');
+
+  $('#tableAppUserLogin').html(`<colgroup><col style='width: 3rem;width:3rem;'><col style='width: 14rem;width:14rem;'><col style='width: 14rem;width:14rem;'><col style='width: 14rem;width:14rem;'><col style='width: 20rem;width:20rem;'></colgroup><thead><tr><th class='oatableColumnCount'>#</th><th>Host Name</th><th>Created</th><th>Created2</th><th>User</th></tr></thead><tbody>
+<tr id='tableAppUserLogin_0'><td id='tableAppUserLogin_0_0' tabindex=0>1</td><td id='tableAppUserLogin_0_1' class='oaNoTextOverflow' tabindex=0>L10946-5430</td><td id='tableAppUserLogin_0_2' class='oaNoTextOverflow' tabindex=0>08/07/23 04:51 PM</td><td id='tableAppUserLogin_0_3' class='oaNoTextOverflow' tabindex=0>08/07/23 04:51 PM</td><td id='tableAppUserLogin_0_4' class='oaNoTextOverflow' tabindex=0></td></tr>
+<tr id='tableAppUserLogin_1' hidden style='display: none;'><td id='tableAppUserLogin_1_0'>2</td><td id='tableAppUserLogin_1_1'><input type='text' id='tableAppUserLoginHostName' class='oaFitColumnSize' style='visibility: hidden;'></td><td id='tableAppUserLogin_1_2'></td><td id='tableAppUserLogin_1_3'><input id='tableAppUserLoginCreated2' class='oaFitColumnSize' style='visibility: hidden;'></td><td id='tableAppUserLogin_1_4'><select id='tableAppUserLoginAppUser' name='tableAppUserLoginAppUser' class='oaFitColumnSize' style='visibility: hidden;'></select></td></tr>
+</tbody>
+`);
+
+  $('#tableAppUserLoginHostName').attr('name', 'tableAppUserLoginHostName');
+$('#tableAppUserLoginHostName').attr('type', 'text');
+$('#tableAppUserLoginHostName').blur(function() {$(this).removeClass('oaError');}); 
+
+  $('#tableAppUserLoginHostName').val('');
+$('#tableAppUserLoginHostName')[0].oaPrevValue = $('#tableAppUserLoginHostName').val();
+$('#tableAppUserLoginHostName').attr('size', 14);
+$('#tableAppUserLoginHostName').attr('maxlength', 35);
+$('#tableAppUserLoginHostName').prop('disabled', true);
+
+  $('#tableAppUserLoginCreated').attr('name', 'tableAppUserLoginCreated');
+
+  $('#tableAppUserLoginCreated2').attr('name', 'tableAppUserLoginCreated2');
+$('#tableAppUserLoginCreated2').attr('type', 'datetime-local');
+$('#tableAppUserLoginCreated2').blur(function() {$(this).removeClass('oaError');}); 
+
+  $('#tableAppUserLoginCreated2').val('');
+$('#tableAppUserLoginCreated2')[0].oaPrevValue = $('#tableAppUserLoginCreated2').val();
+$('#tableAppUserLoginCreated2').prop('disabled', true);
+
+  $('#tableAppUserLoginAppUser').attr('name', 'tableAppUserLoginAppUser');
+
+  $('#tableAppUserLoginAppUser').val('');
+$('#tableAppUserLoginAppUser')[0].oaPrevValue = $('#tableAppUserLoginAppUser').val();
+$('#tableAppUserLoginAppUser').prop('disabled', true);
+$('#tableAppUserLoginAppUser').css('visibility', 'visible');
+$('#tableAppUserLoginAppUser').html('<option value=\'3\'> </option><option value=\'oanull\' selected> </option>');

@@ -1,0 +1,3 @@
+extension=oaas
+mime-type=application/oaappstore
+description=OAAppStore applicaton

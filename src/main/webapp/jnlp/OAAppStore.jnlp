@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0+" codebase="http://localhost:8081/jnlp" href="oaAppStore.jnlp">
+<!-- was
+<jnlp spec="1.0+" codebase="http://localhost:8081/jnlp">
+-->
+  <information> 
+    <title>OAAppStore</title> 
+    <vendor>OAAppStore</vendor> 
+    <homepage href="http://www.viaoa.com"/> 
+    <description>OAAppStore</description> 
+    <description kind="one-line">oaAppStore.com</description> 
+    <description kind="short">oaAppStore.com</description> 
+    <description kind="tooltip">oaAppStore.com</description> 
+    <icon kind="default" href="icon64.gif" width="64" height="64"/> 
+    <icon kind="shortcut" href="icon32.gif" width="32" height="32"/> 
+    <icon kind="splash" href="splash.gif"/> 
+    <offline-allowed/> 
+    <shortcut online="true" installed="true"> 
+	    <desktop/> 
+    	<menu submenu="OAAppStore"/> 
+    </shortcut> 
+    <related-content href="http://www.viaoa.com"> 
+	    <title>Online Documentation</title> 
+	    <description>View addition documentation online.</description>
+	</related-content>
+    <related-content href="http://www.viaoa.com"> 
+	    <title>Program Registration</title> 
+	    <description>Register this product to receive support and information.</description> 
+	</related-content>
+  </information> 
+
+  <update check="always" policy="always"/> 
+
+  <security> 
+      <all-permissions/> 
+  </security> 
+  
+  <resources> 
+    <java version="1.7+" max-heap-size="1000m"/> 
+    <jar href="/lib/OAAppStore.jar" main="true" download="eager"/> 
+    <extension href="oa.jnlp" download="eager"/> 
+    <property name="sun.java2d.dpiaware" value="false"/>
+    <!--
+    <property name="sun.java2d.noddraw" value="true"/>
+    -->
+  </resources> 
+  
+  <application-desc main-class="com.viaoa.appstore.control.StartupController"> 
+  	<argument>JWSCLIENT</argument>
+  </application-desc>
+</jnlp> 
+

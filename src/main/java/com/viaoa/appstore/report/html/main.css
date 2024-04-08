@@ -1,0 +1,106 @@
+body {
+	font-size: 10.5pt;
+	font-family: Arial
+}
+
+div.background {
+	background-color: white;
+}
+
+table {
+	border-style: solid;
+	border-color: rgb(203, 224, 244);
+	border-width: 0px;
+}
+
+table th, td {
+	border-width: 0;
+}
+
+table.outer {
+	padding: 0;
+	border-spacing: 0;
+	border-top-style: solid;
+	border-top-color: silver;
+	border-top-width: 2px;
+	border-left-width: 1px;
+	border-bottom-width: 1px;
+	border-right-width: 1px;
+	margin-left: 0px;
+}
+
+table.form {
+	padding: 0;
+	border-spacing: 1;
+	border-style: solid;
+	border-color: silver;
+	border-top-width: 0px;
+	border-left-width: 0px;
+	border-bottom-width: 0px;
+	border-right-width: 0px;
+	margin-left: 15px;
+}
+
+table.form th {
+	font-weight: 450;
+	font-size: 9.75pt;
+	text-align: left;
+	margin-right: 5px;
+}
+
+table.form td {
+	font-size: 9.5pt;
+	margin-right: 0px;
+}
+
+table.list {
+	padding: 0;
+	border-spacing: 0;
+	border-style: solid;
+	border-color: silver;
+}
+
+table.list td {
+	font-weight: normal;
+	font-size: 9.0pt;
+	padding-left:2px;
+	padding-right:2px
+}
+
+table.list th {
+	border-top-width: 1;
+	border-style: solid;
+	border-right-width: 1;
+	color: white;
+	border-color: silver;
+	background-color: gray;
+	border-left-width: 1;
+	font-size: 10.0pt;
+	border-bottom-width: 1
+}
+
+table.list tr {
+	border-style: solid;
+	border-color: silver;
+	border-right-width: 1;
+	border-bottom-width: 1;
+	border-left-width: 1;
+	border-top-width: 1;
+}
+
+
+h3.title {
+	text-align: left;
+	font-size: 12.5pt;
+	font-weight: bold;
+	padding: 5px;
+
+	/* 
+	background-color: rgb(203, 224, 244);
+	*/ 
+	padding-left: 12px;
+	border-style: solid;
+	border-color: silver;
+	border-width: 1px;
+}
+

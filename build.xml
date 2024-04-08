@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="OAAppStore" default="Dist" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
+    <property file = "/Users/vvia/ant/build.properties"/>
+    <description>OAAppStore</description>
+	<property name="FileName" value="oaAppStore" />
+	<property name="BackupDirectory" location="/backup/oaAppStore" />
+	<property name="JavaDocPackage" value="com.viaoa.appstore.*" />
+    <property name="ResourceDir" value="src/com/viaoa/appstore/resource" />
+	<property name="JavaDocHeading" value="OAAppStore" />
+	<property name="JavaDocCopyright" value="2019 ViaOA, Inc." />
+ 
+	<!-- ========== Distribution =========== -->
+	<target name="Dist" depends="Jar, Sign" description="create distribution">
+		<zip basedir="." includes="src/**" destfile="dist/oaAppStore_source.zip" update="false" />
+	</target>
+    
+	<target name="Sign" depends="Jar">
+		<signjar jar="dist/${FileName}.jar" alias="oaapp" keystore="keystore/oaapp.jks" storepass="viaoaapp" />
+	</target>
+
+	<!-- ========== JAR =========== -->
+	<target name="Jar" depends="UpdateBinFiles" description="Jar Project">
+		<jar basedir="bin" destfile="dist/${FileName}.jar" casesensitive="true" update="false" manifest="manifest.mf"/>
+	</target>
+
+	<!-- ========== Update Bin Files - copy necessary files from src =========== -->
+	<target name="UpdateBinFiles" description="update files from src to bin">
+
+		<!-- this will "sign" the jnlp file, only needed if the jnlp file is setting non-standard properties -->
+		<!--
+		<mkdir dir="bin/JNLP-INF"/>
+		<copyfile src="${WebsiteDirectory}/webcontent/jnlp/oaAppStore/${FileName}.jnlp" dest="bin/JNLP-INF/APPLICATION.JNLP" forceoverwrite="true"/>
+        -->
+		<copy todir="bin" verbose="true" overwrite="true">
+			<fileset dir="src">
+				<include name="**/*.gif/**" />
+				<include name="**/*.jpg/**" />
+				<include name="**/*.css/**" />
+				<include name="**/*.ht*/**" />
+				<include name="**/*.pro*/**" />
+				<include name="**/*.sql/**" />
+				<include name="**/help/**" />
+			</fileset>
+		</copy>
+		<copy overwrite="true" todir="src/com/viaoa/appstore/help/image" verbose="true">
+			<fileset dir="src/com/viaoa/appstore/view/image">
+				<include name="splash.gif" />
+				<include name="icon.gif" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- ========== Backup =========== -->
+	<target name="Backup" description="create a zip file and store in backup directory under timestamp name">
+		<tstamp>
+			<format property="DTSTAMP" pattern="yyyyMMdd_HHmm" />
+		</tstamp>
+		<mkdir dir="${BackupDirectory}" />
+		<zip destfile="${BackupDirectory}/${FileName}_${DTSTAMP}.zip" update="false">
+			<fileset dir=".">
+				<include name="*/**" />
+				<exclude name=".*" />
+				<exclude name="bin/**" />
+				<exclude name="database/**" />
+				<exclude name="javadoc/**" />
+				<exclude name="images/**" />
+				<exclude name="lib/**" />
+				<exclude name="logs/**" />
+				<exclude name="*.jar/**" />
+				<exclude name="*.dll/**" />
+				<exclude name="*.exe/**" />
+			</fileset>
+		</zip>
+	</target>
+
+    
+    
+    <!-- ========== Create Zip =========== -->
+    <target name="CreateOAAppStoreZipFile" description="create a zip file that is used by OABuilder for the oaAppStore project">
+        <mkdir dir="dist" />
+        <zip destfile="dist/oaAppStore.zip" update="false">
+            <fileset dir=".">
+                <include name="*/**" />
+                <exclude name=".*" />
+                
+                <exclude name="bin/**" />
+                <exclude name="target/**" />
+                <exclude name="runtime/**" />
+                <exclude name="package/bundles/**" />
+                <exclude name="dist/**" />
+                <exclude name="package/OAAppStore.jar" />
+                
+                <exclude name="lib/**" />
+                <exclude name="logs/**" />
+                <exclude name="*.jar/**" />
+                <exclude name="*.dll/**" />
+                <exclude name="*.exe/**" />
+            </fileset>
+        </zip>
+    </target>
+    
+
+	<!-- ========== JavaDoc =========== -->
+	<target name="JavaDoc" description="run JavaDoc against source code.">
+		<javadoc packagenames="${JavaDocPackage}" destdir="javadoc" sourcepath="src" author="yes" protected="true" windowtitle="Code Documentation" header="${JavaDocHeading}" footer="&lt;small&gt;&amp;copyright ${JavaDocCopyright} All rights reserved&lt;small&gt;" />
+	</target>
+
+	<target name="JarHelp" depends="" description="Jar javahelp files">
+		<jar basedir="/temp/javahelp" destfile="dist/jh.jar" casesensitive="true" update="false" />
+	</target>
+
+
+	<target name="SignHelp" depends="JarHelp">
+		<signjar jar="dist/jh.jar" alias="oaapp" keystore="keystore/oaapp.jks" storepass="viaoaapp" />
+	</target>
+
+
+	<target name="GenerateJKS">
+		<!-- create a selfsign "dummy" certificate for Jetty SSL, will need to add a host entry
+            C:\WINDOWS\system32\drivers\etc\hosts
+                127.0.0.1       www.oaapp.com
+            
+            Need to add selfsigned SSL certificate to windows:
+            use IE browser, 
+              goto: https://www.oaapp.com:8443
+              the browser will show a warning about the certificate.
+                 "There is a problem with this website's security certificate"
+                 select:  "Continue to this website (not recommended)" 
+              beside the address bar is a button "certificate error"    
+                click this button to add certificate to windows registry - since the certificate is self-signed
+                    click "view certificate" from the popup
+                    this will display the certificate window display cert information
+                    click the "install certiicate" button, which will popup "Certificate import wizard" window
+                    select next button
+                    select the "place all certificates in the following store" radio button
+                    click the browse button, and select "Trusted Root Certificate Authories", then hit "ok" button
+                        hit next, then ok buttons, then "yes" button, then OK button
+                    close all browsers and then start a new browser, secure page should now work without warning.
+                    
+            NOTE: this is used by JettyController                    
+        -->
+
+		<delete file="keystore/oaapp.jks" />
+		<genkey alias="oaapp" storepass="viaoaapp" keystore="keystore/oaapp.jks" keyalg="RSA" validity="730" verbose="true" keysize="2048">
+			<dname>
+				<param name="cn" value="www.oaapp.com" />
+				<param name="ou" value="ViaOA, Inc" />
+				<param name="o" value="ViaOA" />
+				<param name="l" value="Monroe" />
+				<param name="s" value="Georgia" />
+				<param name="c" value="US" />
+			</dname>
+		</genkey>
+
+		
+		<copy todir="${ResourceDir}">
+			<fileset dir="keystore">
+				<include name="oaapp.jks" />
+			</fileset>
+		</copy>
+	</target>
+    
+    
+    
+    <!-- Uses java packager from JDK 8 to create windows exe.
+        see: https://docs.oracle.com/javase/8/docs/technotes/guides/deploy/self-contained-packaging.html
+        must have a directory named "package" 
+    -->    
+    <target name="JavaPackager">
+        <taskdef resource="com/sun/javafx/tools/ant/antlib.xml" uri="javafx:com.sun.javafx.tools.ant" classpath=".;c:\\Program Files\\Java\\jdk1.8.0_77\\lib\\ant-javafx.jar"/>
+         
+        <echo>running JavaPackager for building OAAppStore.exe</echo>
+        <tstamp/>
+        
+        
+        <fx:application id="AppId" name="OAAppStore" mainClass="com.viaoa.appstore.control.StartupController" version="0.1">
+            <fx:argument>client</fx:argument>
+            <fx:argument>java version: ${java.version}</fx:argument>
+            <fx:argument>created: ${DSTAMP} ${TSTAMP}</fx:argument>
+        </fx:application>
+
+        
+<!-- this is required, so that dependent jars are added to the classpath --> 
+        
+        <fx:jar destfile="package/OAAppStore.jar">
+            <fx:application refid="AppId"/>
+            
+            <fileset dir="target/classes/">
+                <include name="**"/>
+            </fileset>
+
+            <manifest>
+                <attribute name="Implementation-Vendor" value="ViaOA"/>
+                <attribute name="Implementation-Version" value="0.1"/>
+            </manifest>
+            
+            <fx:resources>
+                <fx:fileset dir="package" includes="lib/*.jar"/>
+            </fx:resources>
+        </fx:jar>
+
+        <fx:signjar verbose="true" jar="package/OAAppStore.jar" alias="${jks.alias}" keystore="${jks.file}" storepass="${jks.password}" />
+        
+        
+        <!-- was:
+        <fx:signjar jar="package/OAAppStore.jar" alias="oaapp" keystore="keystore/oaapp.jks" storepass="viaoaapp" />
+        -->
+        
+        <fx:deploy width="800" height="600" outdir="package" outfile="OAAppStore" nativeBundles="exe" verbose="false">
+            <fx:application refid="AppId"/>
+
+            <fx:info title="OAAppStore from ViaOA"
+                 vendor="ViaOA"
+                 description="OAAppStore from ViaOA"
+                 category="ViaOA"
+                 copyright="(c) 2019 ViaOA"
+                 license="Apache License 2.0">
+
+                <fx:association mimetype="application/x-vnd.tclx" description="OAAppStore">
+                </fx:association>
+            </fx:info>
+            
+            <fx:resources>
+                <fx:fileset dir="package" includes="*.jar"/>
+                <fx:fileset dir="package" includes="lib/*.jar"/>
+                <fx:fileset dir="package" includes="license.txt" type="license"/>
+                <fx:fileset dir="package" includes="sample.txt" type="data"/>
+            </fx:resources>
+            
+            <fx:platform j2se="8">
+                <fx:jvmarg value="-Xmx1000m"/>
+            </fx:platform>            
+
+            <fx:preferences shortcut="true" menu="true" install="false" />
+            
+            <fx:bundleArgument arg="win.menuGroup" value="ViaOA AppStore"/>
+            
+        </fx:deploy>
+    </target>
+    
+</project>
+

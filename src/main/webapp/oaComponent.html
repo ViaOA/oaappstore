@@ -1,0 +1,487 @@
+<!-- Copied from OATemplate project by OABuilder 03/03/24 06:30 AM -->
+<!DOCTYPE html>
+<html lang="enUS">
+
+<head>
+<TITLE>OAAppStore</TITLE>
+<meta charset="utf-8">
+
+<meta content="text/html; charset=UFT-8" http-equiv=Content-Type>
+<meta http-equiv="Content-Language" content="en-us" />
+<meta http-equiv="Expires" content="Tue, 20 Aug 1996 14:25:27 GMT">
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<link rel="shortcut icon" type="image" href="image/icon.gif" />
+
+<meta name="author" content="xxx">
+<meta name="description" content="xxx">
+<meta name="generator" content="xxx">
+<meta name="keywords" content="abc,xyz,etc">
+<meta name="application-name" content="xxx">
+<meta name="robots" content="index,follow">
+<meta name="publisher" content="xxx">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="vendor/jquery-ui-1.12.1/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="vendor/bootstrap-3.3.7/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="vendor/viaoa/oajsp.css">
+<script type="text/javascript" language="javascript" src="vendor/jquery-3.1.1/jquery.js"></script>
+<script type="text/javascript" language="javascript" src="vendor/jquery-ui-1.12.1/jquery-ui.js"></script>
+<script type="text/javascript" language="javascript" src="vendor/bootstrap-3.3.7/js/bootstrap.js"></script>
+
+<script>
+  var oaShowMessage;
+  if ($().modal) {
+    oaShowMessage = function(title, msg) {
+      $('#oaformDialog .modal-title').html(title);
+      $('#oaformDialog .modal-body').html(msg);
+      $('#oaformDialog').modal({keyboard: true});
+    }
+  }
+  else {
+    oaShowMessage = function(title, msg) {
+      $('#oaformDialog').dialog('option', 'title', title);
+      $('#oaformDialog').html(msg);
+      $('#oaformDialog').dialog('open');
+    }
+  }
+  function oaShowSnackbarMessage(msg) {
+    $('#oaFormSnackbarMessage').html(msg);
+    $('#oaFormSnackbarMessage').css({visibility:'visible', opacity: 0.0}).animate({opacity: 1.0},300);
+    setTimeout(function() {
+      $('#oaFormSnackbarMessage').animate({opacity: 0.0}, 2000,
+        function() {
+          $('#oaFormSnackbarMessage').css('visibility','hidden');
+        }
+      );
+    }, 2000);
+  }
+  $(document).ready(function() {
+    if ($().modal) {
+      $('#baseComponent').prepend(
+      "<div id='oaformDialog' class='modal fade' tabindex='-1'>" +
+        "<div class='modal-dialog'>" +
+          "<div class='modal-content'>" +
+            "<div class='modal-header'>" +
+              "<button type='button' class='close' data-dismiss='modal'><span>&times;</span></button>" +
+              "<h4 class='modal-title'>" +
+              "</h4>" +
+            "</div>" +
+            "<div class='modal-body'>" +
+            "</div>" +
+            "<div class='modal-footer'>" +
+              "<button type='button' class='btn btn-primary' data-dismiss='modal'>Ok</button>" +
+            "</div>" +
+          "</div>" +
+        "</div>" +
+      "</div>"
+    );
+  }
+  else {
+    $('#baseComponent').prepend("<div id='oaformDialog'></div>");
+    $('#oaformDialog').dialog({
+      autoOpen : false,
+      title : 'Message',
+      modal : true,
+      width : 420,
+      zIndex: 19999,
+      buttons: [
+        { text: 'Ok', click: function() { $(this).dialog('close'); } }
+      ]
+    });
+  }
+  $('#baseComponent').prepend(
+    "<div id='oaFormProcess' class='modal fade' tabindex='-1'>" +
+      "<div class='modal-dialog'>" +
+        "<div class='modal-content'>" +
+          "<div class='modal-header'>" +
+            "<button id='oaFormProcessClose' type='button' class='close' data-dismiss='modal'>&times;</button>" +
+            "<h4 class='modal-title' id='myModalLabel'><span id='oaFormProcessTitle'></span></h4>" +
+          "</div>" +
+          "<div class='modal-body center-block'>" +
+            "<div class='progress'>" +
+              "<div id='oaFormProcessProgress' class='progress-bar bar' role='progressbar' style='min-width: 2em; width: 5%;'>" +
+                "" +
+              "</div>" +
+            "</div>" +
+            "<div>" +
+            "<span id='oaFormProcessStep'></span> ... <span id='oaFormProcessMessage'></span>" +
+            "</div>" +
+          "</div>" +
+          "<div id='oaFormProcessFooter' class='modal-footer'>" +
+            "<button type='button' class='btn btn-default' data-dismiss='modal'>Close</button>" +
+          "</div>" +
+        "</div>" +
+      "</div>" +
+    "</div>"
+  );
+  $('#oaFormProcess button').click(function() { $('#oaFormProcessClosed').val('true'); } );
+  $('body').append(
+    "<div id='oaFormSnackbarMessage'></div>"
+  );
+  $('body').append("<div id='oaWait'><img src='image/oawait.gif'></div>");
+  $('#baseComponent').attr('method', 'post');
+  $('#baseComponent').attr('action', 'oaform.jsp');
+  $('#baseComponent').prepend("<input type='hidden' name='oaform' value='baseComponent'>");
+  $('#baseComponent').prepend("<input id='oaajaxid' type='hidden' name='oaajaxid' value='0'>");
+  $('#baseComponent').prepend("<input id='oaFormProcessClosed' type='hidden' name='oaFormProcessClosed' value=''>");
+  $('#baseComponent').prepend("<input id='oacommand' type='hidden' name='oacommand' value=''>");
+  $('#baseComponent').prepend("<input id='oaparam' type='hidden' name='oaparam' value=''>");
+  $('#baseComponent').prepend("<input id='oachanged' type='hidden' name='oachanged' value=''>");
+  (function() {
+    var dtNow = new Date();
+    var tzOffsetJan = (new Date(dtNow.getFullYear(),0,1)).getTimezoneOffset();
+    var tzOffsetJul = (new Date(dtNow.getFullYear(),6,1)).getTimezoneOffset();
+    $('#baseComponent').prepend("<input id='jsDate' type='hidden' name='jsDate' value='"+(dtNow.toString())+"'>");
+    $('#baseComponent').prepend("<input id='jsTzRawOffset' type='hidden' name='jsTzRawOffset' value='"+Math.max(tzOffsetJan,tzOffsetJul)+"'>");
+    $('#baseComponent').prepend("<input id='jsDateSupportsDST' type='hidden' name='jsDateSupportsDST' value='"+(tzOffsetJan != tzOffsetJul)+"'>");
+  })();
+  $('#baseComponent').removeClass('oaDebug');
+  $('.oaBindable').removeClass('oaDebug');
+  $('#txt').removeClass('oaDebug');
+  $('#txt').attr('name', 'txt');
+$('#txt').attr('type', 'text');
+$('#txt').blur(function() {$(this).removeClass('oaError');}); 
+$('#txt').val('');
+$('#txt').css({'min-height':'22px','max-height':'22px'});
+$('#txt').attr('size', 44);
+$('#txt').attr('minlength', 5);
+$('#txt').attr('maxlength', 12);
+
+  $('#div').removeClass('oaDebug');
+  $('#div').attr('name', 'div');
+$('#div').blur(function() {$(this).removeClass('oaError');}); 
+$('#div').val('');
+$('#div').css({'min-height':'150px','max-height':'150px','min-width':'150px','max-width':'150px',overflow:'auto'});
+
+  $('#chk').removeClass('oaDebug');
+  $('#chk').attr('name', 'chk');
+$('#chk').blur(function() {$(this).removeClass('oaError');}); 
+$('#chk').val('');
+
+  $('#span').removeClass('oaDebug');
+  $('#span').attr('name', 'span');
+$('#span').blur(function() {$(this).removeClass('oaError');}); 
+$('#span').click(function() {if (!window.confirm("Are you sure, this is a te4st")) return false;window.location = 'oaforward.jsp?oaform=baseComponent&oacommand=span';return false;});
+$('#span').val('');
+$('#span').css('cursor', 'not-allowed');
+
+  $('#cmdTest').removeClass('oaDebug');
+  $('#cmdTest').attr('name', 'cmdTest');
+$('#cmdTest').blur(function() {$(this).removeClass('oaError');}); 
+$('#cmdTest').addClass('oaSubmit');
+$('#cmdTest').click(function() {
+  $('#oacommand').val('cmdTest');
+  ajaxSubmit();
+  $('#oacommand').val('');
+  $('#oaparam').val('');
+  return false;
+});
+$('#cmdTest').val('Button for Ajax');
+
+  
+  $('#baseComponent').on('submit', oaSubmit);
+  var oaSubmitCancelled;
+  function oaSubmit(event) {
+    oaSubmitCancelled = true;
+    var errors = [];
+    var requires = [];
+    var regex;
+    var val;
+    if (requires.length > 0) {
+      event.preventDefault();
+      var msg = '';
+      for (var i=0; i<requires.length; i++) {
+        if (i > 0) {
+          msg += ',<br>';
+        }
+        msg += requires[i];
+      }
+      oaShowMessage('Required fields are missing', msg);
+      return false;
+    }
+    if (errors.length > 0) {
+      event.preventDefault();
+      var msg = '';
+      for (var i=0; i<errors.length; i++) {
+        if (i > 0) {
+          msg += ', ';
+          if (i % 3 == 0) msg += '<br>';
+        }
+        msg += errors[i];
+      }
+      oaShowMessage('Errors on page', msg);
+      return false;
+    }
+    oaSubmitCancelled = false;
+    return true;
+  }
+  var cntAjaxSubmit = 0;
+  function ajaxSubmit(cmdName) {
+    cntAjaxSubmit++;
+    var bUseAsync = (cntAjaxSubmit == 1);
+    if (bUseAsync && cntAjaxSubmit == 1) {
+      $('#oaWait').fadeIn(200, function(){ if (cntAjaxSubmit < 1) {cntAjaxSubmit=0;$('#oaWait').hide();}});
+    }
+    var f1 = function(data) {
+      if (--cntAjaxSubmit < 1) {
+        cntAjaxSubmit=0; 
+        $('#oaWait').hide();
+      }
+      if (data) eval(data);
+    }
+    var f2 = function() {
+      if (--cntAjaxSubmit < 1) {
+        cntAjaxSubmit=0; 
+        $('#oaWait').hide();
+      }
+    }
+    var args = $('#baseComponent').serialize();
+    if (cmdName != undefined && cmdName) args = cmdName + '=1&' + args;
+    $.ajax({
+      type: 'POST',
+      url: 'oaajax.jsp',
+      data: args,
+      success: f1,
+      error: f2,
+      dataType: 'text',
+      timeout: 30000,
+      async: bUseAsync
+    });
+  }
+  function ajaxSubmit2(cmdName) {
+    var args = $('#baseComponent').serialize();
+    if (cmdName != undefined && cmdName) args = cmdName + '=1&' + args;
+    $.ajax({
+      type: 'POST',
+      data: args,
+      url: 'oaajax.jsp',
+      success: function(data) {if (data) eval(data);},
+      dataType: 'text'
+    });
+  }
+  $('input:enabled:first').focus();
+});
+</script>
+</head>
+
+<body>
+    <form id="baseComponent">
+<style>
+
+body {
+    margin-left: 25px;
+} 
+label {
+    margin-right: 15px;
+}
+#div {
+    border: solid thin;
+}
+</style>
+
+<a href="oareset.jsp">OA Reset</a>
+
+<fieldset>
+    <legend>Sample Form Components</legend>
+
+<p>
+AAAAAA
+<label id="txtlbl" for="txt">Text</label><input type="text" id="txt" accesskey="T">aaaabbbb<br>
+BBBBB
+<label id="txtlbl2" for="txt2">Text2</label><input type="text" id="txt2" name="txt" list=animals><br>
+<label id="txtlbl3" for="txt3">Text3</label><input type="text" id="txt3" name="txt3" inputmode="lowerCase"><br>
+
+ <datalist id=animals>
+  <option value="Cat">
+  <option value="Dog">
+  <option value="Mouse">
+ </datalist>
+
+<div id="div">
+ultricies nisl id lacus vulputate mattis. Nulla condimentum et metus vitae vestibulum. Aliquam ac risus eros. Vestibulum dignissim bibendum sapien, quis feugiat sapien lacinia nec. Mauris id justo pharetra, tincidunt est vel, varius libero. Ut efficitur nulla nec malesuada efficitur. Nulla luctus purus eu metus feugiat, eu semper metus viverra. Aliquam erat volutpat. Vivamus mollis turpis augue, eget maximus lorem convallis vel. Nam sed arcu vitae diam tempus malesuada id non nisl. Phasellus scelerisque nunc ut dapibus interdum.  Donec ornare elementum laoreet. Sed diam mauris, eleifend quis lacinia at, egestas eu tellus. Sed neque augue, vestibulum ut arcu non, accumsan aliquet enim. Aliquam</div>
+
+
+
+<label for="chk"><input type="checkbox" id="chk">Checkbox</label><br>
+
+<label for="pw">Password<input type="password" id="pw" name="pw"></label><br>
+
+<label for="rad">Radio</label>
+<input type="radio" id="rad"><br>
+
+
+<label for="img">Image</label>
+<input type="image" id="img"><br>
+
+<label for="num">Number</label>
+<input type="number" id="num" name="txtNum"><br>
+
+<label for="file">File</label>
+<input type="file" id="file"><br>
+
+<label>Button
+<input type="button" id="cmdTest" value="Test Button w Ajax to changed txt"></label><br>
+
+<label for="reset">Reset</label>
+Reset: <input type="reset" id="reset"><br>
+
+<label for="submit">Submit</label>
+<input type="submit" id="submit" value="Click to Submit"><br>
+
+<span id="span">SPAN here</span><br>
+
+<legend>Hidden Component legend</legend>
+
+<input type="hidden"><br>
+
+<legend>Misc Components</legend>
+<label for="color">Color</label>
+<input type="color" id="color"><br>
+
+<label for="date">Date</label>
+<input type="date" id="date"><br>
+
+<label for="datetimelocla">DateTime Local</label>
+<input type="datetime-local"><br>
+
+<label for="email">Email</label>
+<input type="email" id="email"><br>
+
+<label for="month">Month</label>
+<input type="month" id="month"><br>
+
+<label for="range">Range</label>
+<input type="range" id="range"><br>
+
+<label for="search">Search</label>
+<input type="search" id="search"><br>
+
+<label for="tel">Telephone</label>
+<input type="tel" id="tel"><br>
+
+<label for="time">Time</label>
+<input type="time" id="time"><br>
+
+<label for="url">URL</label>
+<input type="url" id="url"><br>
+
+<label for="week">Week</label>
+<input type="week" id="week"><br>
+
+<label for="select">Select</label>
+<select name="select" id="select" >
+  <option value="volvo">Volvo</option>
+  <option value="saab">Saab</option>
+  <option value="mercedes">Mercedes<hr></option>
+  <option value="audi">Audi</option>
+  <option value="" selected>pick auto</option>
+</select>
+<br>
+<p>
+
+<label for="selectM">Select Multiple
+<select id="selectM" name="selectM" multiple>
+  <option value="volvo">Volvo</option>
+  <option value="saab">Saab<hr></option>
+  <option value="mercedes">Mercedes</option>
+  <option value="audi">Audi</option>
+  <option value="" selected>NONE of the above</option>
+</select>
+</label>
+<br>
+
+
+<label for="rangex">Range</label>
+<input type="range" id="rangex" name="rangex" min="0" max="10">
+<br>
+
+<label for="txta">TextArea</label>
+<textarea id="txta" name="txta" rows="4" cols="80" wrap="soft" placeholder="text area here ...">
+</textarea><br>
+
+<label for="">Progress</label>
+<progress id="progress" value="32" max="100"> 32% </progress><br>
+
+
+<label for="meter">Meter</label>
+<meter id="meter" value="2" min="0" max="10">2 out of 10</meter><br>
+
+
+<label for="select2">Select2</label>
+<select name="select2" id="select2">
+  <optgroup label="Swedish Cars">
+    <option value="volvo">Volvo</option>
+    <option value="saab" selected>Saab</option>
+  </optgroup>
+  <optgroup label="German Cars">
+    <option label="MERCEDES label disabled" disabled value="mercedes">Mercedes</option>
+    <option value="audi">Audi</option>
+  </optgroup>
+</select>
+
+<p>
+<figure>
+  <img src="icon.gif" alt="AltNameForImage">
+  <figcaption>This is the figcaption</figcaption>
+</figure>
+
+
+</fieldset>
+
+<p>
+
+<label for="ice-cream-choice">Choose a flavor
+<input list="ice-cream-flavors" id="ice-cream-choice" name="ice-cream-choice">
+<datalist id="ice-cream-flavors">
+    <option value="Chocolate">
+    <option value="Coconut">
+    <option value="Mint">
+    <option value="Strawberry">
+    <option value="Vanilla">
+</datalist>
+</label>
+
+<p>
+
+<label for="tick">Tip amount
+<input type="range" list="tickmarks" min="0" max="100" id="tick" name="tick" />
+<datalist id="tickmarks">
+  <option value="0"></option>
+  <option value="10"></option>
+  <option value="20"></option>
+  <option value="30"></option>
+</datalist>
+</label>
+
+<p>
+
+<label for="colors">Pick a color (preferably a red tone)
+<input type="color" list="redColors" id="colors" />
+<datalist id="redColors">
+  <option value="#800000"></option>
+  <option value="#8B0000"></option>
+  <option value="#A52A2A"></option>
+  <option value="#DC143C"></option>
+</datalist>
+</label>
+<p>
+
+<br>
+<label>
+ Animal
+ <input name=animal list=animals>
+</label>
+<datalist id=animals>
+ <label>
+  or select from the list:
+  <select name=animal>
+   <option value="">
+   <option>Cat
+   <option>Dog
+  </select>
+ </label>
+</datalist>
+
+
+</form>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<%@page trimDirectiveWhitespaces="true"%>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page language="java" errorPage="oaerror.jsp"%>
+<%@page import="java.io.*,java.util.*"%>
+<%@page import="java.util.logging.*"%>
+
+<%@page import="
+  com.viaoa.object.*,
+  com.viaoa.hub.*,
+  com.viaoa.util.*, 
+  com.viaoa.datasource.*,
+  com.viaoa.datasource.jdbc.*,
+  com.viaoa.process.*"%>
+
+<%@page import="com.viaoa.uicontroller.*,
+  com.viaoa.web.server.*, 
+  com.viaoa.web.html.*, 
+  com.viaoa.web.html.form.*, 
+  com.viaoa.web.html.input.*, 
+  com.viaoa.web.html.jquery.*, 
+  com.viaoa.web.html.bootstrap.*, 
+  com.viaoa.web.html.summernote.*, 
+  com.viaoa.web.html.oa.*, 
+  com.viaoa.web.util.*"%> 
+
+<%@page import="com.viaoa.appstore.model.oa.*,com.viaoa.appstore.model.oa.propertypath.*, com.viaoa.appstore.model.oa.search.*"%>
+<%@page import="com.viaoa.appstore.model.*,com.viaoa.appstore.model.search.*"%>
+<%@page import="com.viaoa.appstore.jsp.oa.*, com.viaoa.appstore.jsp.*"%>
+<%@page import="com.viaoa.appstore.delegate.*"%>
+<%@page import="com.viaoa.appstore.delegate.oa.*"%>
+
+<%-- OAJSP hierarchy: System/Application/Session/Form --%>
+<jsp:useBean id="oasystem" scope="application" class="com.viaoa.web.server.OASystem" />
+
+<%!static Logger LOG = Logger.getLogger("oajsp");%>
+<%
+    String applicationId = "oajsp";
+    OAApplication oaapplication = oasystem.getApplication(applicationId, application);
+    OASession oasession = oaapplication.getSession(session);
+    oasession.setResponse(response);
+    oasession.setRequest(request);
+    
+    String formId = "";
+    OAForm form = null;
+
+    request.setCharacterEncoding("UTF-8");
+%>
+

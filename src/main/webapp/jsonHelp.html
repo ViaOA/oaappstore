@@ -1,0 +1,102 @@
+<!-- Copied from OATemplate project by OABuilder 03/03/24 06:30 AM -->
+
+<html>
+<head>
+<style>
+
+code {
+    font-weight: bold;
+}
+pre, code {
+    padding: 0;
+    margin: 0;
+    color: green;
+}
+
+</style>
+
+</head>
+<Body>
+<h3>JSON servlet Help</h3>
+<p>
+
+The OA JSON Servlet is used to access the model's data objects, and metadata about the classes.
+
+<p>
+This will allow querying of the data that is maintained within an application and have it returned in a json format.
+All queries specify the name of the data class, along with the object Id to return, or a query.
+A query is similar to a database query, and is based on the object model.  Property paths are used to 
+build a reference from one object to another.
+
+<p>
+<h4>Usage</h4>
+
+<code>http://hostname:port/servlet/json</code>
+<br>   to display this help information
+<p>
+
+
+<h4>Example:</h4>
+
+<code>http://hostname:port/servlet/json?class=Application&query="ApplicationStatus.type!=5"</code>
+<br>in this example, the list is all of the applications that are not running.
+
+   
+<p>
+<h4>HTTP Query parameters</h4>
+<code>/servlet/json</code>  root context<br>
+<code>?</code>  begin of http query<br>
+<code>class|c</code>  name of object class that will be returned (case sensitive)<br>
+<p>
+next, use an id or query for the object(s) that are requested.<br>
+<code>id=</code>  the id of the class instance to return<br>
+<code>query=</code>  the query to use (see below)<br>
+<code>all</code>   if the return value is a collection, then show all of the data, otherwise (default) only list the Id values.
+<code>describe</code>  used to describe information (metadata) about the class.
+<p>
+<br>
+<h4>Query</h4>
+Use the application object model to get the name of the data objects (class).
+
+<p>
+<br>
+<h4>Examples</h4>
+
+<pre><code>
+
+servlet/json?c=Site&query="environments.silos.servers.applications.applicationType.code like 'fix*'"
+
+servlet/json?c=Application&query="applicationType.code like 'fix*'"
+
+servlet/json?c=Application&query="applicationStatus.type=5"
+
+servlet/json?c=Application&query="(id<398 OR id > 400) AND applicationType.code like 'fix*'"
+servlet/json?c=Application&query="id=398"
+
+/json?c=Application&describe
+
+</code></pre>
+
+<p>
+<br>
+
+<h4>Operators</h4>
+<pre><code>
+AND && &
+OR || |
+= == IS 
+!=
+<
+<=
+>
+>=
+LIKE   use * to denote leading or trailing wildcards.
+NOTLIKE
+NULL
+</code><pre>
+
+
+</body>
+</html>
+
+

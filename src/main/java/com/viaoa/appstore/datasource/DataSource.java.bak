@@ -1,0 +1,331 @@
+package com.template.datasource;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.sql.*;
+import com.viaoa.object.*;
+import com.viaoa.util.*;
+import com.viaoa.object.OAAnnotationDelegate;
+import com.viaoa.annotation.OATable;
+import com.viaoa.ds.jdbc.*;
+import com.viaoa.ds.jdbc.db.*;
+import com.template.resource.Resource;
+import com.template.model.oa.*;
+
+public class DataSource {
+    private static Logger LOG = Logger.getLogger(DataSource.class.getName());
+    protected OADataSourceJDBC jdbcDataSource;
+    protected Database database;
+    
+    public DataSource() {
+    }
+    
+    public void open() throws Exception {
+        String driver = Resource.getValue(Resource.DB_JDBC_Driver);
+        String jdbcUrl = Resource.getValue(Resource.DB_JDBC_URL);
+        String user = Resource.getValue(Resource.DB_User);
+        String pw = Resource.getValue(Resource.DB_Password);
+        String pwBase64 = Resource.getValue(Resource.DB_Password_Base64);
+        int dbmdType = Resource.getInt(Resource.DB_DBMD_Type);
+        int minConnections = Resource.getInt(Resource.DB_MinConnections);
+        int maxConnections = Resource.getInt(Resource.DB_MaxConnections);
+    
+        if (OAString.isEmpty(pw)) {
+            String s = Base64.decode(pwBase64);
+            if (!OAString.isEmpty(s)) pw = s;
+        }
+        open(driver, jdbcUrl, dbmdType, user, pw, minConnections, maxConnections);
+    }
+    
+    protected void open(String driver, String jdbcUrl, int dbmdType, String user, String password, int min, int max) throws Exception {
+        if (jdbcDataSource != null) return;
+        String s = String.format("JDBC: driver=%s, url=%s, dbmdType=%d, user=%s", driver, jdbcUrl, dbmdType, user);
+        LOG.fine(s);
+        Database db = getDatabase();
+    
+        createDAO(db);
+        DBMetaData dbmd = new DBMetaData(dbmdType, user, password, driver, jdbcUrl);
+        dbmd.setMinConnections(min);
+        dbmd.setMaxConnections(max);
+        jdbcDataSource = new OADataSourceJDBC(db, dbmd);
+    }
+    
+    public void close() {
+        if (jdbcDataSource != null) jdbcDataSource.close();
+    }
+    
+    
+    public OADataSourceJDBC getOADataSource() {
+        return jdbcDataSource;
+    }
+
+    public Database getDatabase() {
+        if (database != null) return database;
+        try {
+            database = createDatabaseFromClasses();
+        }
+        catch (Exception e) {
+            throw new RuntimeException("error creating database", e);
+        }
+        return database;
+    }    
+    
+    private Database createDatabaseFromClasses() throws Exception {
+        Database database = new Database();
+    
+        Table table = new Table("NextNumber",com.viaoa.ds.autonumber.NextNumber.class); // ** Used by all OADataSource Database
+        // NextNumber COLUMNS
+        Column[] columns = new Column[2];
+        columns[0] = new Column("nextNumberId","nextNumberId", Types.VARCHAR, 75);
+        columns[0].primaryKey = true;
+        columns[1] = new Column("nextNumber","nextNumber", Types.INTEGER);
+        table.setColumns(columns);
+        database.addTable(table);
+        String packageName = AppServer.class.getPackage().getName();
+        String[] fnames = OAReflect.getClasses(packageName);
+    
+        Class[] classes = null;
+        for (String fn : fnames) {
+            Class c = Class.forName(packageName + "." + fn);
+            if (c.getAnnotation(OATable.class) == null) continue;
+            classes = (Class[]) OAArray.add(Class.class, classes, c);
+        }
+        OAAnnotationDelegate.update(database, classes);
+        return database;
+    }
+    private Database createDatabase() {
+        int NextNumber = 0;
+        // TABLES
+        int APPSERVER = 1;
+        int APPUSER = 2;
+        int APPUSERERROR = 3;
+        int APPUSERLOGIN = 4;
+        
+        // LINK TABLES
+        int MAX = 5;
+        
+        Database db = new Database();
+        Table[] tables = new Table[MAX];
+        Column[] columns;
+        Link[] links;
+        Column[] fkeys;
+        
+        // TABLES
+        tables[NextNumber] = new Table("NextNumber",com.viaoa.ds.autonumber.NextNumber.class); // ** Used by all OADataSource Database
+        tables[APPSERVER] = new Table("AppServer", AppServer.class);
+        tables[APPUSER] = new Table("AppUser", AppUser.class);
+        tables[APPUSERERROR] = new Table("AppUserError", AppUserError.class);
+        tables[APPUSERLOGIN] = new Table("AppUserLogin", AppUserLogin.class);
+        
+        // LINK TABLES
+        
+        // TABLE COLUMNS
+        // NextNumber COLUMNS
+        columns = new Column[2];
+        columns[0] = new Column("nextNumberId","nextNumberId", Types.VARCHAR, 75);
+        columns[0].primaryKey = true;
+        columns[1] = new Column("nextNumber","nextNumber", Types.INTEGER);
+        tables[NextNumber].setColumns(columns);
+        
+        // AppServer COLUMNS
+        columns = new Column[6];
+        columns[0] = new Column("Id", "id", Types.INTEGER, 5);
+        columns[0].primaryKey = true;
+        columns[0].assignNextNumber = true;
+        columns[1] = new Column("Created", "created", Types.TIMESTAMP);
+        columns[2] = new Column("Started", "started", Types.TIMESTAMP);
+        columns[3] = new Column("DemoMode", "demoMode", Types.BOOLEAN);
+        columns[4] = new Column("Release", "release", Types.VARCHAR, 18);
+        columns[5] = new Column("AppUserLoginId", true);
+        tables[APPSERVER].setColumns(columns);
+        
+        // AppUser COLUMNS
+        columns = new Column[8];
+        columns[0] = new Column("Id", "id", Types.INTEGER, 5);
+        columns[0].primaryKey = true;
+        columns[0].assignNextNumber = true;
+        columns[1] = new Column("null", "loginId", Types.VARCHAR, 24);
+        columns[2] = new Column("null", "password", Types.VARCHAR, 50);
+        columns[3] = new Column("null", "admin", Types.BOOLEAN);
+        columns[4] = new Column("null", "firstName", Types.VARCHAR, 30);
+        columns[5] = new Column("null", "lastName", Types.VARCHAR, 55);
+        columns[6] = new Column("null", "inactiveDate", Types.DATE);
+        columns[7] = new Column("null", "editProcessed", Types.BOOLEAN);
+        tables[APPUSER].setColumns(columns);
+        
+        // AppUserError COLUMNS
+        columns = new Column[7];
+        columns[0] = new Column("Id", "id", Types.INTEGER, 5);
+        columns[0].primaryKey = true;
+        columns[0].assignNextNumber = true;
+        columns[1] = new Column("DateTimeValue", "dateTime", Types.TIMESTAMP);
+        columns[2] = new Column("Message", "message", Types.VARCHAR, 250);
+        columns[3] = new Column("StackTrace", "stackTrace", Types.CLOB, 250);
+        columns[4] = new Column("Reviewed", "reviewed", Types.DATE);
+        columns[5] = new Column("ReviewNote", "reviewNote", Types.VARCHAR, 254);
+        columns[6] = new Column("AppUserLoginId", true);
+        tables[APPUSERERROR].setColumns(columns);
+        tables[APPUSERERROR].addIndex(new Index("AppUserErrorAppUserLogin", "AppUserLoginId"));
+        
+        // AppUserLogin COLUMNS
+        columns = new Column[11];
+        columns[0] = new Column("Id", "id", Types.INTEGER, 5);
+        columns[0].primaryKey = true;
+        columns[0].assignNextNumber = true;
+        columns[1] = new Column("Created", "created", Types.TIMESTAMP);
+        columns[2] = new Column("Location", "location", Types.VARCHAR, 50);
+        columns[3] = new Column("ComputerName", "computerName", Types.VARCHAR, 32);
+        columns[4] = new Column("Disconnected", "disconnected", Types.TIMESTAMP);
+        columns[5] = new Column("ConnectionId", "connectionId", Types.INTEGER);
+        columns[6] = new Column("HostName", "hostName", Types.VARCHAR, 35);
+        columns[7] = new Column("IpAddress", "ipAddress", Types.VARCHAR, 20);
+        columns[8] = new Column("TotalMemory", "totalMemory", Types.INTEGER);
+        columns[9] = new Column("FreeMemory", "freeMemory", Types.INTEGER);
+        columns[10] = new Column("AppUserId", true);
+        tables[APPUSERLOGIN].setColumns(columns);
+        tables[APPUSERLOGIN].addIndex(new Index("AppUserLoginAppUser", "AppUserId"));
+        
+        // Link Tables Columns
+        
+        // LINKS
+        // table.addLink( propertyName, toTableName, reversePropertyName, FKey ColumnNumber(s))
+        tables[APPSERVER].addLink("appUserLogin", tables[APPUSERLOGIN], "appServers", new int[] {5});
+        tables[APPUSER].addLink("appUserLogins", tables[APPUSERLOGIN], "appUser", new int[] {0});
+        tables[APPUSERERROR].addLink("appUserLogin", tables[APPUSERLOGIN], "appUserErrors", new int[] {6});
+        tables[APPUSERLOGIN].addLink("appServers", tables[APPSERVER], "appUserLogin", new int[] {0});
+        tables[APPUSERLOGIN].addLink("appUser", tables[APPUSER], "appUserLogins", new int[] {10});
+        tables[APPUSERLOGIN].addLink("appUserErrors", tables[APPUSERERROR], "appUserLogin", new int[] {0});
+        
+        // Links for Link Tables
+        db.setTables(tables);
+        return db;
+    }
+    
+    protected void createDAO(Database db) {
+        DataAccessObject dao;
+        
+        dao = new DataAccessObject() {
+            private static final String pkeyColumns = "AppServer.Id";
+            private static final String columns = "AppServer.Id, AppServer.Created, AppServer.Started, AppServer.DemoMode, AppServer.Release, AppServer.AppUserLoginId";
+            @Override
+            public String getPkeySelectColumns() {
+                return pkeyColumns;
+            }
+            @Override
+            public String getSelectColumns() {
+                return columns;
+            }
+            @Override
+            public OAObject getObject(DataAccessObject.ResultSetInfo rsi) throws SQLException {
+                return getAppServer(rsi.getResultSet(), rsi);
+            }
+        };
+        db.getTable("AppServer").setDataAccessObject(dao);
+        
+        dao = new DataAccessObject() {
+            private static final String pkeyColumns = "AppUser.Id";
+            private static final String columns = "AppUser.Id, AppUser.null, AppUser.null, AppUser.null, AppUser.null, AppUser.null, AppUser.null, AppUser.null";
+            @Override
+            public String getPkeySelectColumns() {
+                return pkeyColumns;
+            }
+            @Override
+            public String getSelectColumns() {
+                return columns;
+            }
+            @Override
+            public OAObject getObject(DataAccessObject.ResultSetInfo rsi) throws SQLException {
+                return getAppUser(rsi.getResultSet(), rsi);
+            }
+        };
+        db.getTable("AppUser").setDataAccessObject(dao);
+        
+        dao = new DataAccessObject() {
+            private static final String pkeyColumns = "AppUserError.Id";
+            private static final String columns = "AppUserError.Id, AppUserError.DateTimeValue, AppUserError.Message, AppUserError.StackTrace, AppUserError.Reviewed, AppUserError.ReviewNote, AppUserError.AppUserLoginId";
+            @Override
+            public String getPkeySelectColumns() {
+                return pkeyColumns;
+            }
+            @Override
+            public String getSelectColumns() {
+                return columns;
+            }
+            @Override
+            public OAObject getObject(DataAccessObject.ResultSetInfo rsi) throws SQLException {
+                return getAppUserError(rsi.getResultSet(), rsi);
+            }
+        };
+        db.getTable("AppUserError").setDataAccessObject(dao);
+        
+        dao = new DataAccessObject() {
+            private static final String pkeyColumns = "AppUserLogin.Id";
+            private static final String columns = "AppUserLogin.Id, AppUserLogin.Created, AppUserLogin.Location, AppUserLogin.ComputerName, AppUserLogin.Disconnected, AppUserLogin.ConnectionId, AppUserLogin.HostName, AppUserLogin.IpAddress, AppUserLogin.TotalMemory, AppUserLogin.FreeMemory, AppUserLogin.AppUserId";
+            @Override
+            public String getPkeySelectColumns() {
+                return pkeyColumns;
+            }
+            @Override
+            public String getSelectColumns() {
+                return columns;
+            }
+            @Override
+            public OAObject getObject(DataAccessObject.ResultSetInfo rsi) throws SQLException {
+                return getAppUserLogin(rsi.getResultSet(), rsi);
+            }
+        };
+        db.getTable("AppUserLogin").setDataAccessObject(dao);
+    }
+    
+    protected AppServer getAppServer(ResultSet rs, DataAccessObject.ResultSetInfo rsi) throws SQLException {
+        int id = rs.getInt(1);
+        AppServer appServer = (AppServer) OAObjectCacheDelegate.getObject(AppServer.class, id);
+        if (appServer == null) {
+            appServer = new AppServer();
+            appServer.load(rs, id);
+        }
+        else {
+            rsi.setFoundInCache(true);
+        }
+        return appServer;
+    }
+    
+    protected AppUser getAppUser(ResultSet rs, DataAccessObject.ResultSetInfo rsi) throws SQLException {
+        int id = rs.getInt(1);
+        AppUser appUser = (AppUser) OAObjectCacheDelegate.getObject(AppUser.class, id);
+        if (appUser == null) {
+            appUser = new AppUser();
+            appUser.load(rs, id);
+        }
+        else {
+            rsi.setFoundInCache(true);
+        }
+        return appUser;
+    }
+    
+    protected AppUserError getAppUserError(ResultSet rs, DataAccessObject.ResultSetInfo rsi) throws SQLException {
+        int id = rs.getInt(1);
+        AppUserError appUserError = (AppUserError) OAObjectCacheDelegate.getObject(AppUserError.class, id);
+        if (appUserError == null) {
+            appUserError = new AppUserError();
+            appUserError.load(rs, id);
+        }
+        else {
+            rsi.setFoundInCache(true);
+        }
+        return appUserError;
+    }
+    
+    protected AppUserLogin getAppUserLogin(ResultSet rs, DataAccessObject.ResultSetInfo rsi) throws SQLException {
+        int id = rs.getInt(1);
+        AppUserLogin appUserLogin = (AppUserLogin) OAObjectCacheDelegate.getObject(AppUserLogin.class, id);
+        if (appUserLogin == null) {
+            appUserLogin = new AppUserLogin();
+            appUserLogin.load(rs, id);
+        }
+        else {
+            rsi.setFoundInCache(true);
+        }
+        return appUserLogin;
+    }
+}

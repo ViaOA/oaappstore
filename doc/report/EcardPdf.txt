@@ -1,0 +1,27 @@
+
+
+<html>
+  <head>
+    <style type="text/css">
+      <!--
+        body { font-size: 12pt; font-family: Dialog }
+      -->
+    </style>
+    <base href="file:/C:/Projects/java/hifive/runtime/client/./">
+    
+  </head>
+  <body>
+    <div style="height:720; background-repeat:no-repeat; width:1080; background-image:url(oaproperty://com.tmgsc.hifive.model.oa.ImageStore/Bytes?23428&h=720&w=1080)">
+      <p style="margin-left:20; border-style:solid; margin-right:15; margin-top:518">
+        &lt;%=ToEmployee.FullName%&gt;,
+      </p>
+      <div style="margin-right:25; margin-left:20; height:130; margin-top:3; border-style:solid">
+        &lt;%=EmployeeEcard.Message%&gt;
+      </div>
+      <div style="margin-right:25; margin-left:20; margin-top:2; border-style:solid">
+        &lt;%=EmployeeEcard.Employee.FirstLastNamePlusTopLocation%&gt;
+      </div>
+    </div>
+  </body>
+</html>
+

@@ -1,0 +1,1425 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "OATemplate",
+        "description": "OATemplate",
+        "termsOfService": "",
+        "contact": {
+            "email": "test@test.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "0.0.1"
+    },
+    "externalDocs": {
+        "description": "check for more information",
+        "url": "www.template.com"
+    },
+    "servers": [
+        {
+            "url": "/servlet/oarest"
+        }
+    ],
+    "tags": [
+        {
+            "name": "AppServer"
+        },
+        {
+            "name": "AppUser"
+        },
+        {
+            "name": "AppUserError"
+        },
+        {
+            "name": "AppUserLogin"
+        }
+    ],
+    "components": {
+        "schemas": {
+            "AppServer": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true,
+                        "title": "Id"
+                    },
+                    "created": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "default": "new OADateTime()",
+                        "title": "Created"
+                    },
+                    "started": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "title": "Started"
+                    },
+                    "demoMode": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "title": "Demo Mode"
+                    },
+                    "release": {
+                        "type": "string",
+                        "readOnly": true,
+                        "title": "Release",
+                        "maxLength": 18
+                    },
+                    "appUserLoginId": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    },
+                    "refAppUserLogin": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    },
+                    "appUserLogin": {
+                        "$ref": "#/components/schemas/AppUserLogin"
+                    },
+                    "cacheId": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    }
+                },
+                "xml": {
+                    "name": "appServer"
+                }
+            },
+            "AppUser": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true,
+                        "title": "Id"
+                    },
+                    "loginId": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Login Id",
+                        "maxLength": 24
+                    },
+                    "password": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Password",
+                        "maxLength": 50
+                    },
+                    "admin": {
+                        "type": "boolean",
+                        "title": "Admin"
+                    },
+                    "editProcessed": {
+                        "type": "boolean",
+                        "title": "Edit Processed"
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "First Name",
+                        "maxLength": 30
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Last Name",
+                        "maxLength": 55
+                    },
+                    "inactiveDate": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true,
+                        "title": "Inactive Date"
+                    },
+                    "note": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Note"
+                    },
+                    "appUserLogins": {
+                        "type": "array",
+                        "xml": {
+                            "name": "AppUserLogin",
+                            "wrapped": true
+                        },
+                        "items": {
+                            "$ref": "#/components/schemas/AppUserLogin"
+                        }
+                    },
+                    "cacheId": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    }
+                },
+                "xml": {
+                    "name": "appUser"
+                }
+            },
+            "AppUserError": {
+                    "required": [
+                    "appUserLoginId",
+                    "appUserLogin"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true,
+                        "title": "Id"
+                    },
+                    "dateTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "title": "Date TIme"
+                    },
+                    "message": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Message",
+                        "maxLength": 250
+                    },
+                    "stackTrace": {
+                        "type": "string",
+                        "nullable": true,
+                        "title": "Stack Trace"
+                    },
+                    "reviewed": {
+                        "type": "string",
+                        "format": "date",
+                        "readOnly": true,
+                        "title": "Reviewed"
+                    },
+                    "reviewNote": {
+                        "type": "string",
+                        "readOnly": true,
+                        "title": "Review Note",
+                        "maxLength": 254
+                    },
+                    "appUserLoginId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "refAppUserLogin": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    },
+                    "appUserLogin": {
+                        "$ref": "#/components/schemas/AppUserLogin"
+                    },
+                    "cacheId": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    }
+                },
+                "xml": {
+                    "name": "appUserError"
+                }
+            },
+            "AppUserLogin": {
+                    "required": [
+                    "appUserId",
+                    "appUser"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true,
+                        "title": "Id"
+                    },
+                    "created": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "default": "new OADateTime()",
+                        "title": "Created"
+                    },
+                    "location": {
+                        "type": "string",
+                        "readOnly": true,
+                        "title": "Location",
+                        "maxLength": 50
+                    },
+                    "computerName": {
+                        "type": "string",
+                        "readOnly": true,
+                        "title": "Computer Name",
+                        "maxLength": 32
+                    },
+                    "disconnected": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "title": "Disconnected"
+                    },
+                    "connectionId": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true,
+                        "title": "Connection Id"
+                    },
+                    "hostName": {
+                        "type": "string",
+                        "readOnly": true,
+                        "title": "Host Name",
+                        "maxLength": 35
+                    },
+                    "ipAddress": {
+                        "type": "string",
+                        "readOnly": true,
+                        "title": "Ip Address",
+                        "maxLength": 20
+                    },
+                    "totalMemory": {
+                        "type": "integer",
+                        "format": "int64",
+                        "readOnly": true,
+                        "title": "Total Memory"
+                    },
+                    "freeMemory": {
+                        "type": "integer",
+                        "format": "int64",
+                        "readOnly": true,
+                        "title": "Free Memory"
+                    },
+                    "appUserId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "refAppUser": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    },
+                    "appUser": {
+                        "$ref": "#/components/schemas/AppUser"
+                    },
+                    "appUserErrors": {
+                        "type": "array",
+                        "xml": {
+                            "name": "AppUserError",
+                            "wrapped": true
+                        },
+                        "items": {
+                            "$ref": "#/components/schemas/AppUserError"
+                        }
+                    },
+                    "cacheId": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    }
+                },
+                "xml": {
+                    "name": "appUserLogin"
+                }
+            }
+        }
+    },
+    "paths": {
+        "/appServer/{id}": {
+            "get": {
+                "tags": [
+                    "appServer"
+                ],
+                "summary": "find AppServer by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "pp",
+                        "in": "query",
+                        "description": "property paths for expanded data",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppServer"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppServer"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Id"
+                    },
+                    "404": {
+                        "description": "AppServer not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "update an existing AppServer by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppServer"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppServer"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Id"
+                    },
+                    "404": {
+                        "description": "AppServer not found"
+                    }
+                }
+            }
+        },
+        "/appServers": {
+            "get": {
+                "tags": [
+                    "appServersQuery"
+                ],
+                "summary": "select AppServers using query",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "object query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pp",
+                        "in": "query",
+                        "description": "property paths for expanded data",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "type": "array",
+                                    "xml": {
+                                        "name": "AppServer",
+                                        "wrapped": true
+                                    },
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppServer"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppServer"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid query"
+                    }
+                }
+            }
+        },
+        "/detailAppServers": {
+            "get": {
+                "tags": [
+                    "appServersAsDetail"
+                ],
+                "summary": "select AppServers using master object",
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "name of class of master object to start from",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Id of master object",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "description": "path from master object to AppServer",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pp",
+                        "in": "query",
+                        "description": "property paths for expanded data",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "type": "array",
+                                    "xml": {
+                                        "name": "AppServer",
+                                        "wrapped": true
+                                    },
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppServer"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppServer"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid master"
+                    }
+                }
+            }
+        },
+        "/appServer": {
+            "post": {
+                "summary": "create a new AppServer",
+                "requestBody": {
+                    "description": "create new object",
+                    "content": {
+                        "application/xml": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppServer"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppServer"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppServer"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppServer"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    }
+                }
+            }
+        },
+        "/appUser/{id}": {
+            "get": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "find AppUser by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "pp",
+                        "in": "query",
+                        "description": "property paths for expanded data",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUser"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUser"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Id"
+                    },
+                    "404": {
+                        "description": "AppUser not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "update an existing AppUser by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUser"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUser"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Id"
+                    },
+                    "404": {
+                        "description": "AppUser not found"
+                    }
+                }
+            }
+        },
+        "/appUsers": {
+            "get": {
+                "tags": [
+                    "appUsersQuery"
+                ],
+                "summary": "select AppUsers using query",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "object query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pp",
+                        "in": "query",
+                        "description": "property paths for expanded data",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "type": "array",
+                                    "xml": {
+                                        "name": "AppUser",
+                                        "wrapped": true
+                                    },
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppUser"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppUser"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid query"
+                    }
+                }
+            }
+        },
+        "/detailAppUsers": {
+            "get": {
+                "tags": [
+                    "appUsersAsDetail"
+                ],
+                "summary": "select AppUsers using master object",
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "name of class of master object to start from",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Id of master object",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "description": "path from master object to AppUser",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pp",
+                        "in": "query",
+                        "description": "property paths for expanded data",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "type": "array",
+                                    "xml": {
+                                        "name": "AppUser",
+                                        "wrapped": true
+                                    },
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppUser"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppUser"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid master"
+                    }
+                }
+            }
+        },
+        "/appUser": {
+            "post": {
+                "summary": "create a new AppUser",
+                "requestBody": {
+                    "description": "create new object",
+                    "content": {
+                        "application/xml": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppUser"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppUser"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUser"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUser"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    }
+                }
+            }
+        },
+        "/appUserError/{id}": {
+            "get": {
+                "tags": [
+                    "appUserError"
+                ],
+                "summary": "find AppUserError by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "pp",
+                        "in": "query",
+                        "description": "property paths for expanded data",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUserError"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUserError"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Id"
+                    },
+                    "404": {
+                        "description": "AppUserError not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "update an existing AppUserError by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUserError"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUserError"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Id"
+                    },
+                    "404": {
+                        "description": "AppUserError not found"
+                    }
+                }
+            }
+        },
+        "/appUserErrors": {
+            "get": {
+                "tags": [
+                    "appUserErrorsQuery"
+                ],
+                "summary": "select AppUserErrors using query",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "object query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pp",
+                        "in": "query",
+                        "description": "property paths for expanded data",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "type": "array",
+                                    "xml": {
+                                        "name": "AppUserError",
+                                        "wrapped": true
+                                    },
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppUserError"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppUserError"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid query"
+                    }
+                }
+            }
+        },
+        "/detailAppUserErrors": {
+            "get": {
+                "tags": [
+                    "appUserErrorsAsDetail"
+                ],
+                "summary": "select AppUserErrors using master object",
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "name of class of master object to start from",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Id of master object",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "description": "path from master object to AppUserError",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pp",
+                        "in": "query",
+                        "description": "property paths for expanded data",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "type": "array",
+                                    "xml": {
+                                        "name": "AppUserError",
+                                        "wrapped": true
+                                    },
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppUserError"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppUserError"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid master"
+                    }
+                }
+            }
+        },
+        "/appUserError": {
+            "post": {
+                "summary": "create a new AppUserError",
+                "requestBody": {
+                    "description": "create new object",
+                    "content": {
+                        "application/xml": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppUserError"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppUserError"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUserError"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUserError"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    }
+                }
+            }
+        },
+        "/appUserLogin/{id}": {
+            "get": {
+                "tags": [
+                    "appUserLogin"
+                ],
+                "summary": "find AppUserLogin by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "pp",
+                        "in": "query",
+                        "description": "property paths for expanded data",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUserLogin"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUserLogin"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Id"
+                    },
+                    "404": {
+                        "description": "AppUserLogin not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "update an existing AppUserLogin by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUserLogin"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUserLogin"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Id"
+                    },
+                    "404": {
+                        "description": "AppUserLogin not found"
+                    }
+                }
+            }
+        },
+        "/appUserLogins": {
+            "get": {
+                "tags": [
+                    "appUserLoginsQuery"
+                ],
+                "summary": "select AppUserLogins using query",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "object query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pp",
+                        "in": "query",
+                        "description": "property paths for expanded data",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "type": "array",
+                                    "xml": {
+                                        "name": "AppUserLogin",
+                                        "wrapped": true
+                                    },
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppUserLogin"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppUserLogin"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid query"
+                    }
+                }
+            }
+        },
+        "/detailAppUserLogins": {
+            "get": {
+                "tags": [
+                    "appUserLoginsAsDetail"
+                ],
+                "summary": "select AppUserLogins using master object",
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "name of class of master object to start from",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Id of master object",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "description": "path from master object to AppUserLogin",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pp",
+                        "in": "query",
+                        "description": "property paths for expanded data",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "type": "array",
+                                    "xml": {
+                                        "name": "AppUserLogin",
+                                        "wrapped": true
+                                    },
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppUserLogin"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AppUserLogin"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid master"
+                    }
+                }
+            }
+        },
+        "/appUserLogin": {
+            "post": {
+                "summary": "create a new AppUserLogin",
+                "requestBody": {
+                    "description": "create new object",
+                    "content": {
+                        "application/xml": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppUserLogin"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppUserLogin"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUserLogin"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUserLogin"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid data"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<index version="1.0">
+    <indexitem text="open">
+        <indexitem text="test" target="intro"/>
+    </indexitem>
+    <indexitem text="intro" target="intro"/>
+    <indexitem text="OAAppStore" target="intro"/>
+</index>
+

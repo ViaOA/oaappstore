@@ -1,0 +1,6 @@
+Created-By: OAAppStore
+Class-Path: oaappstore.jar
+Main-Class: com.viaoa.appstore.control.StartupController
+Application-Name: OAAppStore
+Permissions: all-permissions
+Codebase: *
