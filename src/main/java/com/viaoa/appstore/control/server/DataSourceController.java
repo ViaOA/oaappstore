@@ -281,47 +281,6 @@ public class DataSourceController {
                 }
             }
         });
-        aiExecutor.incrementAndGet();
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                String msg = "serverRoot.getLastDayApplicationVersions()";
-                try {
-                    alExecutorService.add(msg);
-                    final ApplicationVersionLastDayFilter filter = new ApplicationVersionLastDayFilter(serverRoot.getLastDayApplicationVersions()) {
-                        @Override
-                        public void reselect() {
-                            Hub<ApplicationVersion> hub = new Hub<ApplicationVersion>(ApplicationVersion.class);
-                            Object[] params = new Object[] { (new OADateTime()).addDays(-1) };
-                            String query = "started  >= ?";
-                            String orderBy = "";
-                            hub.select(query, params, orderBy);
-                            hub.loadAllData();
-                        }
-                    };
-                    filter.getObjectCacheFilter().setServerSideOnly(true);
-                    // strMins, strHours, strDayOfMonth, strMonth, strDayOfWeek
-                    OACron cron = new OACron("5", "0", "*","*", "*") {
-                        @Override
-                        public void process(boolean bManuallyCalled) {
-                            filter.refresh();
-                            filter.reselect();
-                        }
-                    };
-                    cron.setName("DataSourceController.ApplicationVersionLastDayFilter.refresh");
-                    CronDelegate.add(cron);
-                }
-                catch (Exception e) {
-                    String s = "DataSourceController error for filter ApplicationVersionLastDayFilter, exception="+e;
-                    alSelectError.add(s);
-                    LOG.log(Level.WARNING, s, e);
-                }
-                finally {
-                    aiExecutor.decrementAndGet();
-                    alExecutorService.remove(msg);
-                }
-            }
-        });
 
         aiExecutor.incrementAndGet();
         executorService.submit(new Runnable() {

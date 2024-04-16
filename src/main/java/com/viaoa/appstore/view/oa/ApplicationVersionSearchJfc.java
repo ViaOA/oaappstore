@@ -308,7 +308,6 @@ public class ApplicationVersionSearchJfc {
         JButton cmd;
         OATextField txt;
         OADateComboBox dcbo;
-        OAPanel opan;
         OATableComboBox cboTable;
         OACheckBox chk;
     
@@ -343,19 +342,6 @@ public class ApplicationVersionSearchJfc {
         panel.add(lbl, gc);
         panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
         panx.add(txt);
-        gc.gridwidth = gc.REMAINDER;
-        panel.add(panx, gc);
-        gc.gridwidth = 1;
-    
-    
-        lbl = new JLabel("Invalid:");
-        opan = createInvalidRadioPanel();
-        opan.setLabel(lbl);
-        panel.add(lbl, gc);
-        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
-        panx.add(opan);
-        panx.add(createInvalidUseNullCheckBox(), gc);
-        panx.add(createInvalidUseNotNullCheckBox(), gc);
         gc.gridwidth = gc.REMAINDER;
         panel.add(panx, gc);
         gc.gridwidth = 1;
@@ -436,40 +422,6 @@ public class ApplicationVersionSearchJfc {
         txt.setMaximumColumns(12);
         // setup(txt);
         return txt;
-    }
-    
-    public OAPanel createInvalidRadioPanel() {
-        ButtonGroup bgrp = new ButtonGroup();
-        OAPanel pan = new OAPanel(getModel().getApplicationVersionSearchHub(), new FlowLayout(FlowLayout.LEFT, 5, 0));
-        OARadioButton rad = new OARadioButton(getModel().getApplicationVersionSearchHub(), ApplicationVersionSearch.P_Invalid, true);
-        bgrp.add(rad);
-        rad.setText("true");
-        pan.add(rad);
-        rad = new OARadioButton(getModel().getApplicationVersionSearchHub(), ApplicationVersionSearch.P_Invalid, false);
-        bgrp.add(rad);
-        rad.setText("false");
-        pan.add(rad);
-        rad = new OARadioButton(getModel().getApplicationVersionSearchHub(), ApplicationVersionSearch.P_Invalid, null);
-        bgrp.add(rad);
-        rad.setText("eitherXX");
-        pan.add(rad);
-        return pan;
-    }
-    public OACheckBox createInvalidUseNullCheckBox() {
-        OACheckBox chk = new OACheckBox(getModel().getApplicationVersionSearchHub(), ApplicationVersionSearch.P_InvalidUseNull);
-        chk.setText("no value");
-        chk.setToolTipText("select Invalid where value is empty (null)");
-        chk.addEnabledCheck(getModel().getApplicationVersionSearchHub(), ApplicationVersionSearch.P_InvalidUseNotNull, false);
-        chk.addEnabledCheck(getModel().getApplicationVersionSearchHub(), ApplicationVersionSearch.P_Invalid, false);
-        return chk;
-    }
-    public OACheckBox createInvalidUseNotNullCheckBox() {
-        OACheckBox chk = new OACheckBox(getModel().getApplicationVersionSearchHub(), ApplicationVersionSearch.P_InvalidUseNotNull);
-        chk.setText("any value");
-        chk.setToolTipText("select Invalid where value is not null/empty");
-        chk.addEnabledCheck(getModel().getApplicationVersionSearchHub(), ApplicationVersionSearch.P_InvalidUseNull, false);
-        chk.addEnabledCheck(getModel().getApplicationVersionSearchHub(), ApplicationVersionSearch.P_Invalid, false);
-        return chk;
     }
     
     public OATextField createMaxResultsTextField() {

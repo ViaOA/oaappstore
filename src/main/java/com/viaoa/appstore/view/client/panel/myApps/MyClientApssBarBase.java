@@ -49,21 +49,18 @@ public class MyClientApssBarBase {
     
         // AppUserClientApps - My Client Applications - 
         AppUserModel modelAppUser = new AppUserModel(ModelDelegate.getLocalAppUserHub());
-        ClientAppJfc jfcClientApp = new ClientAppJfc(modelAppUser.getClientAppsModel()) {
+        AppUserJfc jfcAppUser = new AppUserJfc(modelAppUser) {
             JPanel panx;
             @Override
             public void showCardPanel(final String name) {
                 MyClientApssBarBase.this.cardLayout.show(MyClientApssBarBase.this.cardPanel, CARD_AppUserClientApps);
-                if (panx != null) {
-                    super.showCardPanel(name);
-                    return;
-                }
+                if (panx != null) return;
                 SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
                     volatile Exception ex;
                     @Override
                     protected Void doInBackground() throws Exception {
                         try {
-                            panx = getCardPanel();
+                            panx = getClientAppsJfc().getCardPanel();
                         }
                         catch (Exception e) {
                             ex = e;
@@ -84,9 +81,11 @@ public class MyClientApssBarBase {
                 sw.execute();
             }
         };
-        ttNode = jfcClientApp.getTreeTitleNode();
+        jfcAppUser.createClientAppsJfc(false);
+        ClientAppJfc jfcClientApps = jfcAppUser.getClientAppsJfc();
+        ttNode = jfcClientApps.getTreeTitleNode();
         tree.add(ttNode);
-        ttNode.add(jfcClientApp.getTreeNode());
+        ttNode.add(jfcClientApps.getTreeNode());
         cardPanel.add(new JLabel("loading My Client Applications ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), CARD_AppUserClientApps);
     }
     protected OATree getTree() {

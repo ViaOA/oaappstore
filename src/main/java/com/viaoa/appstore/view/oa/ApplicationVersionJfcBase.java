@@ -91,6 +91,8 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
     // focus components
     protected OADateTimeTextField dttxtCreated;
     protected OADateTimeTextField tableDtTxtCreated;
+    // commands for methods
+    
     protected ApplicationTypeJfc jfcApplicationType;
     protected ServerApplicationJfc jfcServerApplications;
     protected SingleAppJfc jfcSingleApps;
@@ -544,7 +546,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         table.setAllowSorting(false);
         table.addCounterColumn();
         getSearchJfc().createTableColumns(table);
-        table.setPreferredSize(15, 8, true);
+        table.setPreferredSize(15, 6, true);
         table.resizeColumnsToFitHeading();
         
         OATableComboBox cboTable = new OATableComboBox(table, getHub(), PP_Display) {
@@ -899,11 +901,6 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         tableDtTxtCreated = createCreatedDateTimeTextField();
         tc = table.addColumn("Created", 15, tableDtTxtCreated);
         tc = table.addColumn("Completed", 15, createCompletedDateTimeTextField());
-        tc = table.addColumn("File Length", 11, createFileLengthTextField());
-        if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(ApplicationVersion.P_FileLength));
-        }
-        tc = table.addColumn("Invalid", 7, createInvalidCheckBox());
     }
     
     public OATable createReadOnlyTable() {
@@ -977,13 +974,6 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         tc = table.addColumn("Created", 15, lbl);
         lbl = new OALabel(getHub(), ApplicationVersion.P_Completed, 15);
         tc = table.addColumn("Completed", 15, lbl);
-        lbl = new OALabel(getHub(), ApplicationVersion.P_FileLength, 6);
-        tc = table.addColumn("File Length", 11, lbl);
-        if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(ApplicationVersion.P_FileLength));
-        }
-        lbl = new OACheckBoxLabel(getHub(), ApplicationVersion.P_Invalid, 5);
-        tc = table.addColumn("Invalid", 7, lbl);
     }
     
     public OAButton createGotoEditButton() {
@@ -1207,7 +1197,10 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
             }
         }
         if (tbo.bCustom) {
+            toolBar.addSeparator();
+            toolBar.add(Box.createHorizontalStrut(6));
             addCustomCommands(toolBar);
+            toolBar.add(Box.createHorizontalStrut(10));
         }
         
         if (tbo.bDownload) {
@@ -1218,22 +1211,10 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
             }
         }
     
-        if (tbo.bTable) {
-            jcmd = createTableFilterButton();
-            if (jcmd != null) {
-                toolBar.add(Box.createHorizontalStrut(5));
-                JLabel lbl = new JLabel(Resource.getJarIcon("table16.png"));
-                lbl.setText("Table:");
-                OAJfcControllerFactory.createOnlyHubNotEmpty(getHub(), lbl);
-                toolBar.add(lbl);
-                toolBar.add(Box.createHorizontalStrut(5));
-                if (jcmd != null) toolBar.add(jcmd);
-                toolBar.add(Box.createHorizontalStrut(10));
-            }
-        }
     }
     public void addCustomCommands(JToolBar toolBar) {
         if (toolBar == null) return;
+        toolBar.add(createApplicationVersionDownloadMethodButton());
     }
     public JButton createGoBackButton() {
         return null;
@@ -1323,8 +1304,6 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         dd.addProperty("version", ApplicationVersion.P_Version);
         dd.addProperty("created", ApplicationVersion.P_Created);
         dd.addProperty("completed", ApplicationVersion.P_Completed);
-        dd.addProperty("fileLength", ApplicationVersion.P_FileLength);
-        dd.addProperty("invalid", ApplicationVersion.P_Invalid);
     }
     // Card Panel
     public JPanel getCardPanel() {
@@ -1349,11 +1328,11 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
                 super.show(parent, name);
             }
         };
-        cardPanel = new JPanel(getCardLayout());
+        cardPanel = new JPanel(cardLayout);
         
         cardPanel.add(new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), CARD_Edit);
         
-        getCardLayout().show(cardPanel, CARD_List);
+        cardLayout.show(cardPanel, CARD_List);
         return cardPanel;
     }
     public JPanel createListCardPanel() {
@@ -1421,7 +1400,6 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         OAJfcController jfcController;
         OADateTimeTextField dttxt;
         OATextField txt;
-        OACheckBox chk;
         JPanel pan;
         JPanel panMain = new JPanel(new BorderLayout());
         panel = new JPanel(new GridBagLayout());
@@ -1483,34 +1461,6 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         panel.add(comp, gc);
         gc.fill = gc.NONE;
         gc.gridwidth = 1;
-    
-        lbl = new JLabel("Invalid:");
-        gc.anchor = gc.WEST;
-        panel.add(lbl, gc);
-        gc.anchor = gc.NORTHWEST;
-        chk = createInvalidCheckBox();
-        if (getModel().getViewOnly()) chk.getController().setViewOnly(true);
-        chk.setLabel(lbl);
-        gc.gridwidth = gc.REMAINDER;
-        gc.fill = gc.HORIZONTAL;
-        comp = new OAResizePanel(chk, 95);
-        panel.add(comp, gc);
-        gc.fill = gc.NONE;
-        gc.gridwidth = 1;
-    
-        lbl = new JLabel("Invalid Reason:");
-        gc.anchor = gc.WEST;
-        panel.add(lbl, gc);
-        gc.anchor = gc.NORTHWEST;
-        txt = createInvalidReasonTextField();
-        if (getModel().getViewOnly()) txt.getController().setViewOnly(true);
-        txt.setLabel(lbl);
-        gc.gridwidth = gc.REMAINDER;
-        gc.fill = gc.HORIZONTAL;
-        comp = new OAResizePanel(txt, 95);
-        panel.add(comp, gc);
-        gc.fill = gc.NONE;
-        gc.gridwidth = 1;
         if (getModel().getApplicationTypeModel().getCreateUI()) {
             lbl = new JLabel("Application Type:");
             gc.anchor = gc.WEST;
@@ -1529,53 +1479,11 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
             gc.fill = gc.NONE;
         }
     
-        lbl = new JLabel("File Path:");
-        gc.anchor = gc.WEST;
-        panel.add(lbl, gc);
-        gc.anchor = gc.NORTHWEST;
-        txt = createFilePathTextField();
-        if (getModel().getViewOnly()) txt.getController().setViewOnly(true);
-        txt.setLabel(lbl);
-        gc.gridwidth = gc.REMAINDER;
-        gc.fill = gc.HORIZONTAL;
-        comp = new OAResizePanel(txt, 95);
-        panel.add(comp, gc);
-        gc.fill = gc.NONE;
-        gc.gridwidth = 1;
-    
-        lbl = new JLabel("Server File Name:");
-        gc.anchor = gc.WEST;
-        panel.add(lbl, gc);
-        gc.anchor = gc.NORTHWEST;
-        txt = createServerFileNameTextField();
-        if (getModel().getViewOnly()) txt.getController().setViewOnly(true);
-        txt.setLabel(lbl);
-        gc.gridwidth = gc.REMAINDER;
-        gc.fill = gc.HORIZONTAL;
-        comp = new OAResizePanel(txt, 95);
-        panel.add(comp, gc);
-        gc.fill = gc.NONE;
-        gc.gridwidth = 1;
-    
         lbl = new JLabel("Completed:");
         gc.anchor = gc.WEST;
         panel.add(lbl, gc);
         gc.anchor = gc.NORTHWEST;
         dttxt = createCompletedDateTimeTextField();
-        if (getModel().getViewOnly()) dttxt.getController().setViewOnly(true);
-        dttxt.setLabel(lbl);
-        gc.gridwidth = gc.REMAINDER;
-        gc.fill = gc.HORIZONTAL;
-        comp = new OAResizePanel(dttxt, 95);
-        panel.add(comp, gc);
-        gc.fill = gc.NONE;
-        gc.gridwidth = 1;
-    
-        lbl = new JLabel("Started:");
-        gc.anchor = gc.WEST;
-        panel.add(lbl, gc);
-        gc.anchor = gc.NORTHWEST;
-        dttxt = createStartedDateTimeTextField();
         if (getModel().getViewOnly()) dttxt.getController().setViewOnly(true);
         dttxt.setLabel(lbl);
         gc.gridwidth = gc.REMAINDER;
@@ -1595,62 +1503,6 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         gc.gridwidth = gc.REMAINDER;
         gc.fill = gc.HORIZONTAL;
         comp = new OAResizePanel(dttxt, 95);
-        panel.add(comp, gc);
-        gc.fill = gc.NONE;
-        gc.gridwidth = 1;
-    
-        lbl = new JLabel("File Length:");
-        gc.anchor = gc.WEST;
-        panel.add(lbl, gc);
-        gc.anchor = gc.NORTHWEST;
-        txt = createFileLengthTextField();
-        if (getModel().getViewOnly()) txt.getController().setViewOnly(true);
-        txt.setLabel(lbl);
-        gc.gridwidth = gc.REMAINDER;
-        gc.fill = gc.HORIZONTAL;
-        comp = new OAResizePanel(txt, 95);
-        panel.add(comp, gc);
-        gc.fill = gc.NONE;
-        gc.gridwidth = 1;
-    
-        lbl = new JLabel("Invalid Message:");
-        gc.anchor = gc.WEST;
-        panel.add(lbl, gc);
-        gc.anchor = gc.NORTHWEST;
-        txt = createInvalidMessageTextField();
-        if (getModel().getViewOnly()) txt.getController().setViewOnly(true);
-        txt.setLabel(lbl);
-        gc.gridwidth = gc.REMAINDER;
-        gc.fill = gc.HORIZONTAL;
-        comp = new OAResizePanel(txt, 95);
-        panel.add(comp, gc);
-        gc.fill = gc.NONE;
-        gc.gridwidth = 1;
-    
-        lbl = new JLabel("Is Valid:");
-        gc.anchor = gc.WEST;
-        panel.add(lbl, gc);
-        gc.anchor = gc.NORTHWEST;
-        olbl = createIsValidLabel();
-        if (getModel().getViewOnly()) olbl.getController().setViewOnly(true);
-        olbl.setLabel(lbl);
-        gc.gridwidth = gc.REMAINDER;
-        gc.fill = gc.HORIZONTAL;
-        comp = new OAResizePanel(olbl, 95);
-        panel.add(comp, gc);
-        gc.fill = gc.NONE;
-        gc.gridwidth = 1;
-    
-        lbl = new JLabel("Download Url:");
-        gc.anchor = gc.WEST;
-        panel.add(lbl, gc);
-        gc.anchor = gc.NORTHWEST;
-        txt = createDownloadUrlTextField();
-        if (getModel().getViewOnly()) txt.getController().setViewOnly(true);
-        txt.setLabel(lbl);
-        gc.gridwidth = gc.REMAINDER;
-        gc.fill = gc.HORIZONTAL;
-        comp = new OAResizePanel(txt, 95);
         panel.add(comp, gc);
         gc.fill = gc.NONE;
         gc.gridwidth = 1;
@@ -1836,50 +1688,12 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         return txt;
     }
     
-    public OATextField createDownloadUrlTextField() {
-        OATextField txt = new OATextField(getHub(), ApplicationVersion.P_DownloadUrl, 22);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(120);
-        // setup(txt);
-        return txt;
-    }
-    
-    public OADateTimeTextField createStartedDateTimeTextField() {
-        OADateTimeTextField dttxt = new OADateTimeTextField(getHub(), ApplicationVersion.P_Started, 15);
-        dttxt.setMinimumColumns(0);
-        dttxt.setMaximumColumns(22);
-        // setup(dttxt);
-        return dttxt;
-    }
-    
     public OADateTimeTextField createCompletedDateTimeTextField() {
         OADateTimeTextField dttxt = new OADateTimeTextField(getHub(), ApplicationVersion.P_Completed, 15);
         dttxt.setMinimumColumns(0);
         dttxt.setMaximumColumns(22);
         // setup(dttxt);
         return dttxt;
-    }
-    
-    public OACheckBox createInvalidCheckBox() {
-        OACheckBox chk = new OACheckBox(getHub(), ApplicationVersion.P_Invalid);
-        // chk.setText("Invalid")
-        return chk;
-    }
-    
-    public OATextField createInvalidReasonTextField() {
-        OATextField txt = new OATextField(getHub(), ApplicationVersion.P_InvalidReason, 20);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(50);
-        // setup(txt);
-        return txt;
-    }
-    
-    public OATextField createServerFileNameTextField() {
-        OATextField txt = new OATextField(getHub(), ApplicationVersion.P_ServerFileName, 20);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(50);
-        // setup(txt);
-        return txt;
     }
     
     public OADateTimeTextField createVerifiedDateTimeTextField() {
@@ -1890,36 +1704,36 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         return dttxt;
     }
     
-    public OATextField createFileLengthTextField() {
-        OATextField txt = new OATextField(getHub(), ApplicationVersion.P_FileLength, 6);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(20);
-        // setup(txt);
-        return txt;
-    }
-    
-    public OATextField createFilePathTextField() {
-        OATextField txt = new OATextField(getHub(), ApplicationVersion.P_FilePath, 20);
-        txt.getController().getEnabledChangeListener().addAlwaysFalse();
-        OAJfcUtil.initializeCalcTextField(txt);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(50);
-        return txt;
-    }
-    
-    public OALabel createIsValidLabel() {
-        OALabel lbl = new OACheckBoxLabel(getHub(), ApplicationVersion.P_IsValid, 5);
-        lbl.setMaximumColumns(5);
-        return lbl;
-    }
-    
-    public OATextField createInvalidMessageTextField() {
-        OATextField txt = new OATextField(getHub(), ApplicationVersion.P_InvalidMessage, 20);
-        txt.getController().getEnabledChangeListener().addAlwaysFalse();
-        OAJfcUtil.initializeCalcTextField(txt);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(50);
-        return txt;
+    public OAButton createApplicationVersionDownloadMethodButton() {
+        OAButton cmd = new OAButton(getHub(), "Download", getModel().getAllowMultiSelect() ? OAButton.HUB_METHOD : OAButton.OBJECT_METHOD) { 
+            @Override
+            public boolean onActionPerformed() throws Exception {
+                if (ApplicationVersionJfcBase.this.getModel().getAllowMultiSelect() && ApplicationVersionJfcBase.this.getModel().getMultiSelectHub().getSize() > 0) {
+                    for (ApplicationVersion applicationVersion : ApplicationVersionJfcBase.this.getModel().getMultiSelectHub()) {
+                        if (!performAction(applicationVersion)) return false;
+                    }
+                }
+                else {
+                    ApplicationVersion applicationVersion = ApplicationVersionJfcBase.this.getHub().getAO();
+                    performAction(applicationVersion);
+                }
+                return true;
+            }
+            boolean performAction(ApplicationVersion applicationVersion) throws Exception {
+                if (applicationVersion == null) return false;
+                applicationVersion.download();
+                return true;
+            }
+        };
+        cmd.setIcon(Resource.getJarIcon("command16.png"));
+        cmd.setUseSwingWorker(true);
+        cmd.setProcessingText("Download", "Processing ...");
+        cmd.setAllowCancel(false);
+        cmd.setConsoleProperty(ApplicationVersionPP.applicationType().console());
+        cmd.setMethodName(ApplicationVersion.M_Download);
+        cmd.setCompletedMessage("download completed for <%=applicationType.name%>, version=<%=version%>");
+        cmd.setup();
+        return cmd;
     }
     
     public OALabel createApplicationTypeLabel() {
@@ -1992,6 +1806,9 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         return jfcServerApplications;
     }
     public ServerApplicationJfc createServerApplicationsJfc() {
+        return createServerApplicationsJfc(true);
+    }
+    public ServerApplicationJfc createServerApplicationsJfc(final boolean bIsEmbedded) {
         jfcServerApplications = new ServerApplicationJfc(getModel().getServerApplicationsModel()) {
             @Override
             protected ServerApplicationSearchJfc getSearchJfc() {
@@ -2003,6 +1820,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
             @Override
             public JPanel getCardPanel() {
                 if (cardPanel != null) return cardPanel;
+                if (!bIsEmbedded) return super.getCardPanel();
                 cardPanel = new JPanel(getCardLayout());
                 JPanel pan = new JPanel(new BorderLayout());
                 pan.add(createToolBar(ToolBarOptions.createEditPanelToolBar()), BorderLayout.NORTH);
@@ -2013,6 +1831,11 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
     
             @Override
             public void showCardPanel(String name) {
+                if (!bIsEmbedded) {
+                    super.showCardPanel(name);
+                    ApplicationVersionJfcBase.this.showCardPanel(name);
+                    return;
+                }
                 if (name.equals(ServerApplicationJfc.CARD_List)) {
                     ApplicationVersionJfcBase.this.showCardPanel(CARD_Edit);
                     if (ApplicationVersionJfcBase.this.TAB_ServerApplications >= 0) {
@@ -2056,6 +1879,9 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         return jfcSingleApps;
     }
     public SingleAppJfc createSingleAppsJfc() {
+        return createSingleAppsJfc(true);
+    }
+    public SingleAppJfc createSingleAppsJfc(final boolean bIsEmbedded) {
         jfcSingleApps = new SingleAppJfc(getModel().getSingleAppsModel()) {
             @Override
             protected SingleAppSearchJfc getSearchJfc() {
@@ -2067,6 +1893,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
             @Override
             public JPanel getCardPanel() {
                 if (cardPanel != null) return cardPanel;
+                if (!bIsEmbedded) return super.getCardPanel();
                 cardPanel = new JPanel(getCardLayout());
                 JPanel pan = new JPanel(new BorderLayout());
                 pan.add(createToolBar(ToolBarOptions.createEditPanelToolBar()), BorderLayout.NORTH);
@@ -2077,6 +1904,11 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
     
             @Override
             public void showCardPanel(String name) {
+                if (!bIsEmbedded) {
+                    super.showCardPanel(name);
+                    ApplicationVersionJfcBase.this.showCardPanel(name);
+                    return;
+                }
                 if (name.equals(SingleAppJfc.CARD_List)) {
                     ApplicationVersionJfcBase.this.showCardPanel(CARD_Edit);
                     if (ApplicationVersionJfcBase.this.TAB_SingleApps >= 0) {
@@ -2140,7 +1972,6 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         if (getTabbedPane().getTabCount() > 0) {
             getTabbedPane().setSelectedIndex(0);
         }
-        getModel().getHub().setSharedHub(getModel().getUnfilteredHub(), true);
     }
     protected void onDoubleClickTreeNode() {
         if (getModel().getAllowGotoEdit()) {
@@ -2216,52 +2047,6 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         getHub().setAO(applicationVersion);
     }
     
-    public OAMultiButtonSplitButton createTableFilterButton() {
-        if (!getModel().getAllowFilter()) return null;
-        OAMultiButtonSplitButton mscmd = new OAMultiButtonSplitButton();
-        mscmd.setShowTextInSelectedButton(true);
-        mscmd.setAllowChangeMasterButton(true);
-        mscmd.setRequestFocusEnabled(false);
-        mscmd.setFocusPainted(false);
-        OAButton.setup(mscmd);
-        
-        JButton cmd;
-        cmd = createUnFilterButton();
-        if (cmd != null) mscmd.addButton(cmd);
-        cmd = createLastDayFilterButton();
-        if (cmd != null) mscmd.addButton(cmd);
-        if (mscmd.getButtonCount() < 2) return null;
-        mscmd.setBorderPainted(true);
-        OAJfcControllerFactory.createOnlyHubValid(getModel().getOriginalHub(), mscmd);
-        return mscmd;
-    }
-    public JButton createUnFilterButton() {
-        JButton cmd = new JButton("Unfiltered list");
-        cmd.setFont(cmd.getFont().deriveFont(Font.ITALIC)); 
-        cmd.setToolTipText("show default list, without filtering"); 
-        cmd.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ApplicationVersionJfcBase.this.getModel().getUnfilteredHub();
-                ApplicationVersionJfcBase.this.getModel().useUnfilteredHub();
-            }
-        });
-        OAButton.setup(cmd);
-        return cmd;
-    }
-    public JButton createLastDayFilterButton() {
-        final JButton cmd = new JButton("Last Day");
-        cmd.setIcon(Resource.getJarIcon(Resource.getValue(Resource.IMG_Filter)));
-        cmd.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                getModel().getApplicationVersionLastDayFilterModel().getFilter().refresh();
-                getModel().useLastDayFilteredHub();
-            }
-        });
-        OAButton.setup(cmd);
-        return cmd;
-    }
     
     public static void main(String[] args) {
         AppUser user = new AppUser();

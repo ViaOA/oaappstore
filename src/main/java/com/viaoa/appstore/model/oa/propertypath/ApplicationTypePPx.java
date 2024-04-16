@@ -85,6 +85,10 @@ public class ApplicationTypePPx implements PPxInterface, Serializable {
         return pp + "." + ApplicationType.P_DownloadUrl;
     }
 
+    public String jarFileName() {
+        return pp + "." + ApplicationType.P_JarFileName;
+    }
+
     public String mainClass() {
         return pp + "." + ApplicationType.P_MainClass;
     }
@@ -95,6 +99,14 @@ public class ApplicationTypePPx implements PPxInterface, Serializable {
 
     public String icon() {
         return pp + "." + ApplicationType.P_Icon;
+    }
+
+    public String console() {
+        return pp + "." + ApplicationType.P_Console;
+    }
+
+    public String checkForNewVersion() {
+        return pp + ".checkForNewVersion";
     }
 
     @Override

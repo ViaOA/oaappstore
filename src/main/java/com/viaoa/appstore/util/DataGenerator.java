@@ -332,15 +332,17 @@ public class DataGenerator {
         // created has a default value
         obj.setName(OAString.getDummyText(14, 0, 40));
         obj.setAbbrevName(OAString.getDummyText(8, 0, 8));
-        obj.setDirectoryName(OAString.getDummyText(14, 0, 45));
+        // directoryName has a default value
         obj.setSingleTypeOnly(Math.random() < .5 ? true : false);
         obj.setClientPort((int) (Math.random() * 900));
         obj.setHttpPort((int) (Math.random() * 900));
         obj.setHttpsPort((int) (Math.random() * 900));
-        obj.setDownloadUrl(OAString.getDummyText(22, 0, 125));
+        // downloadUrl has a default value
+        obj.setJarFileName(OAString.getDummyText(15, 0, 70));
         // mainClass has a default value
         // jvmOptions has a default value
         obj.setIcon(new byte[0]);
+        obj.setConsole(OAString.getDummyText(20, 0, 254));
         if (add(obj, ApplicationType.P_ApplicationVersions)) {
             // applicationVersions
             tot = ((int) (Math.random()*4));
@@ -388,14 +390,8 @@ public class DataGenerator {
         // created has a default value
         obj.setVersion(OAString.getDummyText(6, 0, 12));
         obj.setRelease((int) (Math.random() * 900));
-        obj.setDownloadUrl(OAString.getDummyText(22, 0, 125));
-        obj.setStarted((new OADateTime()).addDays((int) (Math.random() * 1000)));
         obj.setCompleted((new OADateTime()).addDays((int) (Math.random() * 1000)));
-        obj.setInvalid(Math.random() < .5 ? true : false);
-        obj.setInvalidReason(OAString.getDummyText(20, 0, 80));
-        obj.setServerFileName(OAString.getDummyText(20, 0, 55));
         obj.setVerified((new OADateTime()).addDays((int) (Math.random() * 1000)));
-        obj.setFileLength((long) (Math.random() * 900));
         if (add(obj, ApplicationVersion.P_ServerApplications)) {
             // serverApplications
             tot = ((int) (Math.random()*4));
@@ -719,6 +715,7 @@ public class DataGenerator {
         int tot;
         // id is auto assigned
         // created has a default value
+        obj.setConsole(OAString.getDummyText(20, 0, 254));
         if (add(obj, SingleApp.P_ApplicationType)) {
             // applicationType
             hub = (Hub) obj.getProperty(OAString.cpp(SingleApp.P_AppUser, AppUser.P_ApplicationTypes));

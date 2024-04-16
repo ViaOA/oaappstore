@@ -4,10 +4,10 @@ package com.viaoa.appstore.model.oa;
 import java.util.*;
 import java.util.logging.*;
 import java.sql.*;
-import com.viaoa.util.*;
 import com.viaoa.object.*;
 import com.viaoa.hub.*;
 import com.viaoa.scheduler.*;
+import com.viaoa.util.*;
 import com.viaoa.annotation.*;
 import com.viaoa.util.OADateTime;
 import com.viaoa.appstore.delegate.oa.*;
@@ -21,7 +21,6 @@ import com.viaoa.appstore.model.oa.propertypath.*;
     displayName = "Application Version",
     isProcessed = true,
     displayProperty = "version",
-    filterClasses = {ApplicationVersionLastDayFilter.class},
     noPojo = true
 )
 @OATable(
@@ -37,36 +36,21 @@ public class ApplicationVersion extends OAObject {
     public static final String P_Created = "created";
     public static final String P_Version = "version";
     public static final String P_Release = "release";
-    public static final String P_DownloadUrl = "downloadUrl";
-    public static final String P_Started = "started";
     public static final String P_Completed = "completed";
-    public static final String P_Invalid = "invalid";
-    public static final String P_InvalidReason = "invalidReason";
-    public static final String P_ServerFileName = "serverFileName";
     public static final String P_Verified = "verified";
-    public static final String P_FileLength = "fileLength";
-     
-    public static final String P_FilePath = "filePath";
-    public static final String P_IsValid = "isValid";
-    public static final String P_InvalidMessage = "invalidMessage";
      
     public static final String P_ApplicationType = "applicationType";
     public static final String P_ApplicationTypeId = "applicationTypeId"; // fkey
     public static final String P_ServerApplications = "serverApplications";
     public static final String P_SingleApps = "singleApps";
      
+    public static final String M_Download = "download";
     protected volatile int id;
     protected volatile OADateTime created;
     protected volatile String version;
     protected volatile int release;
-    protected volatile String downloadUrl;
-    protected volatile OADateTime started;
     protected volatile OADateTime completed;
-    protected volatile boolean invalid;
-    protected volatile String invalidReason;
-    protected volatile String serverFileName;
     protected volatile OADateTime verified;
-    protected volatile long fileLength;
      
     // Links to other objects.
     protected volatile transient ApplicationType applicationType;
@@ -135,30 +119,6 @@ public class ApplicationVersion extends OAObject {
         firePropertyChange(P_Release, old, this.release);
     }
 
-    @OAProperty(displayName = "Download Url", maxLength = 125, displayLength = 22, uiColumnLength = 20, isUrl = true)
-    @OAColumn(name = "DownloadUrl", maxLength = 125)
-    public String getDownloadUrl() {
-        return downloadUrl;
-    }
-    public void setDownloadUrl(String newValue) {
-        String old = downloadUrl;
-        fireBeforePropertyChange(P_DownloadUrl, old, newValue);
-        this.downloadUrl = newValue;
-        firePropertyChange(P_DownloadUrl, old, this.downloadUrl);
-    }
-
-    @OAProperty(displayLength = 15, isProcessed = true)
-    @OAColumn(name = "Started", sqlType = java.sql.Types.TIMESTAMP)
-    public OADateTime getStarted() {
-        return started;
-    }
-    public void setStarted(OADateTime newValue) {
-        OADateTime old = started;
-        fireBeforePropertyChange(P_Started, old, newValue);
-        this.started = newValue;
-        firePropertyChange(P_Started, old, this.started);
-    }
-
     @OAProperty(displayLength = 15, isProcessed = true)
     @OAColumn(name = "Completed", sqlType = java.sql.Types.TIMESTAMP)
     public OADateTime getCompleted() {
@@ -171,52 +131,6 @@ public class ApplicationVersion extends OAObject {
         firePropertyChange(P_Completed, old, this.completed);
     }
 
-    @OAProperty(displayLength = 5, uiColumnLength = 7)
-    @OAColumn(name = "Invalid", sqlType = java.sql.Types.BOOLEAN)
-    public boolean getInvalid() {
-        return invalid;
-    }
-    public boolean isInvalid() {
-        return getInvalid();
-    }
-    public void setInvalid(boolean newValue) {
-        boolean old = invalid;
-        fireBeforePropertyChange(P_Invalid, old, newValue);
-        this.invalid = newValue;
-        firePropertyChange(P_Invalid, old, this.invalid);
-    }
-     
-    @OAObjCallback(contextEnabledProperty = AppUser.P_Admin)
-    public void invalidCallback(OAObjectCallback callback) {
-        if (callback == null) return;
-        switch (callback.getType()) {
-        }
-    }
-
-    @OAProperty(displayName = "Invalid Reason", maxLength = 80, displayLength = 20)
-    @OAColumn(name = "InvalidReason", maxLength = 80)
-    public String getInvalidReason() {
-        return invalidReason;
-    }
-    public void setInvalidReason(String newValue) {
-        String old = invalidReason;
-        fireBeforePropertyChange(P_InvalidReason, old, newValue);
-        this.invalidReason = newValue;
-        firePropertyChange(P_InvalidReason, old, this.invalidReason);
-    }
-
-    @OAProperty(displayName = "Server File Name", maxLength = 55, displayLength = 20, isProcessed = true)
-    @OAColumn(name = "ServerFileName", maxLength = 55)
-    public String getServerFileName() {
-        return serverFileName;
-    }
-    public void setServerFileName(String newValue) {
-        String old = serverFileName;
-        fireBeforePropertyChange(P_ServerFileName, old, newValue);
-        this.serverFileName = newValue;
-        firePropertyChange(P_ServerFileName, old, this.serverFileName);
-    }
-
     @OAProperty(displayLength = 15, isProcessed = true)
     @OAColumn(name = "Verified", sqlType = java.sql.Types.TIMESTAMP)
     public OADateTime getVerified() {
@@ -227,47 +141,6 @@ public class ApplicationVersion extends OAObject {
         fireBeforePropertyChange(P_Verified, old, newValue);
         this.verified = newValue;
         firePropertyChange(P_Verified, old, this.verified);
-    }
-
-    @OAProperty(displayName = "File Length", displayLength = 6, uiColumnLength = 11, isProcessed = true)
-    @OAColumn(name = "FileLength", sqlType = java.sql.Types.BIGINT)
-    public long getFileLength() {
-        return fileLength;
-    }
-    public void setFileLength(long newValue) {
-        long old = fileLength;
-        fireBeforePropertyChange(P_FileLength, old, newValue);
-        this.fileLength = newValue;
-        firePropertyChange(P_FileLength, old, this.fileLength);
-    }
-    @OACalculatedProperty(displayName = "File Path", displayLength = 20, properties = {P_ApplicationType+"."+ApplicationType.P_DirectoryName, P_ServerFileName, P_Release})
-    public String getFilePath() {
-        String directoryName = null;
-        ApplicationType applicationType = this.getApplicationType();
-        if (applicationType != null) {
-            directoryName = applicationType.getDirectoryName();
-        }
-    
-        String filePath = String.format("%s/%d/%s",
-            directoryName, getRelease(),
-            getServerFileName());
-    
-        filePath = OAFile.convertFileName(filePath);
-        return filePath;
-    }
-    @OACalculatedProperty(displayName = "Is Valid", displayLength = 5, columnLength = 8, properties = {P_InvalidMessage})
-    public boolean getIsValid() {
-        String s = this.getInvalidMessage();
-        return (s == null);
-    }
-    @OACalculatedProperty(displayName = "Invalid Message", displayLength = 20, properties = {P_Invalid, P_Completed})
-    public String getInvalidMessage() {
-        if (this.getInvalid()) return "flagged as invalid";
-    
-        OADateTime dt = this.getCompleted();
-        if (dt == null) return "not completed";
-    
-        return null;
     }
 
     @OAOne(
@@ -322,6 +195,12 @@ public class ApplicationVersion extends OAObject {
         }
         return hubSingleApps;
     }
+    @OAMethod(displayName = "Download")
+    public void download() throws Exception {
+        // custom code
+        ApplicationVersionDelegate.download(this);
+    }
+
     public void load(ResultSet rs, int id) throws SQLException {
         this.id = id;
         java.sql.Timestamp timestamp;
@@ -330,20 +209,11 @@ public class ApplicationVersion extends OAObject {
         this.version = rs.getString(3);
         this.release = rs.getInt(4);
         OAObjectInfoDelegate.setPrimitiveNull(this, P_Release, rs.wasNull());
-        this.downloadUrl = rs.getString(5);
-        timestamp = rs.getTimestamp(6);
-        if (timestamp != null) this.started = new OADateTime(timestamp);
-        timestamp = rs.getTimestamp(7);
+        timestamp = rs.getTimestamp(5);
         if (timestamp != null) this.completed = new OADateTime(timestamp);
-        this.invalid = rs.getBoolean(8);
-        OAObjectInfoDelegate.setPrimitiveNull(this, P_Invalid, rs.wasNull());
-        this.invalidReason = rs.getString(9);
-        this.serverFileName = rs.getString(10);
-        timestamp = rs.getTimestamp(11);
+        timestamp = rs.getTimestamp(6);
         if (timestamp != null) this.verified = new OADateTime(timestamp);
-        this.fileLength = rs.getLong(12);
-        OAObjectInfoDelegate.setPrimitiveNull(this, P_FileLength, rs.wasNull());
-        int applicationTypeFkey = rs.getInt(13);
+        int applicationTypeFkey = rs.getInt(7);
         setFkeyProperty(P_ApplicationType, rs.wasNull() ? null : applicationTypeFkey);
 
         this.changedFlag = false;

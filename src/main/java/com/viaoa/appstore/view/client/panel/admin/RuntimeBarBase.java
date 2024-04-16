@@ -28,7 +28,6 @@ public class RuntimeBarBase {
     public static final String CARD_ConnectedAppUserLogins = "ConnectedAppUserLogins";
     public static final String CARD_LastDayAppUserLogins = "LastDayAppUserLogins";
     public static final String CARD_AppUserErrors = "AppUserErrors";
-    public static final String CARD_LastDayApplicationVersions = "LastDayApplicationVersions";
     
     public RuntimeBarBase() {
         cardLayout = new CardLayout();
@@ -341,66 +340,6 @@ public class RuntimeBarBase {
         ttNode = jfcAppUserError.getTreeTitleNode();
         tree.add(ttNode);
         cardPanel.add(new JLabel("loading User Errors ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), CARD_AppUserErrors);
-    
-        // LastDayApplicationVersions - Last Day Application Versions - 
-        Hub<ApplicationVersion> hubApplicationVersion = ModelDelegate.getLastDayApplicationVersions().createSharedHub();
-        ApplicationVersionJfc jfcApplicationVersion = new ApplicationVersionJfc(hubApplicationVersion) {
-            JPanel panx;
-            @Override
-            public void showCardPanel(final String name) {
-                RuntimeBarBase.this.cardLayout.show(RuntimeBarBase.this.cardPanel, CARD_LastDayApplicationVersions);
-                if (panx != null) {
-                    super.showCardPanel(name);
-                    return;
-                }
-                SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
-                    volatile Exception ex;
-                    @Override
-                    protected Void doInBackground() throws Exception {
-                        try {
-                            panx = createCombinedPanel();
-                        }
-                        catch (Exception e) {
-                            ex = e;
-                        }
-                        return null;
-                    }
-                    @Override
-                    protected void done() {
-                        if (ex != null) {
-                            LOG.log(Level.WARNING, "UI exception creating ApplicationVersionJfc", ex);
-                            JOptionPane.showMessageDialog(null, "Exception while creating UI, message sent to tech support", "UI Exception", JOptionPane.ERROR_MESSAGE);
-                        }
-                        if (panx == null) panx = new JPanel();
-                        RuntimeBarBase.this.cardPanel.add(panx, CARD_LastDayApplicationVersions);
-                        showCardPanel(name);
-                    }
-                };
-                sw.execute();
-            }
-            @Override
-            public OATable createTable() {
-                OATable table = super.createTable();
-                table.setPreferredRows(15);
-                return table;
-            }
-        };
-        jfcApplicationVersion.getModel().setPluralDisplayName("Last Day Application Versions");
-        jfcApplicationVersion.getModel().setAllowAdd(false);
-        jfcApplicationVersion.getModel().setAllowFilter(false);
-        jfcApplicationVersion.getModel().setAllowDownload(true);
-        jfcApplicationVersion.getModel().setAllowRemove(false);
-        jfcApplicationVersion.getModel().setAllowSearch(false);
-        jfcApplicationVersion.getModel().setAllowHubSearch(true);
-        // ApplicationVersion isProcessed=true
-        // jfcApplicationVersion.getModel().setAllowDelete(false);
-        jfcApplicationVersion.getModel().setAllowClear(false);
-        jfcApplicationVersion.getModel().setAllowCut(false);
-        jfcApplicationVersion.getModel().setAllowPaste(false);
-        jfcApplicationVersion.getModel().setAllowNew(false);
-        ttNode = jfcApplicationVersion.getTreeTitleNode();
-        tree.add(ttNode);
-        cardPanel.add(new JLabel("loading Last Day Application Versions ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), CARD_LastDayApplicationVersions);
     }
     protected OATree getTree() {
         if (tree != null) return tree;

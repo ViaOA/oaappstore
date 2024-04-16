@@ -1581,11 +1581,11 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
                 super.show(parent, name);
             }
         };
-        cardPanel = new JPanel(getCardLayout());
+        cardPanel = new JPanel(cardLayout);
         
         cardPanel.add(new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), CARD_Edit);
         
-        getCardLayout().show(cardPanel, CARD_List);
+        cardLayout.show(cardPanel, CARD_List);
         return cardPanel;
     }
     public JPanel createListCardPanel() {
@@ -2316,10 +2316,14 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
         return jfcClientApps;
     }
     public ClientAppJfc createClientAppsJfc() {
+        return createClientAppsJfc(true);
+    }
+    public ClientAppJfc createClientAppsJfc(final boolean bIsEmbedded) {
         jfcClientApps = new ClientAppJfc(getModel().getClientAppsModel()) {
             @Override
             public JPanel getCardPanel() {
                 if (cardPanel != null) return cardPanel;
+                if (!bIsEmbedded) return super.getCardPanel();
                 cardPanel = new JPanel(getCardLayout());
                 JPanel pan = new JPanel(new BorderLayout());
                 pan.add(createToolBar(ToolBarOptions.createEditPanelToolBar()), BorderLayout.NORTH);
@@ -2330,6 +2334,11 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
     
             @Override
             public void showCardPanel(String name) {
+                if (!bIsEmbedded) {
+                    super.showCardPanel(name);
+                    ServerApplicationJfcBase.this.showCardPanel(name);
+                    return;
+                }
                 if (name.equals(ClientAppJfc.CARD_List)) {
                     ServerApplicationJfcBase.this.showCardPanel(CARD_Edit);
                     if (ServerApplicationJfcBase.this.TAB_ClientApps >= 0) {

@@ -53,6 +53,10 @@ public class SingleAppPPx implements PPxInterface, Serializable {
         return pp + "." + SingleApp.P_Created;
     }
 
+    public String console() {
+        return pp + "." + SingleApp.P_Console;
+    }
+
     public String run() {
         return pp + ".run";
     }

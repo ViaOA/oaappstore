@@ -40,6 +40,11 @@ public class SingleAppPP {
         return s;
     }
 
+    public static String console() {
+        String s = SingleApp.P_Console;
+        return s;
+    }
+
     public static String run() {
         String s = "run";
         return s;

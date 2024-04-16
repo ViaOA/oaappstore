@@ -18,8 +18,6 @@
                             <th style="width: 30px; text-align: left"><nobr>Version</nobr></th>
                             <th style="width: 75px; text-align: left"><nobr>Created</nobr></th>
                             <th style="width: 75px; text-align: left"><nobr>Completed</nobr></th>
-                            <th style="width: 30px; text-align: right"><nobr>File Length</nobr></th>
-                            <th style="width: 25px; text-align: left"><nobr>Invalid</nobr></th>
                         </tr>
                         <%=foreach%>
                         <tr>
@@ -29,8 +27,6 @@
                             <td style="text-align: left"><nobr><%=version, '6L.'%></nobr></td>
                             <td style="text-align: left"><nobr><%=created, '15L.'%></nobr></td>
                             <td style="text-align: left"><nobr><%=completed, '15L.'%></nobr></td>
-                            <td style="text-align: right"><nobr><%=fileLength, '11R,'%></nobr></td>
-                            <td style="text-align: left"><nobr><%=invalid, '7L.'%></nobr></td>
                         </tr>
                         <%=end%>
                     </table>

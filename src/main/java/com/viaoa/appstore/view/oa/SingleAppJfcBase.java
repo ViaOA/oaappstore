@@ -1332,11 +1332,11 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
                 super.show(parent, name);
             }
         };
-        cardPanel = new JPanel(getCardLayout());
+        cardPanel = new JPanel(cardLayout);
         
         cardPanel.add(new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), CARD_Edit);
         
-        getCardLayout().show(cardPanel, CARD_List);
+        cardLayout.show(cardPanel, CARD_List);
         return cardPanel;
     }
     public JPanel createListCardPanel() {
@@ -1386,6 +1386,7 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         JComponent comp;
         OAJfcController jfcController;
         OADateTimeTextField dttxt;
+        OAConsole con;
         OATableComboBox cboTable;
         JPanel pan;
         panel = new JPanel(new GridBagLayout());
@@ -1488,11 +1489,34 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
             gc.fill = gc.NONE;
         }
     
+        lbl = new JLabel("Console:");
+        gc.anchor = gc.NORTHWEST;
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(lbl, gc);
+        con = createConsoleConsole();
+        if (getModel().getViewOnly()) con.getController().setViewOnly(true);
+        con.setLabel(lbl);
+        gc.insets = new Insets(0, 10, 0, 0);
+        gc.weightx = 0.75f;
+        gc.weighty = 0.75f;
+        gc.fill = gc.BOTH;
+        comp = new OAResizePanel(new JScrollPane(con), 90, true);
+        panel.add(comp, gc);
+        gc.fill = gc.NONE;
+        gc.weightx = 0.0f;
+        gc.weighty = 0.0f;
+        gc.insets = new Insets(0, 0, 0, 0);
+        gc.gridwidth = 1;
+    
         // take up remaining space
         lbl = new JLabel("");
         panel.add(lbl, gc);
+        lbl = new JLabel("");
+        panel.add(lbl, gc);
+        lbl = new JLabel("");
         gc.gridwidth = gc.REMAINDER;
-        gc.weightx = gc.weighty = 1.0f;
+        gc.weightx = 0.25f;
+        gc.weighty = 0.25f;
         gc.fill = gc.BOTH;
         panel.add(lbl, gc);
         gc.gridwidth = 1;
@@ -1573,6 +1597,15 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         dttxt.setMaximumColumns(22);
         // setup(dttxt);
         return dttxt;
+    }
+    
+    public OAConsole createConsoleConsole() {
+        OAConsole con = new OAConsole(getHub(), SingleApp.P_Console, 20);
+        return con;
+    }
+    public OALabel createConsoleLabel() {
+        OALabel lbl = new OALabel(getHub(), SingleApp.P_Console, 20);
+        return lbl;
     }
     
     public OAButton createSingleAppRunMethodButton() {

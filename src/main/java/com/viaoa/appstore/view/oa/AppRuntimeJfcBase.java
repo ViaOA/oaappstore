@@ -1279,11 +1279,11 @@ public class AppRuntimeJfcBase implements OAModelJfcInterface {
                 super.show(parent, name);
             }
         };
-        cardPanel = new JPanel(getCardLayout());
+        cardPanel = new JPanel(cardLayout);
         
         cardPanel.add(new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), CARD_Edit);
         
-        getCardLayout().show(cardPanel, CARD_List);
+        cardLayout.show(cardPanel, CARD_List);
         return cardPanel;
     }
     public JPanel createListCardPanel() {
@@ -1857,10 +1857,14 @@ public class AppRuntimeJfcBase implements OAModelJfcInterface {
         return jfcAppRuntimeErrors;
     }
     public AppRuntimeErrorJfc createAppRuntimeErrorsJfc() {
+        return createAppRuntimeErrorsJfc(true);
+    }
+    public AppRuntimeErrorJfc createAppRuntimeErrorsJfc(final boolean bIsEmbedded) {
         jfcAppRuntimeErrors = new AppRuntimeErrorJfc(getModel().getAppRuntimeErrorsModel()) {
             @Override
             public JPanel getCardPanel() {
                 if (cardPanel != null) return cardPanel;
+                if (!bIsEmbedded) return super.getCardPanel();
                 cardPanel = new JPanel(getCardLayout());
                 JPanel pan = new JPanel(new BorderLayout());
                 pan.add(createToolBar(ToolBarOptions.createEditPanelToolBar()), BorderLayout.NORTH);
@@ -1871,6 +1875,11 @@ public class AppRuntimeJfcBase implements OAModelJfcInterface {
     
             @Override
             public void showCardPanel(String name) {
+                if (!bIsEmbedded) {
+                    super.showCardPanel(name);
+                    AppRuntimeJfcBase.this.showCardPanel(name);
+                    return;
+                }
                 if (name.equals(AppRuntimeErrorJfc.CARD_List)) {
                     AppRuntimeJfcBase.this.showCardPanel(CARD_Edit);
                     if (AppRuntimeJfcBase.this.TAB_AppRuntimeErrors >= 0) {

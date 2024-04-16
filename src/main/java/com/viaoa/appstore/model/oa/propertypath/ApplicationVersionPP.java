@@ -44,33 +44,8 @@ public class ApplicationVersionPP {
         return s;
     }
 
-    public static String downloadUrl() {
-        String s = ApplicationVersion.P_DownloadUrl;
-        return s;
-    }
-
-    public static String started() {
-        String s = ApplicationVersion.P_Started;
-        return s;
-    }
-
     public static String completed() {
         String s = ApplicationVersion.P_Completed;
-        return s;
-    }
-
-    public static String invalid() {
-        String s = ApplicationVersion.P_Invalid;
-        return s;
-    }
-
-    public static String invalidReason() {
-        String s = ApplicationVersion.P_InvalidReason;
-        return s;
-    }
-
-    public static String serverFileName() {
-        String s = ApplicationVersion.P_ServerFileName;
         return s;
     }
 
@@ -79,23 +54,8 @@ public class ApplicationVersionPP {
         return s;
     }
 
-    public static String fileLength() {
-        String s = ApplicationVersion.P_FileLength;
-        return s;
-    }
-
-    public static String filePath() {
-        String s = ApplicationVersion.P_FilePath;
-        return s;
-    }
-
-    public static String isValid() {
-        String s = ApplicationVersion.P_IsValid;
-        return s;
-    }
-
-    public static String invalidMessage() {
-        String s = ApplicationVersion.P_InvalidMessage;
+    public static String download() {
+        String s = "download";
         return s;
     }
 

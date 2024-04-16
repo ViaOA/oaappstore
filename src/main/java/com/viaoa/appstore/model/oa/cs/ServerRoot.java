@@ -33,7 +33,6 @@ public class ServerRoot extends OAObject {
     public static final String P_CreateOneAppRuntimeHub = "CreateOneAppRuntimeHub";
     public static final String P_CreateOneAppServerHub = "CreateOneAppServerHub";
     // filters
-    public static final String P_LastDayApplicationVersions = "LastDayApplicationVersions";
     // UI containers
     public static final String P_AppUserApplicationTypes = "AppUserApplicationTypes";
     public static final String P_ConnectedAppUserLogins = "ConnectedAppUserLogins";
@@ -53,7 +52,6 @@ public class ServerRoot extends OAObject {
     protected transient Hub<AppRuntime> hubCreateOneAppRuntime;
     protected transient Hub<AppServer> hubCreateOneAppServer;
     // filters
-    protected transient Hub<ApplicationVersion> hubLastDayApplicationVersions;
     // UI containers
     protected transient Hub<ApplicationType> hubAppUserApplicationTypes;
     protected transient Hub<AppUserLogin> hubConnectedAppUserLogins;
@@ -130,13 +128,6 @@ public class ServerRoot extends OAObject {
         return hubCreateOneAppServer;
     }
     // filters
-    @OAMany(toClass = ApplicationVersion.class, cascadeSave = true)
-    public Hub<ApplicationVersion> getLastDayApplicationVersions() {
-        if (hubLastDayApplicationVersions == null) {
-            hubLastDayApplicationVersions = (Hub<ApplicationVersion>) super.getHub(P_LastDayApplicationVersions);
-        }
-        return hubLastDayApplicationVersions;
-    }
     // UI containers
     @OAMany(toClass = ApplicationType.class, isCalculated = true, cascadeSave = true)
     public Hub<ApplicationType> getAppUserApplicationTypes() {

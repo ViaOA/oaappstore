@@ -21,18 +21,12 @@ public class ApplicationVersionSearch extends OAObject {
 
     public static final String P_Created = "Created";
     public static final String P_Version = "Version";
-    public static final String P_Invalid = "Invalid";
-    public static final String P_InvalidUseNull = "InvalidUseNull";
-    public static final String P_InvalidUseNotNull = "InvalidUseNotNull";
     public static final String P_ApplicationType = "ApplicationType";
     public static final String P_UseApplicationTypeSearch = "UseApplicationTypeSearch";
     public static final String P_MaxResults = "MaxResults";
 
     protected OADateTime created;
     protected String version;
-    protected boolean invalid;
-    protected boolean invalidUseNull;
-    protected boolean invalidUseNotNull;
     protected ApplicationType applicationType;
     protected boolean useApplicationTypeSearch;
     protected ApplicationTypeSearch searchApplicationType;
@@ -60,36 +54,6 @@ public class ApplicationVersionSearch extends OAObject {
         firePropertyChange(P_Version, old, this.version);
     }
       
-    @OAProperty(displayLength = 5, uiColumnLength = 7)
-    public boolean getInvalid() {
-        return invalid;
-    }
-    public boolean isInvalid() {
-        return getInvalid();
-    }
-    public void setInvalid(boolean newValue) {
-        boolean old = invalid;
-        fireBeforePropertyChange(P_Invalid, old, newValue);
-        this.invalid = newValue;
-        firePropertyChange(P_Invalid, old, this.invalid);
-    }
-      
-    public boolean getInvalidUseNull() {
-        return invalidUseNull;
-    }
-    public void setInvalidUseNull(boolean newValue) {
-        boolean old = this.invalidUseNull;
-        this.invalidUseNull = newValue;
-        firePropertyChange(P_InvalidUseNull, old, this.invalidUseNull);
-    }
-    public boolean getInvalidUseNotNull() {
-        return invalidUseNotNull;
-    }
-    public void setInvalidUseNotNull(boolean newValue) {
-        boolean old = this.invalidUseNotNull;
-        this.invalidUseNotNull = newValue;
-        firePropertyChange(P_InvalidUseNotNull, old, this.invalidUseNotNull);
-    }
 
     public int getMaxResults() {
         return maxResults;
@@ -131,10 +95,6 @@ public class ApplicationVersionSearch extends OAObject {
     public void reset() {
         setCreated(null);
         setVersion(null);
-        setInvalid(false);
-        setNull(P_Invalid);
-        setInvalidUseNull(false);
-        setInvalidUseNotNull(false);
         setApplicationType(null);
         setUseApplicationTypeSearch(false);
     }
@@ -142,9 +102,6 @@ public class ApplicationVersionSearch extends OAObject {
     public boolean isDataEntered() {
         if (getCreated() != null) return true;
         if (getVersion() != null) return true;
-        if (!isNull(P_Invalid)) return true;
-        if (getInvalidUseNull()) return true;
-        if (getInvalidUseNotNull()) return true;
         if (getApplicationType() != null) return true;
         if (getUseApplicationTypeSearch()) return true;
         return false;
@@ -190,19 +147,6 @@ public class ApplicationVersionSearch extends OAObject {
                 sql += ApplicationVersion.P_Version + " = ?";
             }
             args = OAArray.add(Object.class, args, val);
-        }
-        if (invalidUseNull) {
-            if (sql.length() > 0) sql += " AND ";
-            sql += ApplicationVersion.P_Invalid + " = null";
-        }
-        else if (invalidUseNotNull) {
-            if (sql.length() > 0) sql += " AND ";
-            sql += ApplicationVersion.P_Invalid + " != null";
-        }
-        if (!isNull(P_Invalid)) {
-            if (sql.length() > 0) sql += " AND ";
-            sql += ApplicationVersion.P_Invalid + " = ?";
-            args = OAArray.add(Object.class, args, this.invalid);
         }
         if (!useApplicationTypeSearch && getApplicationType() != null) {
             if (sql.length() > 0) sql += " AND ";
@@ -250,19 +194,6 @@ public class ApplicationVersionSearch extends OAObject {
                 sql += prefix + ApplicationVersion.P_Version + " = ?";
             }
             args = OAArray.add(Object.class, args, val);
-        }
-        if (invalidUseNull) {
-            if (sql.length() > 0) sql += " AND ";
-            sql += prefix + ApplicationVersion.P_Invalid + " = null";
-        }
-        else if (invalidUseNotNull) {
-            if (sql.length() > 0) sql += " AND ";
-            sql += prefix + ApplicationVersion.P_Invalid + " != null";
-        }
-        if (!isNull(P_Invalid)) {
-            if (sql.length() > 0) sql += " AND ";
-            sql += prefix + ApplicationVersion.P_Invalid + " = ?";
-            args = OAArray.add(Object.class, args, this.invalid);
         }
         if (!useApplicationTypeSearch && getApplicationType() != null) {
             if (sql.length() > 0) sql += " AND ";

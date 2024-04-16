@@ -80,6 +80,11 @@ public class ApplicationTypePP {
         return s;
     }
 
+    public static String jarFileName() {
+        String s = ApplicationType.P_JarFileName;
+        return s;
+    }
+
     public static String mainClass() {
         String s = ApplicationType.P_MainClass;
         return s;
@@ -92,6 +97,16 @@ public class ApplicationTypePP {
 
     public static String icon() {
         String s = ApplicationType.P_Icon;
+        return s;
+    }
+
+    public static String console() {
+        String s = ApplicationType.P_Console;
+        return s;
+    }
+
+    public static String checkForNewVersion() {
+        String s = "checkForNewVersion";
         return s;
     }
 

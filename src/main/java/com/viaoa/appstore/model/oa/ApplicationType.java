@@ -40,9 +40,11 @@ public class ApplicationType extends OAObject {
     public static final String P_HttpPort = "httpPort";
     public static final String P_HttpsPort = "httpsPort";
     public static final String P_DownloadUrl = "downloadUrl";
+    public static final String P_JarFileName = "jarFileName";
     public static final String P_MainClass = "mainClass";
     public static final String P_JvmOptions = "jvmOptions";
     public static final String P_Icon = "icon";
+    public static final String P_Console = "console";
      
     public static final String P_ApplicationVersions = "applicationVersions";
     public static final String P_AppUsers = "appUsers";
@@ -50,6 +52,7 @@ public class ApplicationType extends OAObject {
     public static final String P_ServerApplications = "serverApplications";
     public static final String P_SingleApps = "singleApps";
      
+    public static final String M_CheckForNewVersion = "checkForNewVersion";
     protected volatile int id;
     protected volatile OADateTime created;
     protected volatile String name;
@@ -60,9 +63,11 @@ public class ApplicationType extends OAObject {
     protected volatile int httpPort;
     protected volatile int httpsPort;
     protected volatile String downloadUrl;
+    protected volatile String jarFileName;
     protected volatile String mainClass;
     protected volatile String jvmOptions;
     protected volatile transient byte[] icon;
+    protected volatile String console;
      
     // Links to other objects.
     protected transient Hub<ApplicationVersion> hubApplicationVersions;
@@ -76,7 +81,9 @@ public class ApplicationType extends OAObject {
     @Override
     public void setObjectDefaults() {
         setCreated(new OADateTime());
-        setMainClass("com.[project].control.StartupController");
+        setDirectoryName("[appname]");
+        setDownloadUrl("https://github.com/[project]/[appname]-run/raw/master/executable-jar");
+        setMainClass("com.[project].[appname].control.StartupController");
         setJvmOptions("-Xmx1000m");
     }
      
@@ -140,7 +147,7 @@ public class ApplicationType extends OAObject {
         firePropertyChange(P_AbbrevName, old, this.abbrevName);
     }
 
-    @OAProperty(displayName = "Directory Name", maxLength = 45, displayLength = 14, uiColumnName = "Directory")
+    @OAProperty(displayName = "Directory Name", defaultValue = "[appname]", maxLength = 45, displayLength = 14, uiColumnName = "Directory")
     @OAColumn(name = "DirectoryName", maxLength = 45)
     public String getDirectoryName() {
         return directoryName;
@@ -224,7 +231,7 @@ public class ApplicationType extends OAObject {
         }
     }
 
-    @OAProperty(displayName = "Download Url", maxLength = 125, displayLength = 22, uiColumnLength = 20, isUrl = true)
+    @OAProperty(displayName = "Download Url", defaultValue = "https://github.com/[project]/[appname]-run/raw/master/executable-jar", maxLength = 125, displayLength = 22, uiColumnLength = 20, isUrl = true)
     @OAColumn(name = "DownloadUrl", maxLength = 125)
     public String getDownloadUrl() {
         return downloadUrl;
@@ -236,7 +243,19 @@ public class ApplicationType extends OAObject {
         firePropertyChange(P_DownloadUrl, old, this.downloadUrl);
     }
 
-    @OAProperty(displayName = "Main Class", defaultValue = "com.[project].control.StartupController", maxLength = 75, displayLength = 20)
+    @OAProperty(displayName = "Jar File Name", maxLength = 70, displayLength = 15)
+    @OAColumn(name = "JarFileName", maxLength = 70)
+    public String getJarFileName() {
+        return jarFileName;
+    }
+    public void setJarFileName(String newValue) {
+        String old = jarFileName;
+        fireBeforePropertyChange(P_JarFileName, old, newValue);
+        this.jarFileName = newValue;
+        firePropertyChange(P_JarFileName, old, this.jarFileName);
+    }
+
+    @OAProperty(displayName = "Main Class", defaultValue = "com.[project].[appname].control.StartupController", maxLength = 75, displayLength = 20)
     @OAColumn(name = "MainClass", maxLength = 75)
     public String getMainClass() {
         return mainClass;
@@ -273,6 +292,17 @@ public class ApplicationType extends OAObject {
         fireBeforePropertyChange(P_Icon, old, newValue);
         this.icon = newValue;
         firePropertyChange(P_Icon, old, this.icon);
+    }
+
+    @OAProperty(maxLength = 254, displayLength = 20)
+    public String getConsole() {
+        return console;
+    }
+    public void setConsole(String newValue) {
+        String old = console;
+        fireBeforePropertyChange(P_Console, old, newValue);
+        this.console = newValue;
+        firePropertyChange(P_Console, old, this.console);
     }
 
     @OAMany(
@@ -326,6 +356,12 @@ public class ApplicationType extends OAObject {
         }
         return hubSingleApps;
     }
+    @OAMethod(displayName = "Check For New Version")
+    public void checkForNewVersion() throws Exception {
+        // custom code
+        ApplicationTypeDelegate.checkForNewVersion(this);
+    }
+
     public void load(ResultSet rs, int id) throws SQLException {
         this.id = id;
         java.sql.Timestamp timestamp;
@@ -343,8 +379,9 @@ public class ApplicationType extends OAObject {
         this.httpsPort = rs.getInt(9);
         OAObjectInfoDelegate.setPrimitiveNull(this, P_HttpsPort, rs.wasNull());
         this.downloadUrl = rs.getString(10);
-        this.mainClass = rs.getString(11);
-        this.jvmOptions = rs.getString(12);
+        this.jarFileName = rs.getString(11);
+        this.mainClass = rs.getString(12);
+        this.jvmOptions = rs.getString(13);
 
         this.changedFlag = false;
         this.newFlag = false;

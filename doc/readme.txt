@@ -1,5 +1,32 @@
 
 
+
+Notes:
+
+
+GitHubNewReleaseController
+
+ClientProcessController
+
+ServerJarStoreController
+JarStoreController
+
+
+
+Applications:
+
+OABuilder, oabldr, com.viaoa.builder.control.StartupController, 1g
+   download url:  https://github.com/ViaOA/oabuilder-run/raw/master/executable-jar
+   3.2.8  202402260
+
+
+
+
+
+
+
+==================
+
 	
 Building:
 	uses maven (pom.xml)	

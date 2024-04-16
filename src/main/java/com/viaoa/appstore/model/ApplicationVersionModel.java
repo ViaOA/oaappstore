@@ -21,20 +21,7 @@ import com.viaoa.appstore.resource.Resource;
 public class ApplicationVersionModel extends OAObjectModel {
     private static Logger LOG = Logger.getLogger(ApplicationVersionModel.class.getName());
     
-    /* overview
-      originalHub   - save the original hub
-      <- unfilteredHub - points one of the above hubs
-      lastDayFilteredHub;
-      <- hub - points to unfiltered or filtered hub
-    */
-    
     // Hubs
-    protected Hub<ApplicationVersion> hubOriginal;
-    
-    // base hub that points to one of: hubOriginal
-    protected Hub<ApplicationVersion> hubUnfiltered;
-    protected Hub<ApplicationVersion> hubLastDayFilteredHub;
-    // main hub that points to hubUnfiltered, hubLastDayFilteredHub
     protected Hub<ApplicationVersion> hub;
     // selected applicationVersions
     protected Hub<ApplicationVersion> hubMultiSelect;
@@ -59,9 +46,6 @@ public class ApplicationVersionModel extends OAObjectModel {
     protected ServerApplicationSearchModel modelServerApplicationsSearch;
     protected SingleAppSearchModel modelSingleAppsSearch;
     
-    // FilterModels
-    protected ApplicationVersionLastDayFilterModel modelApplicationVersionLastDayFilter;
-    
     public ApplicationVersionModel() {
         setDisplayName("Application Version");
         setPluralDisplayName("Application Versions");
@@ -70,7 +54,7 @@ public class ApplicationVersionModel extends OAObjectModel {
     public ApplicationVersionModel(Hub<ApplicationVersion> hubApplicationVersion) {
         this();
         if (hubApplicationVersion != null) HubDelegate.setObjectClass(hubApplicationVersion, ApplicationVersion.class);
-        this.hubOriginal = hubApplicationVersion;
+        this.hub = hubApplicationVersion;
     }
     public ApplicationVersionModel(ApplicationVersion applicationVersion) {
         this();
@@ -78,18 +62,8 @@ public class ApplicationVersionModel extends OAObjectModel {
         getHub().setPos(0);
     }
     
-    public void useUnfilteredHub() {
-        getHub().setSharedHub(getUnfilteredHub(), true);
-    }
-    public void useLastDayFilteredHub() {
-        getHub().setSharedHub(getLastDayFilteredHub(), true);
-    }
-    
     public Hub<ApplicationVersion> getOriginalHub() {
-        if (hubOriginal == null) {
-            hubOriginal = new Hub<ApplicationVersion>(ApplicationVersion.class);
-        }
-        return hubOriginal;
+        return getHub();
     }
     
     public Hub<ApplicationType> getApplicationTypeHub() {
@@ -118,29 +92,13 @@ public class ApplicationVersionModel extends OAObjectModel {
         hubApplicationTypeSelectFrom.setLinkHub(getHub(), ApplicationVersion.P_ApplicationType); 
         return hubApplicationTypeSelectFrom;
     }
-    public Hub<ApplicationVersion> getUnfilteredHub() {
-        if (hubUnfiltered == null) {
-            hubUnfiltered = new Hub<ApplicationVersion>(ApplicationVersion.class);
-            hubUnfiltered.setSharedHub(getOriginalHub(), true);
-        }
-        return hubUnfiltered;
-    }
-    public Hub<ApplicationVersion> getLastDayFilteredHub() {
-        if (hubLastDayFilteredHub == null) {
-            hubLastDayFilteredHub = new Hub<ApplicationVersion>(ApplicationVersion.class);
-        }
-        return hubLastDayFilteredHub;
-    }
-    
     public ApplicationVersion getApplicationVersion() {
         return getHub().getAO();
     }
     
-    // points to filtered or unfiltered hub
     public Hub<ApplicationVersion> getHub() {
         if (hub == null) {
             hub = new Hub<ApplicationVersion>(ApplicationVersion.class);
-            hub.setSharedHub(getUnfilteredHub(), true);
         }
         return hub;
     }
@@ -280,14 +238,6 @@ public class ApplicationVersionModel extends OAObjectModel {
         if (modelSingleAppsSearch != null) return modelSingleAppsSearch;
         modelSingleAppsSearch = new SingleAppSearchModel();
         return modelSingleAppsSearch;
-    }
-    
-    public ApplicationVersionLastDayFilterModel getApplicationVersionLastDayFilterModel() {
-        if (modelApplicationVersionLastDayFilter == null) {
-            modelApplicationVersionLastDayFilter = new ApplicationVersionLastDayFilterModel(getUnfilteredHub(), getLastDayFilteredHub());
-            new HubShareAO(getUnfilteredHub(), getLastDayFilteredHub());
-        }
-        return modelApplicationVersionLastDayFilter;
     }
     
     public HubCopy<ApplicationVersion> createHubCopy() {

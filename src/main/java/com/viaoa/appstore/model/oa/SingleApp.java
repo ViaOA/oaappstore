@@ -37,6 +37,7 @@ public class SingleApp extends OAObject {
 
     public static final String P_Id = "id";
     public static final String P_Created = "created";
+    public static final String P_Console = "console";
      
     public static final String P_ApplicationType = "applicationType";
     public static final String P_ApplicationTypeId = "applicationTypeId"; // fkey
@@ -50,6 +51,7 @@ public class SingleApp extends OAObject {
     public static final String M_Run = "run";
     protected volatile int id;
     protected volatile OADateTime created;
+    protected volatile String console;
      
     // Links to other objects.
     protected volatile transient ApplicationType applicationType;
@@ -94,6 +96,17 @@ public class SingleApp extends OAObject {
         fireBeforePropertyChange(P_Created, old, newValue);
         this.created = newValue;
         firePropertyChange(P_Created, old, this.created);
+    }
+
+    @OAProperty(maxLength = 254, displayLength = 20)
+    public String getConsole() {
+        return console;
+    }
+    public void setConsole(String newValue) {
+        String old = console;
+        fireBeforePropertyChange(P_Console, old, newValue);
+        this.console = newValue;
+        firePropertyChange(P_Console, old, this.console);
     }
 
     @OAOne(

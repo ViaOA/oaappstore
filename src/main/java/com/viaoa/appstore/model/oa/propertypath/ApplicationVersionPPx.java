@@ -56,53 +56,16 @@ public class ApplicationVersionPPx implements PPxInterface, Serializable {
         return pp + "." + ApplicationVersion.P_Release;
     }
 
-    public String downloadUrl() {
-        return pp + "." + ApplicationVersion.P_DownloadUrl;
-    }
-
-    public String started() {
-        return pp + "." + ApplicationVersion.P_Started;
-    }
-
     public String completed() {
         return pp + "." + ApplicationVersion.P_Completed;
-    }
-
-    public String invalid() {
-        return pp + "." + ApplicationVersion.P_Invalid;
-    }
-
-    public String invalidReason() {
-        return pp + "." + ApplicationVersion.P_InvalidReason;
-    }
-
-    public String serverFileName() {
-        return pp + "." + ApplicationVersion.P_ServerFileName;
     }
 
     public String verified() {
         return pp + "." + ApplicationVersion.P_Verified;
     }
 
-    public String fileLength() {
-        return pp + "." + ApplicationVersion.P_FileLength;
-    }
-
-    public String filePath() {
-        return pp + "." + ApplicationVersion.P_FilePath;
-    }
-
-    public String isValid() {
-        return pp + "." + ApplicationVersion.P_IsValid;
-    }
-
-    public String invalidMessage() {
-        return pp + "." + ApplicationVersion.P_InvalidMessage;
-    }
-
-    public ApplicationVersionPPx lastDayFilter() {
-        ApplicationVersionPPx ppx = new ApplicationVersionPPx(this, ":lastDay()");
-        return ppx;
+    public String download() {
+        return pp + ".download";
     }
 
     @Override

@@ -153,7 +153,7 @@ public class DataSource {
         tables[NextNumber].setColumns(columns);
         
         // ApplicationType COLUMNS
-        columns = new Column[13];
+        columns = new Column[14];
         columns[0] = new Column("Id", "id", Types.INTEGER, 20);
         columns[0].primaryKey = true;
         columns[0].assignNextNumber = true;
@@ -166,28 +166,23 @@ public class DataSource {
         columns[7] = new Column("HttpPort", "httpPort", Types.INTEGER);
         columns[8] = new Column("HttpsPort", "httpsPort", Types.INTEGER);
         columns[9] = new Column("DownloadUrl", "downloadUrl", Types.VARCHAR, 125);
-        columns[10] = new Column("MainClass", "mainClass", Types.VARCHAR, 75);
-        columns[11] = new Column("JvmOptions", "jvmOptions", Types.VARCHAR, 120);
-        columns[12] = new Column("Icon", "icon", Types.BLOB);
+        columns[10] = new Column("JarFileName", "jarFileName", Types.VARCHAR, 70);
+        columns[11] = new Column("MainClass", "mainClass", Types.VARCHAR, 75);
+        columns[12] = new Column("JvmOptions", "jvmOptions", Types.VARCHAR, 120);
+        columns[13] = new Column("Icon", "icon", Types.BLOB);
         tables[APPLICATIONTYPE].setColumns(columns);
         
         // ApplicationVersion COLUMNS
-        columns = new Column[13];
+        columns = new Column[7];
         columns[0] = new Column("Id", "id", Types.INTEGER, 20);
         columns[0].primaryKey = true;
         columns[0].assignNextNumber = true;
         columns[1] = new Column("Created", "created", Types.TIMESTAMP);
         columns[2] = new Column("Version", "version", Types.VARCHAR, 12);
         columns[3] = new Column("Release", "release", Types.INTEGER);
-        columns[4] = new Column("DownloadUrl", "downloadUrl", Types.VARCHAR, 125);
-        columns[5] = new Column("Started", "started", Types.TIMESTAMP);
-        columns[6] = new Column("Completed", "completed", Types.TIMESTAMP);
-        columns[7] = new Column("Invalid", "invalid", Types.BOOLEAN);
-        columns[8] = new Column("InvalidReason", "invalidReason", Types.VARCHAR, 80);
-        columns[9] = new Column("ServerFileName", "serverFileName", Types.VARCHAR, 55);
-        columns[10] = new Column("Verified", "verified", Types.TIMESTAMP);
-        columns[11] = new Column("FileLength", "fileLength", Types.BIGINT);
-        columns[12] = new Column("ApplicationTypeId", true);
+        columns[4] = new Column("Completed", "completed", Types.TIMESTAMP);
+        columns[5] = new Column("Verified", "verified", Types.TIMESTAMP);
+        columns[6] = new Column("ApplicationTypeId", true);
         tables[APPLICATIONVERSION].setColumns(columns);
         tables[APPLICATIONVERSION].addIndex(new Index("ApplicationVersionApplicationType", "ApplicationTypeId", true));
         
@@ -386,7 +381,7 @@ public class DataSource {
         tables[APPLICATIONTYPE].addLink("applicationVersions", tables[APPLICATIONVERSION], "applicationType", new int[] {0});
         tables[APPLICATIONTYPE].addLink("serverApplications", tables[SERVERAPPLICATION], "applicationType", new int[] {0});
         tables[APPLICATIONTYPE].addLink("singleApps", tables[SINGLEAPP], "applicationType", new int[] {0});
-        tables[APPLICATIONVERSION].addLink("applicationType", tables[APPLICATIONTYPE], "applicationVersions", new int[] {12});
+        tables[APPLICATIONVERSION].addLink("applicationType", tables[APPLICATIONTYPE], "applicationVersions", new int[] {6});
         tables[APPLICATIONVERSION].addLink("serverApplications", tables[SERVERAPPLICATION], "applicationVersion", new int[] {0});
         tables[APPLICATIONVERSION].addLink("singleApps", tables[SINGLEAPP], "applicationVersion", new int[] {0});
         tables[APPRUNTIME].addLink("appRuntimeErrors", tables[APPRUNTIMEERROR], "appRuntime", new int[] {0});
@@ -439,7 +434,7 @@ public class DataSource {
         
         dao = new DataAccessObject() {
             private static final String pkeyColumns = "ApplicationType.Id";
-            private static final String columns = "ApplicationType.Id, ApplicationType.Created, ApplicationType.Name, ApplicationType.AbbrevName, ApplicationType.DirectoryName, ApplicationType.SingleTypeOnly, ApplicationType.ClientPort, ApplicationType.HttpPort, ApplicationType.HttpsPort, ApplicationType.DownloadUrl, ApplicationType.MainClass, ApplicationType.JvmOptions";
+            private static final String columns = "ApplicationType.Id, ApplicationType.Created, ApplicationType.Name, ApplicationType.AbbrevName, ApplicationType.DirectoryName, ApplicationType.SingleTypeOnly, ApplicationType.ClientPort, ApplicationType.HttpPort, ApplicationType.HttpsPort, ApplicationType.DownloadUrl, ApplicationType.JarFileName, ApplicationType.MainClass, ApplicationType.JvmOptions";
             @Override
             public String getPkeySelectColumns() {
                 return pkeyColumns;
@@ -458,7 +453,7 @@ public class DataSource {
         
         dao = new DataAccessObject() {
             private static final String pkeyColumns = "ApplicationVersion.Id";
-            private static final String columns = "ApplicationVersion.Id, ApplicationVersion.Created, ApplicationVersion.Version, ApplicationVersion.Release, ApplicationVersion.DownloadUrl, ApplicationVersion.Started, ApplicationVersion.Completed, ApplicationVersion.Invalid, ApplicationVersion.InvalidReason, ApplicationVersion.ServerFileName, ApplicationVersion.Verified, ApplicationVersion.FileLength, ApplicationVersion.ApplicationTypeId";
+            private static final String columns = "ApplicationVersion.Id, ApplicationVersion.Created, ApplicationVersion.Version, ApplicationVersion.Release, ApplicationVersion.Completed, ApplicationVersion.Verified, ApplicationVersion.ApplicationTypeId";
             @Override
             public String getPkeySelectColumns() {
                 return pkeyColumns;

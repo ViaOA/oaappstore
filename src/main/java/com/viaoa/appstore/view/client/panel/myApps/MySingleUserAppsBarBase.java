@@ -47,25 +47,14 @@ public class MySingleUserAppsBarBase {
         getTree();
         OATreeTitleNode ttNode;
     
-        
-//qqqqqqqqqqqqqqqqqqqqqq use AppUserJfcBase to get SingleAppJfc
-        
-        
-        
-        
-        
         // AppUserSingleApps - My Single User Applications - 
         AppUserModel modelAppUser = new AppUserModel(ModelDelegate.getLocalAppUserHub());
-        
         AppUserJfc jfcAppUser = new AppUserJfc(modelAppUser) {
             JPanel panx;
             @Override
             public void showCardPanel(final String name) {
                 MySingleUserAppsBarBase.this.cardLayout.show(MySingleUserAppsBarBase.this.cardPanel, CARD_AppUserSingleApps);
-                if (panx != null) {
-                    super.showCardPanel(name);
-                    return;
-                }
+                if (panx != null) return;
                 SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
                     volatile Exception ex;
                     @Override
@@ -85,9 +74,6 @@ public class MySingleUserAppsBarBase {
                             JOptionPane.showMessageDialog(null, "Exception while creating UI, message sent to tech support", "UI Exception", JOptionPane.ERROR_MESSAGE);
                         }
                         if (panx == null) panx = new JPanel();
-                        
-                        // getSingleAppsJfc()
-                        
                         MySingleUserAppsBarBase.this.cardPanel.add(panx, CARD_AppUserSingleApps);
                         showCardPanel(name);
                     }
@@ -95,57 +81,13 @@ public class MySingleUserAppsBarBase {
                 sw.execute();
             }
         };
-        
-        SingleAppJfc jfcSingleApp = jfcAppUser.getSingleAppsJfc();
-        
-        
-/*qqqqqqq replace this        
-        SingleAppJfc jfcSingleApp = new SingleAppJfc(modelAppUser.getSingleAppsModel()) {
-            JPanel panx;
-            @Override
-            public void showCardPanel(final String name) {
-                MySingleUserAppsBarBase.this.cardLayout.show(MySingleUserAppsBarBase.this.cardPanel, CARD_AppUserSingleApps);
-                if (panx != null) {
-                    super.showCardPanel(name);
-                    return;
-                }
-                SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
-                    volatile Exception ex;
-                    @Override
-                    protected Void doInBackground() throws Exception {
-                        try {
-                            panx = getCardPanel();
-                        }
-                        catch (Exception e) {
-                            ex = e;
-                        }
-                        return null;
-                    }
-                    @Override
-                    protected void done() {
-                        if (ex != null) {
-                            LOG.log(Level.WARNING, "UI exception creating SingleAppJfc", ex);
-                            JOptionPane.showMessageDialog(null, "Exception while creating UI, message sent to tech support", "UI Exception", JOptionPane.ERROR_MESSAGE);
-                        }
-                        if (panx == null) panx = new JPanel();
-                        MySingleUserAppsBarBase.this.cardPanel.add(panx, CARD_AppUserSingleApps);
-                        showCardPanel(name);
-                    }
-                };
-                sw.execute();
-            }
-        };
-qqqqqq */        
-        ttNode = jfcSingleApp.getTreeTitleNode();
+        jfcAppUser.createSingleAppsJfc(false);
+        SingleAppJfc jfcSingleApps = jfcAppUser.getSingleAppsJfc();
+        ttNode = jfcSingleApps.getTreeTitleNode();
         tree.add(ttNode);
-        ttNode.add(jfcSingleApp.getTreeNode());
+        ttNode.add(jfcSingleApps.getTreeNode());
         cardPanel.add(new JLabel("loading My Single User Applications ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), CARD_AppUserSingleApps);
     }
-    
-    
-    
-    
-    
     protected OATree getTree() {
         if (tree != null) return tree;
         tree = new OATree(18) {

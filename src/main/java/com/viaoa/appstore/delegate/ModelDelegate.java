@@ -33,8 +33,6 @@ public class ModelDelegate {
     // autoCreateOne
     private static final Hub<AppRuntime> hubCreateOneAppRuntime = new Hub<AppRuntime>(AppRuntime.class);
     private static final Hub<AppServer> hubCreateOneAppServer = new Hub<AppServer>(AppServer.class);
-    // filters
-    private static final Hub<ApplicationVersion> hubLastDayApplicationVersions = new Hub<ApplicationVersion>(ApplicationVersion.class);
     // UI containers
     private static final Hub<ApplicationType> hubAppUserApplicationTypes = new Hub<ApplicationType>(ApplicationType.class);
     private static final Hub<AppUserLogin> hubConnectedAppUserLogins = new Hub<AppUserLogin>(AppUserLogin.class);
@@ -54,7 +52,6 @@ public class ModelDelegate {
         setSharedHub(getCreateOneAppRuntimeHub(), rootServer.getCreateOneAppRuntimeHub());
         setSharedHub(getCreateOneAppServerHub(), rootServer.getCreateOneAppServerHub());
         // filters
-        setSharedHub(getLastDayApplicationVersions(), rootServer.getLastDayApplicationVersions());
         // UI containers
         getAppUserApplicationTypes().setSharedHub(rootServer.getAppUserApplicationTypes());
         getConnectedAppUserLogins().setSharedHub(rootServer.getConnectedAppUserLogins());
@@ -133,9 +130,6 @@ public class ModelDelegate {
     }
     public static AppServer getAppServer() {
         return hubCreateOneAppServer.getAt(0);
-    }
-    public static Hub<ApplicationVersion> getLastDayApplicationVersions() {
-        return hubLastDayApplicationVersions;
     }
     public static Hub<ApplicationType> getAppUserApplicationTypes() {
         return hubAppUserApplicationTypes;

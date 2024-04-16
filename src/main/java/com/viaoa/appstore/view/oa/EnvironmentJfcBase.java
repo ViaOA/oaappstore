@@ -1307,11 +1307,11 @@ public class EnvironmentJfcBase implements OAModelJfcInterface {
                 super.show(parent, name);
             }
         };
-        cardPanel = new JPanel(getCardLayout());
+        cardPanel = new JPanel(cardLayout);
         
         cardPanel.add(new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), CARD_Edit);
         
-        getCardLayout().show(cardPanel, CARD_List);
+        cardLayout.show(cardPanel, CARD_List);
         return cardPanel;
     }
     public JPanel createListCardPanel() {
@@ -1721,10 +1721,14 @@ public class EnvironmentJfcBase implements OAModelJfcInterface {
         return jfcMergeServerApplications;
     }
     public ServerApplicationJfc createMergeServerApplicationsJfc() {
+        return createMergeServerApplicationsJfc(true);
+    }
+    public ServerApplicationJfc createMergeServerApplicationsJfc(final boolean bIsEmbedded) {
         jfcMergeServerApplications = new ServerApplicationJfc(getModel().getMergeServerApplicationsModel()) {
             @Override
             public JPanel getCardPanel() {
                 if (cardPanel != null) return cardPanel;
+                if (!bIsEmbedded) return super.getCardPanel();
                 cardPanel = new JPanel(getCardLayout());
                 JPanel pan = new JPanel(new BorderLayout());
                 pan.add(createToolBar(ToolBarOptions.createEditPanelToolBar()), BorderLayout.NORTH);
@@ -1735,6 +1739,11 @@ public class EnvironmentJfcBase implements OAModelJfcInterface {
     
             @Override
             public void showCardPanel(String name) {
+                if (!bIsEmbedded) {
+                    super.showCardPanel(name);
+                    EnvironmentJfcBase.this.showCardPanel(name);
+                    return;
+                }
                 if (name.equals(ServerApplicationJfc.CARD_List)) {
                     EnvironmentJfcBase.this.showCardPanel(CARD_Edit);
                     if (EnvironmentJfcBase.this.TAB_MergeServerApplications >= 0) {
@@ -1778,10 +1787,14 @@ public class EnvironmentJfcBase implements OAModelJfcInterface {
         return jfcServers;
     }
     public ServerJfc createServersJfc() {
+        return createServersJfc(true);
+    }
+    public ServerJfc createServersJfc(final boolean bIsEmbedded) {
         jfcServers = new ServerJfc(getModel().getServersModel()) {
             @Override
             public JPanel getCardPanel() {
                 if (cardPanel != null) return cardPanel;
+                if (!bIsEmbedded) return super.getCardPanel();
                 cardPanel = new JPanel(getCardLayout());
                 JPanel pan = new JPanel(new BorderLayout());
                 pan.add(createToolBar(ToolBarOptions.createEditPanelToolBar()), BorderLayout.NORTH);
@@ -1792,6 +1805,11 @@ public class EnvironmentJfcBase implements OAModelJfcInterface {
     
             @Override
             public void showCardPanel(String name) {
+                if (!bIsEmbedded) {
+                    super.showCardPanel(name);
+                    EnvironmentJfcBase.this.showCardPanel(name);
+                    return;
+                }
                 if (name.equals(ServerJfc.CARD_List)) {
                     EnvironmentJfcBase.this.showCardPanel(CARD_Edit);
                     if (EnvironmentJfcBase.this.TAB_Servers >= 0) {
