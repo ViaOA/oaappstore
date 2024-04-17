@@ -13,6 +13,7 @@ import com.viaoa.util.OADate;
 import com.viaoa.appstore.delegate.oa.*;
 import com.viaoa.appstore.model.oa.filter.*;
 import com.viaoa.appstore.model.oa.propertypath.*;
+import com.viaoa.appstore.resource.Resource;
  
 @OAClass(
     lowerName = "appUser",
@@ -44,7 +45,7 @@ public class AppUser extends OAObject {
      
     public static final String P_FullName = "fullName";
     public static final String P_DisplayName = "displayName";
-    public static final String P_CalcCheckVersions = "calcCheckVersions";
+    public static final String P_ShowAppStoreServers = "showAppStoreServers";
      
     public static final String P_ApplicationTypes = "applicationTypes";
     public static final String P_ApplicationTypesId = "applicationTypesId"; // fkey
@@ -274,13 +275,10 @@ public class AppUser extends OAObject {
         displayName += ")";
         return displayName;
     }
-    @OACalculatedProperty(displayName = "Calc Check Versions", description = "calc prop that is triggered whenever a users applications need to be rechecked", displayLength = 5, columnLength = 19, properties = {P_ApplicationTypes+"."+ApplicationType.P_ClientPort, P_ApplicationTypes+"."+ApplicationType.P_ServerApplications+"."+ServerApplication.P_ClientPort, P_ApplicationTypes+"."+ApplicationType.P_ServerApplications+"."+ServerApplication.P_Server+"."+Server.P_Host, P_ApplicationTypes+"."+ApplicationType.P_ServerApplications+"."+ServerApplication.P_Server+"."+Server.P_IpAddress, P_ApplicationTypes+"."+ApplicationType.P_DirectoryName})
-    /**
-      calc prop that is triggered whenever a users applications need to be rechecked
-    */
-    public boolean getCalcCheckVersions() {
-        // no-op used to for listener to know when any of a user's applications has changed.
-        return false;
+    @OACalculatedProperty(displayName = "Show App Store Servers", displayLength = 5, columnLength = 22)
+    public boolean getShowAppStoreServers() {
+        boolean b = Resource.getRunType() == Resource.RUNTYPE_Single; 
+        return b;
     }
 
     @OAMany(

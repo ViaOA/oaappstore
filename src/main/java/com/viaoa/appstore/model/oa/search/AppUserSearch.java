@@ -11,6 +11,7 @@ import com.viaoa.hub.*;
 import com.viaoa.util.*;
 import com.viaoa.datasource.*;
 import com.viaoa.filter.*;
+import com.viaoa.appstore.resource.Resource;
 
 @OAClass(useDataSource=false, localOnly=true)
 public class AppUserSearch extends OAObject {

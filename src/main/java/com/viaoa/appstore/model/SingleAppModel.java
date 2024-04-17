@@ -216,7 +216,7 @@ public class SingleAppModel extends OAObjectModel {
         modelRunningApp.setAllowSearch(false);
         modelRunningApp.setAllowHubSearch(false);
         modelRunningApp.setAllowGotoEdit(true);
-        modelRunningApp.setViewOnly(getViewOnly());
+        modelRunningApp.setViewOnly(true);
         // call SingleApp.runningAppModelCallback(RunningAppModel) to be able to customize this model
         OAObjectCallbackDelegate.onObjectCallbackModel(SingleApp.class, SingleApp.P_RunningApp, modelRunningApp);
     

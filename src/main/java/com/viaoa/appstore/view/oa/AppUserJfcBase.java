@@ -1617,6 +1617,20 @@ public class AppUserJfcBase implements OAModelJfcInterface {
             gc.fill = gc.NONE;
         }
     
+        lbl = new JLabel("Show App Store Servers:");
+        gc.anchor = gc.WEST;
+        panel.add(lbl, gc);
+        gc.anchor = gc.NORTHWEST;
+        olbl = createShowAppStoreServersLabel();
+        if (getModel().getViewOnly()) olbl.getController().setViewOnly(true);
+        olbl.setLabel(lbl);
+        gc.gridwidth = gc.REMAINDER;
+        gc.fill = gc.HORIZONTAL;
+        comp = new OAResizePanel(olbl, 95);
+        panel.add(comp, gc);
+        gc.fill = gc.NONE;
+        gc.gridwidth = 1;
+    
         // take up remaining space
         lbl = new JLabel("");
         panel.add(lbl, gc);
@@ -2013,8 +2027,8 @@ public class AppUserJfcBase implements OAModelJfcInterface {
         return txt;
     }
     
-    public OALabel createCalcCheckVersionsLabel() {
-        OALabel lbl = new OACheckBoxLabel(getHub(), AppUser.P_CalcCheckVersions, 5);
+    public OALabel createShowAppStoreServersLabel() {
+        OALabel lbl = new OACheckBoxLabel(getHub(), AppUser.P_ShowAppStoreServers, 5);
         lbl.setMaximumColumns(5);
         return lbl;
     }

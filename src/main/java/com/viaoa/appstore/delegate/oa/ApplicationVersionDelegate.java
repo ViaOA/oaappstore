@@ -32,7 +32,7 @@ public class ApplicationVersionDelegate {
             return false;
         }
         
-        applicationType.setConsole(String.format("checking URL=%s", urlDownload));
+        applicationType.setConsole(String.format("checking download URL=%s", urlDownload));
 
         //  "https://github.com/ViaOA/oaappstore-run/raw/master/executable-jar";
 
@@ -55,6 +55,11 @@ public class ApplicationVersionDelegate {
             setConsole(applicationVersion, String.format("release for ApplicationVersion release=%s, does not match version.ini release=%d", applicationVersion.getRelease(), release));
             return false;
         }
+
+        url = new URL(urlDownload + "/" + applicationType.getJarFileName());
+        conn = url.openConnection();
+
+        dis = new DataInputStream(new BufferedInputStream(conn.getInputStream()));
         
         String dirName = String.format("appstore/%s/%d",  applicationType.getDirectoryName(), release);
         dirName = OAFile.convertFileName(dirName);
@@ -65,11 +70,6 @@ public class ApplicationVersionDelegate {
         fileName = OAFile.convertFileName(fileName);
         File file = new File(fileName); 
         
-        url = new URL(urlDownload + "/" + applicationType.getJarFileName());
-        conn = url.openConnection();
-
-        dis = new DataInputStream(new BufferedInputStream(conn.getInputStream()));
-
         setConsole(applicationVersion, "file name will be "+ fileName);
         file.createNewFile();
         OutputStream fos = new FileOutputStream(file);

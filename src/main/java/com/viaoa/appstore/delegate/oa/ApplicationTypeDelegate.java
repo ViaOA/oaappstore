@@ -24,10 +24,11 @@ public class ApplicationTypeDelegate {
 
         OAProperties gitProps = new OAProperties(conn.getInputStream());
         
-        final int release = OAConv.toInt(gitProps.getProperty(Resource.APP_Release));
-        final String version = gitProps.getProperty(Resource.APP_Version);
+        final int release = OAConv.toInt(gitProps.getProperty("Release"));
+        final String version = gitProps.getProperty("Version");
 
         applicationType.setConsole(String.format("version.ini read, version=%s, release=%d", version, release));
+        if (release == 0) return;
         
         for (ApplicationVersion ap : applicationType.getApplicationVersions()) {
             if (ap.getRelease() == release) {
@@ -41,5 +42,4 @@ public class ApplicationTypeDelegate {
         ap.setRelease(release);
         applicationType.getApplicationVersions().add(ap);
     }
-    
 }

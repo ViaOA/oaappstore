@@ -44,7 +44,6 @@ public class ClientAppModel extends OAObjectModel {
     protected ServerApplicationModel modelServerApplicationSelectFrom;
     
     // SearchModels used for references
-    protected RunningAppSearchModel modelRunningAppSearch;
     protected ServerApplicationSearchModel modelServerApplicationSearch;
     
     public ClientAppModel() {
@@ -147,16 +146,16 @@ public class ClientAppModel extends OAObjectModel {
         modelRunningApp.setDisplayName("Running App");
         modelRunningApp.setPluralDisplayName("Running Apps");
         modelRunningApp.setForJfc(getForJfc());
-        modelRunningApp.setAllowNew(true);
+        modelRunningApp.setAllowNew(false);
         modelRunningApp.setAllowSave(true);
         modelRunningApp.setAllowAdd(false);
-        modelRunningApp.setAllowRemove(true);
-        modelRunningApp.setAllowClear(true);
+        modelRunningApp.setAllowRemove(false);
+        modelRunningApp.setAllowClear(false);
         modelRunningApp.setAllowDelete(false);
-        modelRunningApp.setAllowSearch(true);
+        modelRunningApp.setAllowSearch(false);
         modelRunningApp.setAllowHubSearch(false);
         modelRunningApp.setAllowGotoEdit(true);
-        modelRunningApp.setViewOnly(getViewOnly());
+        modelRunningApp.setViewOnly(true);
         // call ClientApp.runningAppModelCallback(RunningAppModel) to be able to customize this model
         OAObjectCallbackDelegate.onObjectCallbackModel(ClientApp.class, ClientApp.P_RunningApp, modelRunningApp);
     
@@ -233,12 +232,6 @@ public class ClientAppModel extends OAObjectModel {
         modelServerApplicationSelectFrom.setAllowPaste(false);
         modelServerApplicationSelectFrom.setAllowMultiSelect(false);
         return modelServerApplicationSelectFrom;
-    }
-    public RunningAppSearchModel getRunningAppSearchModel() {
-        if (modelRunningAppSearch != null) return modelRunningAppSearch;
-        modelRunningAppSearch = new RunningAppSearchModel();
-        HubSelectDelegate.adoptWhereHub(modelRunningAppSearch.getHub(), ClientApp.P_RunningApp, getHub());
-        return modelRunningAppSearch;
     }
     public ServerApplicationSearchModel getServerApplicationSearchModel() {
         if (modelServerApplicationSearch != null) return modelServerApplicationSearch;

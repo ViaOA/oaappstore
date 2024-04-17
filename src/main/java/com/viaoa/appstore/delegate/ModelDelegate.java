@@ -28,6 +28,7 @@ public class ModelDelegate {
 	/*$$Start: ModelDelegate1 $$*/
     // lookups, preselects
     private static final Hub<ApplicationType> hubApplicationTypes = new Hub<ApplicationType>(ApplicationType.class);
+    private static final Hub<AppStoreServer> hubAppStoreServers = new Hub<AppStoreServer>(AppStoreServer.class);
     private static final Hub<AppUser> hubAppUsers = new Hub<AppUser>(AppUser.class);
     private static final Hub<Environment> hubEnvironments = new Hub<Environment>(Environment.class);
     // autoCreateOne
@@ -46,6 +47,7 @@ public class ModelDelegate {
 		/*$$Start: ModelDelegate2 $$*/
         // lookups, preselects
         setSharedHub(getApplicationTypes(), rootServer.getApplicationTypes());
+        setSharedHub(getAppStoreServers(), rootServer.getAppStoreServers());
         setSharedHub(getAppUsers(), rootServer.getAppUsers());
         setSharedHub(getEnvironments(), rootServer.getEnvironments());
         // autoCreateOne
@@ -111,6 +113,9 @@ public class ModelDelegate {
 	/*$$Start: ModelDelegate3 $$*/
     public static Hub<ApplicationType> getApplicationTypes() {
         return hubApplicationTypes;
+    }
+    public static Hub<AppStoreServer> getAppStoreServers() {
+        return hubAppStoreServers;
     }
     public static Hub<AppUser> getAppUsers() {
         return hubAppUsers;

@@ -107,8 +107,8 @@ public class AppUserPP {
         return s;
     }
 
-    public static String calcCheckVersions() {
-        String s = AppUser.P_CalcCheckVersions;
+    public static String showAppStoreServers() {
+        String s = AppUser.P_ShowAppStoreServers;
         return s;
     }
 

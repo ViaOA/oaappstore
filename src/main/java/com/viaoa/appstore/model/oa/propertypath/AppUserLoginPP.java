@@ -7,7 +7,7 @@ public class AppUserLoginPP {
     private static AppServerPPx appServers;
     private static AppUserPPx appUser;
     private static AppUserErrorPPx appUserErrors;
-    private static RunningAppPPx runningApps;
+    private static RunningAppPPx runningApp;
      
 
     public static AppServerPPx appServers() {
@@ -25,9 +25,9 @@ public class AppUserLoginPP {
         return appUserErrors;
     }
 
-    public static RunningAppPPx runningApps() {
-        if (runningApps == null) runningApps = new RunningAppPPx(AppUserLogin.P_RunningApps);
-        return runningApps;
+    public static RunningAppPPx runningApp() {
+        if (runningApp == null) runningApp = new RunningAppPPx(AppUserLogin.P_RunningApp);
+        return runningApp;
     }
 
     public static String id() {

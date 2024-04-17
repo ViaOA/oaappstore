@@ -25,11 +25,7 @@ public class RunningAppModel extends OAObjectModel {
     protected Hub<RunningApp> hub;
     // selected runningApps
     protected Hub<RunningApp> hubMultiSelect;
-    // detail hubs
-    protected Hub<AppUserLogin> hubAppUserLogin;
     
-    // ObjectModels
-    protected AppUserLoginModel modelAppUserLogin;
     
     public RunningAppModel() {
         setDisplayName("Running App");
@@ -51,12 +47,6 @@ public class RunningAppModel extends OAObjectModel {
         return getHub();
     }
     
-    public Hub<AppUserLogin> getAppUserLoginHub() {
-        if (hubAppUserLogin != null) return hubAppUserLogin;
-        // this is the owner, use detailHub
-        hubAppUserLogin = getHub().getDetailHub(RunningApp.P_AppUserLogin);
-        return hubAppUserLogin;
-    }
     public RunningApp getRunningApp() {
         return getHub().getAO();
     }
@@ -73,30 +63,6 @@ public class RunningAppModel extends OAObjectModel {
             hubMultiSelect = new Hub<RunningApp>(RunningApp.class);
         }
         return hubMultiSelect;
-    }
-    
-    public AppUserLoginModel getAppUserLoginModel() {
-        if (modelAppUserLogin != null) return modelAppUserLogin;
-        modelAppUserLogin = new AppUserLoginModel(getAppUserLoginHub());
-        modelAppUserLogin.setDisplayName("App User Login");
-        modelAppUserLogin.setPluralDisplayName("App User Logins");
-        modelAppUserLogin.setForJfc(getForJfc());
-        modelAppUserLogin.setAllowNew(false);
-        modelAppUserLogin.setAllowSave(true);
-        modelAppUserLogin.setAllowAdd(false);
-        modelAppUserLogin.setAllowRemove(false);
-        modelAppUserLogin.setAllowClear(false);
-        modelAppUserLogin.setAllowDelete(false);
-        modelAppUserLogin.setAllowSearch(false);
-        modelAppUserLogin.setAllowHubSearch(false);
-        modelAppUserLogin.setAllowGotoEdit(true);
-        OALinkInfo li = HubDetailDelegate.getLinkInfoFromDetailToMaster(getOriginalHub());
-        modelAppUserLogin.setCreateUI(li == null || !RunningApp.P_AppUserLogin.equalsIgnoreCase(li.getName()) );
-        modelAppUserLogin.setViewOnly(getViewOnly());
-        // call RunningApp.appUserLoginModelCallback(AppUserLoginModel) to be able to customize this model
-        OAObjectCallbackDelegate.onObjectCallbackModel(RunningApp.class, RunningApp.P_AppUserLogin, modelAppUserLogin);
-    
-        return modelAppUserLogin;
     }
     
     public HubCopy<RunningApp> createHubCopy() {

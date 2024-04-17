@@ -124,6 +124,24 @@ public class DataGenerator {
         }
     }
     
+    public AppStoreServer createAppStoreServer() {
+        AppStoreServer appStoreServer = new AppStoreServer();
+        return appStoreServer;
+    }
+    
+    public void prepopulate(AppStoreServer obj) {
+        prepopulate(obj, 0);
+    }
+    public void prepopulate(AppStoreServer obj, int level) {
+        int x;
+        int tot;
+        if (add(obj, AppStoreServer.P_RunningApp)) {
+            // runningApp
+            RunningApp runningApp = null;
+            done(obj, AppStoreServer.P_RunningApp);
+        }
+    }
+    
     public AppUser createAppUser() {
         AppUser appUser = new AppUser();
         return appUser;
@@ -178,6 +196,20 @@ public class DataGenerator {
             //    owned
             done(obj, AppUserLogin.P_AppUser);
         }
+        if (add(obj, AppUserLogin.P_RunningApp)) {
+            // runningApp
+            RunningApp runningApp = null;
+            if (Math.random() < .75) {
+                runningApp = (RunningApp) OAObjectCacheDelegate.getRandom(RunningApp.class, 500);
+                if (runningApp != null) obj.setRunningApp(runningApp);
+            }
+            if (runningApp == null) {
+                runningApp = createRunningApp();
+                prepopulate(runningApp);
+                obj.setRunningApp(runningApp);
+            }
+            done(obj, AppUserLogin.P_RunningApp);
+        }
     }
     
     public ClientApp createClientApp() {
@@ -194,15 +226,6 @@ public class DataGenerator {
         if (add(obj, ClientApp.P_RunningApp)) {
             // runningApp
             RunningApp runningApp = null;
-            if (Math.random() < .75) {
-                runningApp = (RunningApp) OAObjectCacheDelegate.getRandom(RunningApp.class, 500);
-                if (runningApp != null) obj.setRunningApp(runningApp);
-            }
-            if (runningApp == null) {
-                runningApp = createRunningApp();
-                prepopulate(runningApp);
-                obj.setRunningApp(runningApp);
-            }
             done(obj, ClientApp.P_RunningApp);
         }
     }
@@ -231,11 +254,6 @@ public class DataGenerator {
     public void prepopulate(RunningApp obj, int level) {
         int x;
         int tot;
-        if (add(obj, RunningApp.P_AppUserLogin)) {
-            // appUserLogin
-            //    owned
-            done(obj, RunningApp.P_AppUserLogin);
-        }
     }
     
     public Server createServer() {
@@ -319,6 +337,11 @@ public class DataGenerator {
             // appUser
             //    owned
             done(obj, SingleApp.P_AppUser);
+        }
+        if (add(obj, SingleApp.P_RunningApp)) {
+            // runningApp
+            RunningApp runningApp = null;
+            done(obj, SingleApp.P_RunningApp);
         }
     }
     
@@ -477,6 +500,19 @@ public class DataGenerator {
         obj.setRelease(OAString.getDummyText(18, 0, 18));
     }
     
+    public void populate(AppStoreServer obj) {
+        populate(obj, 0);
+    }
+    public void populate(AppStoreServer obj, int level) {
+        int x;
+        int tot;
+        // id is auto assigned
+        // created has a default value
+        obj.setName(OAString.getDummyText(20, 0, 70));
+        obj.setServer(OAString.getDummyText(20, 0, 75));
+        obj.setConsole(OAString.getDummyText(22, 0, 254));
+    }
+    
     public void populate(AppUser obj) {
         populate(obj, 0);
     }
@@ -574,18 +610,6 @@ public class DataGenerator {
                 populate(appUserError);
             }
             done(obj, AppUserLogin.P_AppUserErrors);
-        }
-        if (add(obj, AppUserLogin.P_RunningApps)) {
-            // runningApps
-            tot = ((int) (Math.random()*4));
-            tot -= obj.getRunningApps().size();
-            for (int cnt=0; cnt<tot; cnt++) {
-                RunningApp runningApp = null;
-                runningApp = createRunningApp();
-                obj.getRunningApps().add(runningApp);
-                populate(runningApp);
-            }
-            done(obj, AppUserLogin.P_RunningApps);
         }
     }
     
@@ -755,6 +779,11 @@ public class DataGenerator {
         }
         x = 5 + ((int) (Math.random()*20));
         for (int i=0; i<x; i++) {
+            AppStoreServer appStoreServer = createAppStoreServer();
+            ModelDelegate.getAppStoreServers().add(appStoreServer);
+        }
+        x = 5 + ((int) (Math.random()*20));
+        for (int i=0; i<x; i++) {
             AppUser appUser = createAppUser();
             ModelDelegate.getAppUsers().add(appUser);
         }
@@ -765,6 +794,11 @@ public class DataGenerator {
         }
         
         // others
+        x = 5 + ((int) (Math.random()*20));
+        for (int i=0; i<x; i++) {
+            RunningApp runningApp = createRunningApp();
+            hubRunningApp.add(runningApp);
+        }
          
         // Now prepopulate new objects
         // lookups
@@ -777,6 +811,9 @@ public class DataGenerator {
         for (AppServer appServer : ModelDelegate.getCreateOneAppServerHub()) {
             prepopulate(appServer);
         }
+        for (AppStoreServer appStoreServer : ModelDelegate.getAppStoreServers()) {
+            prepopulate(appStoreServer);
+        }
         for (AppUser appUser : ModelDelegate.getAppUsers()) {
             prepopulate(appUser);
         }
@@ -785,6 +822,9 @@ public class DataGenerator {
         }
         
         // others
+        for (RunningApp runningApp : hubRunningApp) {
+            prepopulate(runningApp);
+        }
         
         // Now populate new objects
         // lookups
@@ -797,6 +837,9 @@ public class DataGenerator {
         for (AppServer appServer : ModelDelegate.getCreateOneAppServerHub()) {
             populate(appServer);
         }
+        for (AppStoreServer appStoreServer : ModelDelegate.getAppStoreServers()) {
+            populate(appStoreServer);
+        }
         for (AppUser appUser : ModelDelegate.getAppUsers()) {
             populate(appUser);
         }
@@ -805,9 +848,13 @@ public class DataGenerator {
         }
         
         // others
+        for (RunningApp runningApp : hubRunningApp) {
+            populate(runningApp);
+        }
     }
     
     // Hubs to hold sample data that is not in ModelDelegate
+    private Hub<RunningApp> hubRunningApp = new Hub<RunningApp>(RunningApp.class);
     
     public static void main(String[] args) {
         OAObjectCallbackDelegate.demoAllowAllToPass(true);

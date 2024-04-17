@@ -37,15 +37,6 @@ public class SingleAppDelegate {
         int release = applicationVersion.getRelease();
         
         
-        String dirName = String.format("appstore/%s/%d", applicationType.getDirectoryName(), release);
-        dirName = OAFile.convertFileName(dirName);
-
-        String jarFileName = dirName + "/" + applicationType.getJarFileName();
-        jarFileName = OAFile.convertFileName(jarFileName);
-        setConsole(singleApp, "jar file name="+ jarFileName);
-        
-        
-        
         // see: C:\Users\vvia\AppData\Local\OAAppStore\app\OAAppStore.cfg
         /*
             [Application]
@@ -61,41 +52,48 @@ public class SingleAppDelegate {
             arguments=single
         */
 
-        String rootDir = String.format("app/datastore/%s/single/id_%d", applicationType.getDirectoryName(), singleApp.getId());
-        File file = new File(rootDir);
-        if (!file.exists()) file.mkdirs();
-        
         
         String s;
         String txt = "";
         txt += "[Application]\n";
-        
-        txt += String.format("app.classpath=$APPDIR\\%s\n", OAStr.convert(jarFileName, "/", "\\"));
+        txt += "app.classpath=";
+        txt += OAFile.convertFileName(
+            String.format("appstore/%s/%d/%s", 
+                applicationType.getDirectoryName(), 
+                release, 
+                applicationType.getJarFileName()
+                )
+            );
+        txt += "\n";
         txt += String.format("app.mainclass=%s\n", applicationType.getMainClass());
-        
+
         txt += "\n";
         txt += "[JavaOptions]\n";
         s = applicationType.getJvmOptions();
         if (OAString.isEmpty(s)) s = "-Xmx2g";
         txt += String.format("java-options=%s\n", s);
-        
-        
         txt += "\n";
+        
+        String rootDir = String.format("appstore/%s/%d", applicationType.getDirectoryName(), release);
+        rootDir = OAFile.convertFileName(rootDir);
+        File file = new File(rootDir);
+        if (!file.exists()) file.mkdirs();
+        
         txt += "[ArgOptions]\n";
         txt += "arguments=single\n";
         // Important note:  $APPDIR does not work for ArgOptions/arguments
         txt += String.format("arguments=RootDirectory=%s\n", rootDir);
 
-        /*qqqqqqqq
+        /*qqqqq
         int port = serverApp.getClientPort();
         txt += String.format("arguments=ServerPort=%d\n", port);
         */
         
-        // note: make sure that client.ini file is in the install
+        // note: make sure that single.ini file is in the install
         
         LOG.fine("saving OAAppStore.cfg, txt="+txt);
         
-        file = new File("app\\OAAppStore.cfg");
+        file = new File(OAFile.convertFileName("app/OAAppStore.cfg"));
         final String hold = OAFile.readTextFile(file, 800);
         OAFile.writeTextFile(file, txt);
         

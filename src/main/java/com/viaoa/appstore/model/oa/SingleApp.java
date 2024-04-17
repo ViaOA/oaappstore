@@ -65,7 +65,6 @@ public class SingleApp extends OAObject {
     @Override
     public void setObjectDefaults() {
         setCreated(new OADateTime());
-        getRunningApp(); // have it autoCreated
     }
      
     public SingleApp(int id) {
@@ -200,7 +199,8 @@ public class SingleApp extends OAObject {
     @OAOne(
         displayName = "Running App", 
         reverseName = RunningApp.P_SingleApp, 
-        autoCreateNew = true, 
+        allowCreateNew = false, 
+        allowAddExisting = false, 
         fkeys = {@OAFkey(fromProperty = P_RunningAppId, toProperty = RunningApp.P_Id)}
     )
     public RunningApp getRunningApp() {

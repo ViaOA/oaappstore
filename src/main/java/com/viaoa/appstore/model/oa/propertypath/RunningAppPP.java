@@ -4,11 +4,17 @@ package com.viaoa.appstore.model.oa.propertypath;
 import com.viaoa.appstore.model.oa.*;
  
 public class RunningAppPP {
+    private static AppStoreServerPPx appStoreServer;
     private static AppUserLoginPPx appUserLogin;
     private static ClientAppPPx clientApp;
     private static ServerApplicationPPx serverApplication;
     private static SingleAppPPx singleApp;
      
+
+    public static AppStoreServerPPx appStoreServer() {
+        if (appStoreServer == null) appStoreServer = new AppStoreServerPPx(RunningApp.P_AppStoreServer);
+        return appStoreServer;
+    }
 
     public static AppUserLoginPPx appUserLogin() {
         if (appUserLogin == null) appUserLogin = new AppUserLoginPPx(RunningApp.P_AppUserLogin);

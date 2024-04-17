@@ -29,11 +29,11 @@ public class MyAppsPanelBase {
     
     public static final String CARD_MySingleUserAppsBar = "MySingleUserAppsBar";
     public static final String CARD_MyServerAppsBar = "MyServerAppsBar";
-    public static final String CARD_MyClientApssBar = "MyClientApssBar";
+    public static final String CARD_MyClientAppsBar = "MyClientAppsBar";
     
     protected MySingleUserAppsBar barMySingleUserApps;
     protected MyServerAppsBar barMyServerApps;
-    protected MyClientApssBar barMyClientApss;
+    protected MyClientAppsBar barMyClientApps;
     
     public MyAppsPanelBase() {
         cardLayout = new CardLayout();
@@ -52,8 +52,8 @@ public class MyAppsPanelBase {
         outlookBar.addBar(CARD_MyServerAppsBar, "My Server Apps", icon, new JScrollPane(getMyServerAppsBar().getTree()));
         cardPanel.add(getMyServerAppsBar().getPanel(), CARD_MyServerAppsBar);
         icon = Resource.getJarIcon("myAppsBar.png");
-        outlookBar.addBar(CARD_MyClientApssBar, "My Client Apss", icon, new JScrollPane(getMyClientApssBar().getTree()));
-        cardPanel.add(getMyClientApssBar().getPanel(), CARD_MyClientApssBar);
+        outlookBar.addBar(CARD_MyClientAppsBar, "My Client Apps", icon, new JScrollPane(getMyClientAppsBar().getTree()));
+        cardPanel.add(getMyClientAppsBar().getPanel(), CARD_MyClientAppsBar);
     }
     
     public MySingleUserAppsBar getMySingleUserAppsBar() {
@@ -66,10 +66,10 @@ public class MyAppsPanelBase {
         barMyServerApps = new MyServerAppsBar();
         return barMyServerApps;
     }
-    public MyClientApssBar getMyClientApssBar() {
-        if (barMyClientApss != null) return barMyClientApss;
-        barMyClientApss = new MyClientApssBar();
-        return barMyClientApss;
+    public MyClientAppsBar getMyClientAppsBar() {
+        if (barMyClientApps != null) return barMyClientApps;
+        barMyClientApps = new MyClientAppsBar();
+        return barMyClientApps;
     }
     
     public OAOutlookBar getOutlookBar() {

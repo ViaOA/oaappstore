@@ -37,6 +37,12 @@ public class PP {
     public static AppServerPPx appServers() {
         return new AppServerPPx("AppServers");
     }
+    public static AppStoreServerPPx appStoreServer() {
+        return new AppStoreServerPPx("AppStoreServer");
+    }
+    public static AppStoreServerPPx appStoreServers() {
+        return new AppStoreServerPPx("AppStoreServers");
+    }
     public static AppUserPPx appUser() {
         return new AppUserPPx("AppUser");
     }

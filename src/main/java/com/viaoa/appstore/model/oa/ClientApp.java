@@ -125,6 +125,8 @@ public class ClientApp extends OAObject {
     @OAOne(
         displayName = "Running App", 
         reverseName = RunningApp.P_ClientApp, 
+        allowCreateNew = false, 
+        allowAddExisting = false, 
         fkeys = {@OAFkey(fromProperty = P_RunningAppId, toProperty = RunningApp.P_Id)}
     )
     public RunningApp getRunningApp() {

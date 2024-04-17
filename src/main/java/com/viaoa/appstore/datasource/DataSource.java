@@ -104,19 +104,20 @@ public class DataSource {
         int APPRUNTIME = 3;
         int APPRUNTIMEERROR = 4;
         int APPSERVER = 5;
-        int APPUSER = 6;
-        int APPUSERERROR = 7;
-        int APPUSERLOGIN = 8;
-        int CLIENTAPP = 9;
-        int ENVIRONMENT = 10;
-        int RUNNINGAPP = 11;
-        int SERVER = 12;
-        int SERVERAPPLICATION = 13;
-        int SINGLEAPP = 14;
+        int APPSTORESERVER = 6;
+        int APPUSER = 7;
+        int APPUSERERROR = 8;
+        int APPUSERLOGIN = 9;
+        int CLIENTAPP = 10;
+        int ENVIRONMENT = 11;
+        int RUNNINGAPP = 12;
+        int SERVER = 13;
+        int SERVERAPPLICATION = 14;
+        int SINGLEAPP = 15;
         
         // LINK TABLES
-        int APPUSERAPPLICATIONTYPE = 15;
-        int MAX = 16;
+        int APPUSERAPPLICATIONTYPE = 16;
+        int MAX = 17;
         
         Database db = new Database();
         Table[] tables = new Table[MAX];
@@ -131,6 +132,7 @@ public class DataSource {
         tables[APPRUNTIME] = new Table("AppRuntime", AppRuntime.class);
         tables[APPRUNTIMEERROR] = new Table("AppRuntimeError", AppRuntimeError.class);
         tables[APPSERVER] = new Table("AppServer", AppServer.class);
+        tables[APPSTORESERVER] = new Table("AppStoreServer", AppStoreServer.class);
         tables[APPUSER] = new Table("AppUser", AppUser.class);
         tables[APPUSERERROR] = new Table("AppUserError", AppUserError.class);
         tables[APPUSERLOGIN] = new Table("AppUserLogin", AppUserLogin.class);
@@ -225,6 +227,18 @@ public class DataSource {
         tables[APPSERVER].setColumns(columns);
         tables[APPSERVER].addIndex(new Index("AppServerAppUserLogin", "AppUserLoginId", true));
         
+        // AppStoreServer COLUMNS
+        columns = new Column[5];
+        columns[0] = new Column("Id", "id", Types.INTEGER, 20);
+        columns[0].primaryKey = true;
+        columns[0].assignNextNumber = true;
+        columns[1] = new Column("Created", "created", Types.TIMESTAMP);
+        columns[2] = new Column("Name", "name", Types.VARCHAR, 70);
+        columns[3] = new Column("Server", "server", Types.VARCHAR, 75);
+        columns[4] = new Column("RunningAppId", true);
+        tables[APPSTORESERVER].setColumns(columns);
+        tables[APPSTORESERVER].addIndex(new Index("AppStoreServerRunningApp", "RunningAppId", true));
+        
         // AppUser COLUMNS
         columns = new Column[10];
         columns[0] = new Column("Id", "id", Types.INTEGER, 5);
@@ -256,7 +270,7 @@ public class DataSource {
         tables[APPUSERERROR].addIndex(new Index("AppUserErrorAppUserLogin", "AppUserLoginId", true));
         
         // AppUserLogin COLUMNS
-        columns = new Column[12];
+        columns = new Column[13];
         columns[0] = new Column("Id", "id", Types.INTEGER, 5);
         columns[0].primaryKey = true;
         columns[0].assignNextNumber = true;
@@ -271,8 +285,10 @@ public class DataSource {
         columns[9] = new Column("TotalMemory", "totalMemory", Types.BIGINT);
         columns[10] = new Column("FreeMemory", "freeMemory", Types.BIGINT);
         columns[11] = new Column("AppUserId", true);
+        columns[12] = new Column("RunningAppId", true);
         tables[APPUSERLOGIN].setColumns(columns);
         tables[APPUSERLOGIN].addIndex(new Index("AppUserLoginAppUser", "AppUserId", true));
+        tables[APPUSERLOGIN].addIndex(new Index("AppUserLoginRunningApp", "RunningAppId", true));
         
         // ClientApp COLUMNS
         columns = new Column[5];
@@ -301,7 +317,7 @@ public class DataSource {
         tables[ENVIRONMENT].setColumns(columns);
         
         // RunningApp COLUMNS
-        columns = new Column[8];
+        columns = new Column[7];
         columns[0] = new Column("Id", "id", Types.INTEGER, 20);
         columns[0].primaryKey = true;
         columns[0].assignNextNumber = true;
@@ -311,9 +327,7 @@ public class DataSource {
         columns[4] = new Column("Error", "error", Types.VARCHAR, 240);
         columns[5] = new Column("CpuSeconds", "cpuSeconds", Types.BIGINT);
         columns[6] = new Column("Stopped", "stopped", Types.TIMESTAMP);
-        columns[7] = new Column("AppUserLoginId", true);
         tables[RUNNINGAPP].setColumns(columns);
-        tables[RUNNINGAPP].addIndex(new Index("RunningAppAppUserLogin", "AppUserLoginId", true));
         
         // Server COLUMNS
         columns = new Column[7];
@@ -387,6 +401,7 @@ public class DataSource {
         tables[APPRUNTIME].addLink("appRuntimeErrors", tables[APPRUNTIMEERROR], "appRuntime", new int[] {0});
         tables[APPRUNTIMEERROR].addLink("appRuntime", tables[APPRUNTIME], "appRuntimeErrors", new int[] {5});
         tables[APPSERVER].addLink("appUserLogin", tables[APPUSERLOGIN], "appServers", new int[] {5});
+        tables[APPSTORESERVER].addLink("runningApp", tables[RUNNINGAPP], "appStoreServer", new int[] {4});
         tables[APPUSER].addLink("appUserLogins", tables[APPUSERLOGIN], "appUser", new int[] {0});
         tables[APPUSER].addLink("clientApps", tables[CLIENTAPP], "appUser", new int[] {0});
         tables[APPUSER].addLink("server", tables[SERVER], "appUser", new int[] {0});
@@ -395,12 +410,13 @@ public class DataSource {
         tables[APPUSERLOGIN].addLink("appServers", tables[APPSERVER], "appUserLogin", new int[] {0});
         tables[APPUSERLOGIN].addLink("appUser", tables[APPUSER], "appUserLogins", new int[] {11});
         tables[APPUSERLOGIN].addLink("appUserErrors", tables[APPUSERERROR], "appUserLogin", new int[] {0});
-        tables[APPUSERLOGIN].addLink("runningApps", tables[RUNNINGAPP], "appUserLogin", new int[] {0});
+        tables[APPUSERLOGIN].addLink("runningApp", tables[RUNNINGAPP], "appUserLogin", new int[] {12});
         tables[CLIENTAPP].addLink("appUser", tables[APPUSER], "clientApps", new int[] {2});
         tables[CLIENTAPP].addLink("runningApp", tables[RUNNINGAPP], "clientApp", new int[] {3});
         tables[CLIENTAPP].addLink("serverApplication", tables[SERVERAPPLICATION], "clientApps", new int[] {4});
         tables[ENVIRONMENT].addLink("servers", tables[SERVER], "environment", new int[] {0});
-        tables[RUNNINGAPP].addLink("appUserLogin", tables[APPUSERLOGIN], "runningApps", new int[] {7});
+        tables[RUNNINGAPP].addLink("appStoreServer", tables[APPSTORESERVER], "runningApp", new int[] {0});
+        tables[RUNNINGAPP].addLink("appUserLogin", tables[APPUSERLOGIN], "runningApp", new int[] {0});
         tables[RUNNINGAPP].addLink("clientApp", tables[CLIENTAPP], "runningApp", new int[] {0});
         tables[RUNNINGAPP].addLink("serverApplication", tables[SERVERAPPLICATION], "runningApp", new int[] {0});
         tables[RUNNINGAPP].addLink("singleApp", tables[SINGLEAPP], "runningApp", new int[] {0});
@@ -528,6 +544,25 @@ public class DataSource {
         if (table != null) table.setDataAccessObject(dao);
         
         dao = new DataAccessObject() {
+            private static final String pkeyColumns = "AppStoreServer.Id";
+            private static final String columns = "AppStoreServer.Id, AppStoreServer.Created, AppStoreServer.Name, AppStoreServer.Server, AppStoreServer.RunningAppId";
+            @Override
+            public String getPkeySelectColumns() {
+                return pkeyColumns;
+            }
+            @Override
+            public String getSelectColumns() {
+                return columns;
+            }
+            @Override
+            public OAObject getObject(DataAccessObject.ResultSetInfo rsi) throws SQLException {
+                return getAppStoreServer(rsi.getResultSet(), rsi);
+            }
+        };
+        table = db.getTable("AppStoreServer");
+        if (table != null) table.setDataAccessObject(dao);
+        
+        dao = new DataAccessObject() {
             private static final String pkeyColumns = "AppUser.Id";
             private static final String columns = "AppUser.Id, AppUser.LoginId, AppUser.Password, AppUser.Admin, AppUser.EditProcessed, AppUser.FirstName, AppUser.LastName, AppUser.InactiveDate, AppUser.Note, AppUser.DisableAutoLogin";
             @Override
@@ -567,7 +602,7 @@ public class DataSource {
         
         dao = new DataAccessObject() {
             private static final String pkeyColumns = "AppUserLogin.Id";
-            private static final String columns = "AppUserLogin.Id, AppUserLogin.Created, AppUserLogin.Location, AppUserLogin.ComputerName, AppUserLogin.TimeZone, AppUserLogin.Disconnected, AppUserLogin.ConnectionId, AppUserLogin.HostName, AppUserLogin.IpAddress, AppUserLogin.TotalMemory, AppUserLogin.FreeMemory, AppUserLogin.AppUserId";
+            private static final String columns = "AppUserLogin.Id, AppUserLogin.Created, AppUserLogin.Location, AppUserLogin.ComputerName, AppUserLogin.TimeZone, AppUserLogin.Disconnected, AppUserLogin.ConnectionId, AppUserLogin.HostName, AppUserLogin.IpAddress, AppUserLogin.TotalMemory, AppUserLogin.FreeMemory, AppUserLogin.AppUserId, AppUserLogin.RunningAppId";
             @Override
             public String getPkeySelectColumns() {
                 return pkeyColumns;
@@ -624,7 +659,7 @@ public class DataSource {
         
         dao = new DataAccessObject() {
             private static final String pkeyColumns = "RunningApp.Id";
-            private static final String columns = "RunningApp.Id, RunningApp.Created, RunningApp.StopRequest, RunningApp.Pid, RunningApp.Error, RunningApp.CpuSeconds, RunningApp.Stopped, RunningApp.AppUserLoginId";
+            private static final String columns = "RunningApp.Id, RunningApp.Created, RunningApp.StopRequest, RunningApp.Pid, RunningApp.Error, RunningApp.CpuSeconds, RunningApp.Stopped";
             @Override
             public String getPkeySelectColumns() {
                 return pkeyColumns;
@@ -762,6 +797,19 @@ public class DataSource {
             rsi.setFoundInCache(true);
         }
         return appServer;
+    }
+    
+    protected AppStoreServer getAppStoreServer(ResultSet rs, DataAccessObject.ResultSetInfo rsi) throws SQLException {
+        int id = rs.getInt(1);
+        AppStoreServer appStoreServer = (AppStoreServer) OAObjectCacheDelegate.getObject(AppStoreServer.class, id);
+        if (appStoreServer == null) {
+            appStoreServer = new AppStoreServer();
+            appStoreServer.load(rs, id);
+        }
+        else {
+            rsi.setFoundInCache(true);
+        }
+        return appStoreServer;
     }
     
     protected AppUser getAppUser(ResultSet rs, DataAccessObject.ResultSetInfo rsi) throws SQLException {

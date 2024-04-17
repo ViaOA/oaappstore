@@ -88,7 +88,6 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
     protected OADateTimeTextField tableDtTxtCreated;
     // commands for methods
     
-    protected AppUserLoginJfc jfcAppUserLogin;
     
     public RunningAppJfcBase() {
         this.model = new RunningAppModel();
@@ -1342,7 +1341,6 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         OAJfcController jfcController;
         OADateTimeTextField dttxt;
         OATextField txt;
-        JPanel pan;
         panel = new JPanel(new GridBagLayout());
         panel.setBorder(new EmptyBorder(5,5, 3,3));
     
@@ -1444,23 +1442,6 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         panel.add(comp, gc);
         gc.fill = gc.NONE;
         gc.gridwidth = 1;
-        if (getModel().getAppUserLoginModel().getCreateUI()) {
-            lbl = new JLabel("App User Login:");
-            gc.anchor = gc.WEST;
-            panel.add(lbl, gc);
-            gc.anchor = gc.NORTHWEST;
-            gc.gridwidth = gc.REMAINDER;
-            gc.fill = gc.HORIZONTAL;
-            olbl = createAppUserLoginLabel();
-            if (getModel().getViewOnly()) olbl.getController().setViewOnly(true);
-            OAJfcControllerFactory.createOnlyAoNotNull(getHub(), lbl);
-            cmd = createAppUserLoginCommand();
-            comp = olbl;
-            comp = new OAResizePanel(comp, cmd);
-            panel.add(comp, gc);
-            gc.gridwidth = 1;
-            gc.fill = gc.NONE;
-        }
     
         // take up remaining space
         lbl = new JLabel("");
@@ -1620,16 +1601,6 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         return cmd;
     }
     
-    public OALabel createAppUserLoginLabel() {
-        OALabel lbl = getAppUserLoginJfc().createLabel();
-        return lbl;
-    }
-    public JButton createAppUserLoginCommand() {
-        JButton cmd = null;
-        cmd = getAppUserLoginJfc().createGotoEditButton();
-        return cmd;
-    }
-    
     protected void setup(JTextComponent txt) {
         OATextController tc = new OATextController(txt, Resource.getSpellChecker(), true);
         String s = txt.getToolTipText();
@@ -1651,14 +1622,6 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
     }
     
     
-    public AppUserLoginJfc getAppUserLoginJfc() {
-        if (jfcAppUserLogin != null) return jfcAppUserLogin;
-        jfcAppUserLogin = new AppUserLoginJfc(getModel().getAppUserLoginModel()) {
-        };
-        jfcAppUserLogin.setLevel(getLevel()+1);
-        OAModelJfcUtil.setParent(jfcAppUserLogin, this);
-        return jfcAppUserLogin;
-    }
     // OnShowCommands
     public void showCardPanel(String name) {
         if (name == null) return;

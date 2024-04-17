@@ -74,10 +74,8 @@ public class AppUserLoginJfcBase implements OAModelJfcInterface {
     public static final String CARD_Edit = "edit";
     protected static final String CARD_AppServers = "AppServers";
     protected static final String CARD_AppUserErrors = "AppUserErrors";
-    protected static final String CARD_RunningApps = "RunningApps";
     protected int TAB_AppServers = -1;
     protected int TAB_AppUserErrors = -1;
-    protected int TAB_RunningApps = -1;
     protected JPanel cardPanel;
     protected CardLayout cardLayout;
     protected JTabbedPane tabbedPane;
@@ -94,9 +92,9 @@ public class AppUserLoginJfcBase implements OAModelJfcInterface {
     protected OADateTimeTextField dttxtCreated;
     protected OADateTimeTextField tableDtTxtCreated;
     protected AppUserJfc jfcAppUser;
+    protected RunningAppJfc jfcRunningApp;
     protected AppServerJfc jfcAppServers;
     protected AppUserErrorJfc jfcAppUserErrors;
-    protected RunningAppJfc jfcRunningApps;
     
     public AppUserLoginJfcBase() {
         this.model = new AppUserLoginModel();
@@ -360,10 +358,6 @@ public class AppUserLoginJfcBase implements OAModelJfcInterface {
         mi = getAppUserErrorsJfc().createNewMenuItem();
         if (mi != null) menu.add(mi);
         mi = getAppUserErrorsJfc().createAddMenuItem();
-        if (mi != null) menu.add(mi);
-        mi = getRunningAppsJfc().createNewMenuItem();
-        if (mi != null) menu.add(mi);
-        mi = getRunningAppsJfc().createAddMenuItem();
         if (mi != null) menu.add(mi);
     
         menu.addSeparator();
@@ -1491,7 +1485,6 @@ public class AppUserLoginJfcBase implements OAModelJfcInterface {
         pan.add(new OAScroller(createToolBar(ToolBarOptions.createOneToolBar())), BorderLayout.NORTH);
         // cardPanel.add(getAppServersJfc().getCardPanel(), CARD_AppServers); // this will be created when needed by showCardPanel(..)
         // cardPanel.add(getAppUserErrorsJfc().getCardPanel(), CARD_AppUserErrors); // this will be created when needed by showCardPanel(..)
-        // cardPanel.add(getRunningAppsJfc().getCardPanel(), CARD_RunningApps); // this will be created when needed by showCardPanel(..)
         return pan;
     }
     
@@ -1509,7 +1502,6 @@ public class AppUserLoginJfcBase implements OAModelJfcInterface {
         pan.add(new OAScroller(createToolBar(ToolBarOptions.createEditPanelToolBar())), BorderLayout.NORTH);
         // cardPanel.add(getAppServersJfc().getCardPanel(), CARD_AppServers); // this will be created when needed by showCardPanel(..)
         // cardPanel.add(getAppUserErrorsJfc().getCardPanel(), CARD_AppUserErrors); // this will be created when needed by showCardPanel(..)
-        // cardPanel.add(getRunningAppsJfc().getCardPanel(), CARD_RunningApps); // this will be created when needed by showCardPanel(..)
         return pan;
     }
     public CardLayout getCardLayout() {
@@ -1717,6 +1709,23 @@ public class AppUserLoginJfcBase implements OAModelJfcInterface {
         panel.add(comp, gc);
         gc.fill = gc.NONE;
         gc.gridwidth = 1;
+        if (getModel().getRunningAppModel().getCreateUI()) {
+            lbl = new JLabel("Running App:");
+            gc.anchor = gc.WEST;
+            panel.add(lbl, gc);
+            gc.anchor = gc.NORTHWEST;
+            gc.gridwidth = gc.REMAINDER;
+            gc.fill = gc.HORIZONTAL;
+            olbl = createRunningAppLabel();
+            if (getModel().getViewOnly()) olbl.getController().setViewOnly(true);
+            OAJfcControllerFactory.createOnlyAoNotNull(getHub(), lbl);
+            cmd = createRunningAppCommand();
+            comp = olbl;
+            comp = new OAResizePanel(comp, cmd);
+            panel.add(comp, gc);
+            gc.gridwidth = 1;
+            gc.fill = gc.NONE;
+        }
     
         // take up remaining space
         lbl = new JLabel("");
@@ -1825,53 +1834,6 @@ public class AppUserLoginJfcBase implements OAModelJfcInterface {
             }
             else {
                 tabbedPane.addTab("Errors", icon, new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), "App User Errors");
-            }
-        }
-        icon = Resource.getJarIcon("runningApp.gif");
-        icon = new ScaledImageIcon(icon, 32, 20);
-        tabbedPane.addChangeListener(new ChangeListener() {
-            volatile JPanel panThis;
-            volatile Exception ex;
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if (panThis != null) return;
-                if (AppUserLoginJfcBase.this.TAB_RunningApps == 0) return;
-                final JTabbedPane tp = (JTabbedPane) e.getSource();
-                if (tp.getSelectedIndex() != AppUserLoginJfcBase.this.TAB_RunningApps) return;
-                SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
-                    @Override
-                    protected Void doInBackground() throws Exception {
-                        try {
-                            if (bUseCombinedDetail) panThis = getRunningAppsJfc().createCombinedPanel();
-                            else panThis = getRunningAppsJfc().createTablePanel();
-                        }
-                        catch (Exception e) {
-                            ex = e;
-                        }
-                        return null;
-                    }
-                    @Override
-                    protected void done() {
-                        if (ex != null) {
-                            LOG.log(Level.WARNING, "UI exception creating UI for AppUserLogin", ex);
-                            JOptionPane.showMessageDialog(null, "Exception while creating UI, message sent to tech support", "UI Exception", JOptionPane.ERROR_MESSAGE);
-                        }
-                        if (panThis == null) panThis = new JPanel();
-                        tp.setComponentAt(AppUserLoginJfcBase.this.TAB_RunningApps, panThis);
-                    }
-                };
-                sw.execute();
-            }
-        });
-        if (getModel().getRunningAppsModel().getCreateUI()) {
-            if ((this.TAB_RunningApps = tabbedPane.getTabCount()) == 0) {
-                JPanel panThis;
-                if (bUseCombinedDetail) panThis = getRunningAppsJfc().createCombinedPanel();
-                else panThis = getRunningAppsJfc().createTablePanel();
-                tabbedPane.setComponentAt(AppUserLoginJfcBase.this.TAB_RunningApps, panThis);
-            }
-            else {
-                tabbedPane.addTab("Running Apps", icon, new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), "Running Apps");
             }
         }
         panel = panMain;
@@ -2052,6 +2014,46 @@ public class AppUserLoginJfcBase implements OAModelJfcInterface {
         return null;
     }
     
+    public OALabel createRunningAppLabel() {
+        OALabel lbl = getRunningAppJfc().createLabel();
+        return lbl;
+    }
+    public JButton createRunningAppCommand() {
+        JButton cmd = null;
+        OAMultiButtonSplitButton mscmd = new OAMultiButtonSplitButton();
+        mscmd.setShowTextInSelectedButton(true);
+        mscmd.setAllowChangeMasterButton(false);
+        mscmd.setRequestFocusEnabled(false);
+        mscmd.setFocusPainted(false);
+        OAButton.setup(mscmd);
+        cmd = getRunningAppJfc().createGotoEditButton();
+        if (cmd != null) {
+            ((OAButton)cmd).getController().setViewOnly(getModel().getViewOnly());
+            mscmd.addButton(cmd);
+        }
+        ((OAButton)cmd).getController().setViewOnly(getModel().getViewOnly());
+        cmd = getRunningAppJfc().createNewButton();
+        if (cmd != null) {
+        ((OAButton)cmd).getController().setViewOnly(getModel().getViewOnly());
+            mscmd.addButton(cmd);
+        }
+        cmd = getRunningAppJfc().createSearchButton(true);
+        if (cmd != null) {
+            ((OAButton)cmd).getController().setViewOnly(getModel().getViewOnly());
+            cmd.setText("Search ...");
+            mscmd.addButton(cmd);
+        }
+        boolean b = true;
+        Hub h;
+        if (b) {
+            cmd = new OAButton(getModel().getRunningAppHub(), OAButton.CLEARAO);
+            cmd.setText("Clear");
+            ((OAButton)cmd).getController().setViewOnly(getModel().getViewOnly());
+            mscmd.addButton(cmd);
+        }
+        return mscmd;
+    }
+    
     protected void setup(JTextComponent txt) {
         OATextController tc = new OATextController(txt, Resource.getSpellChecker(), true);
         String s = txt.getToolTipText();
@@ -2080,6 +2082,33 @@ public class AppUserLoginJfcBase implements OAModelJfcInterface {
         jfcAppUser.setLevel(getLevel()+1);
         OAModelJfcUtil.setParent(jfcAppUser, this);
         return jfcAppUser;
+    }
+    public RunningAppJfc getRunningAppJfc() {
+        if (jfcRunningApp != null) return jfcRunningApp;
+        jfcRunningApp = new RunningAppJfc(getModel().getRunningAppModel()) {
+            @Override
+            protected RunningAppSearchJfc getSearchJfc() {
+                if (jfcSearch != null) return jfcSearch;
+                AppUserLoginJfcBase.this.getModel().getRunningAppSearchModel().getRunningAppSearch().setMaxResults(1000);
+                jfcSearch = new RunningAppSearchJfc(AppUserLoginJfcBase.this.getModel().getRunningAppSearchModel());
+                return jfcSearch;
+            }
+            @Override
+            protected void onNewRunningAppCreated() {
+                getEditDialog(AppUserLoginJfcBase.this.getCardPanel()).setVisible(true);
+            }
+            @Override
+            protected RunningApp onSearch() {
+                getSearchJfc().getDialog().setVisible(true);
+                if (!getSearchJfc().wasSelected()) return null;
+                
+                RunningApp runningApp = getSearchJfc().getSelected();
+                return runningApp;
+            }
+        };
+        jfcRunningApp.setLevel(getLevel()+1);
+        OAModelJfcUtil.setParent(jfcRunningApp, this);
+        return jfcRunningApp;
     }
     public AppServerJfc getAppServersJfc() {
         if (jfcAppServers == null) {
@@ -2227,72 +2256,6 @@ public class AppUserLoginJfcBase implements OAModelJfcInterface {
         OAModelJfcUtil.setParent(jfcAppUserErrors, this);
         return jfcAppUserErrors;
     }
-    public RunningAppJfc getRunningAppsJfc() {
-        if (jfcRunningApps == null) {
-            jfcRunningApps = createRunningAppsJfc();
-        }
-        return jfcRunningApps;
-    }
-    public RunningAppJfc createRunningAppsJfc() {
-        return createRunningAppsJfc(true);
-    }
-    public RunningAppJfc createRunningAppsJfc(final boolean bIsEmbedded) {
-        jfcRunningApps = new RunningAppJfc(getModel().getRunningAppsModel()) {
-            @Override
-            public JPanel getCardPanel() {
-                if (cardPanel != null) return cardPanel;
-                if (!bIsEmbedded) return super.getCardPanel();
-                cardPanel = new JPanel(getCardLayout());
-                JPanel pan = new JPanel(new BorderLayout());
-                pan.add(createToolBar(ToolBarOptions.createEditPanelToolBar()), BorderLayout.NORTH);
-                pan.add(createEditPanel(), BorderLayout.CENTER);
-                cardPanel.add(pan, CARD_Edit);
-                return cardPanel;
-            }
-    
-            @Override
-            public void showCardPanel(String name) {
-                if (!bIsEmbedded) {
-                    super.showCardPanel(name);
-                    AppUserLoginJfcBase.this.showCardPanel(name);
-                    return;
-                }
-                if (name.equals(RunningAppJfc.CARD_List)) {
-                    AppUserLoginJfcBase.this.showCardPanel(CARD_Edit);
-                    if (AppUserLoginJfcBase.this.TAB_RunningApps >= 0) {
-                        AppUserLoginJfcBase.this.getTabbedPane().setSelectedIndex(AppUserLoginJfcBase.this.TAB_RunningApps);
-                    }
-                }
-                else if (name.equals(RunningAppJfcBase.CARD_Edit)) {
-                    AppUserLoginJfcBase.this.showCardPanel(CARD_Edit);
-                    if (AppUserLoginJfcBase.this.TAB_RunningApps >= 0) {
-                        AppUserLoginJfcBase.this.getTabbedPane().setSelectedIndex(AppUserLoginJfcBase.this.TAB_RunningApps);
-                    }
-                }
-                else {
-                    AppUserLoginJfcBase.this.showCardPanel(CARD_RunningApps);
-                    super.showCardPanel(name);
-                }
-            }
-            public JButton createGoBackButton() {
-                JButton cmd = new JButton();
-                cmd.setIcon(Resource.getJarIcon(Resource.getValue(Resource.IMG_GoBack)));
-                cmd.setToolTipText("Go to " + AppUserLoginJfcBase.this.getModel().getDisplayName());
-                cmd.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        AppUserLoginJfcBase.this.showCardPanel(AppUserLoginJfcBase.this.CARD_Edit);
-                        AppUserLoginJfcBase.this.getHub().resetAO(); // this will set selected treeNode
-                    }
-                });
-                OAButton.setup(cmd);
-                return cmd;
-            }
-        };
-        jfcRunningApps.setLevel(getLevel()+1);
-        OAModelJfcUtil.setParent(jfcRunningApps, this);
-        return jfcRunningApps;
-    }
     // OnShowCommands
     public void showCardPanel(String name) {
         if (name == null) return;
@@ -2305,11 +2268,6 @@ public class AppUserLoginJfcBase implements OAModelJfcInterface {
         else if (name.equalsIgnoreCase(CARD_AppUserErrors)) {
             if ( !OAArray.contains(cardPanel.getComponents(), getAppUserErrorsJfc().getCardPanel()) ) {
                 cardPanel.add(getAppUserErrorsJfc().getCardPanel(), CARD_AppUserErrors);
-            }
-        }
-        else if (name.equalsIgnoreCase(CARD_RunningApps)) {
-            if ( !OAArray.contains(cardPanel.getComponents(), getRunningAppsJfc().getCardPanel()) ) {
-                cardPanel.add(getRunningAppsJfc().getCardPanel(), CARD_RunningApps);
             }
         }
         getCardLayout().show(getCardPanel(), name);

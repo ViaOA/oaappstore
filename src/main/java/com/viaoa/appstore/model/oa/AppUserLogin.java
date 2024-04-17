@@ -29,7 +29,8 @@ import com.viaoa.appstore.model.oa.propertypath.*;
 )
 @OATable(
     indexes = {
-        @OAIndex(name = "AppUserLoginAppUser", fkey = true, columns = { @OAIndexColumn(name = "AppUserId") })
+        @OAIndex(name = "AppUserLoginAppUser", fkey = true, columns = { @OAIndexColumn(name = "AppUserId") }), 
+        @OAIndex(name = "null", fkey = true, columns = { @OAIndexColumn(name = "RunningAppId") })
     }
 )
 public class AppUserLogin extends OAObject {
@@ -52,7 +53,8 @@ public class AppUserLogin extends OAObject {
     public static final String P_AppUser = "appUser";
     public static final String P_AppUserId = "appUserId"; // fkey
     public static final String P_AppUserErrors = "appUserErrors";
-    public static final String P_RunningApps = "runningApps";
+    public static final String P_RunningApp = "runningApp";
+    public static final String P_RunningAppId = "runningAppId"; // fkey
      
     protected volatile int id;
     protected volatile OADateTime created;
@@ -69,7 +71,7 @@ public class AppUserLogin extends OAObject {
     // Links to other objects.
     protected volatile transient AppUser appUser;
     protected transient Hub<AppUserError> hubAppUserErrors;
-    protected transient Hub<RunningApp> hubRunningApps;
+    protected volatile transient RunningApp runningApp;
      
     public AppUserLogin() {
         if (!isLoading()) setObjectDefaults();
@@ -273,19 +275,31 @@ public class AppUserLogin extends OAObject {
         return hubAppUserErrors;
     }
 
-    @OAMany(
-        displayName = "Running Apps", 
-        toClass = RunningApp.class, 
-        owner = true, 
+    @OAOne(
+        displayName = "Running App", 
         reverseName = RunningApp.P_AppUserLogin, 
-        cascadeSave = true, 
-        cascadeDelete = true
+        fkeys = {@OAFkey(fromProperty = P_RunningAppId, toProperty = RunningApp.P_Id)}
     )
-    public Hub<RunningApp> getRunningApps() {
-        if (hubRunningApps == null) {
-            hubRunningApps = (Hub<RunningApp>) getHub(P_RunningApps);
+    public RunningApp getRunningApp() {
+        if (runningApp == null) {
+            runningApp = (RunningApp) getObject(P_RunningApp);
         }
-        return hubRunningApps;
+        return runningApp;
+    }
+    public void setRunningApp(RunningApp newValue) {
+        RunningApp old = this.runningApp;
+        fireBeforePropertyChange(P_RunningApp, old, newValue);
+        this.runningApp = newValue;
+        firePropertyChange(P_RunningApp, old, this.runningApp);
+    }
+    @OAProperty(isFkeyOnly = true)
+    @OAColumn(name = "RunningAppId")
+    public Integer getRunningAppId() {
+        return (Integer) getFkeyProperty(P_RunningAppId);
+    }
+    public void setRunningAppId(Integer newValue) {
+        this.runningApp = null;
+        setFkeyProperty(P_RunningAppId, newValue);
     }
     public void load(ResultSet rs, int id) throws SQLException {
         this.id = id;
@@ -307,6 +321,8 @@ public class AppUserLogin extends OAObject {
         OAObjectInfoDelegate.setPrimitiveNull(this, P_FreeMemory, rs.wasNull());
         int appUserFkey = rs.getInt(12);
         setFkeyProperty(P_AppUser, rs.wasNull() ? null : appUserFkey);
+        int runningAppFkey = rs.getInt(13);
+        setFkeyProperty(P_RunningApp, rs.wasNull() ? null : runningAppFkey);
 
         this.changedFlag = false;
         this.newFlag = false;

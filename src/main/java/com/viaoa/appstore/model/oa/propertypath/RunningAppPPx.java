@@ -25,6 +25,11 @@ public class RunningAppPPx implements PPxInterface, Serializable {
         pp = s;
     }
 
+    public AppStoreServerPPx appStoreServer() {
+        AppStoreServerPPx ppx = new AppStoreServerPPx(this, RunningApp.P_AppStoreServer);
+        return ppx;
+    }
+
     public AppUserLoginPPx appUserLogin() {
         AppUserLoginPPx ppx = new AppUserLoginPPx(this, RunningApp.P_AppUserLogin);
         return ppx;

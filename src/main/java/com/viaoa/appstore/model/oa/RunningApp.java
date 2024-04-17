@@ -25,9 +25,6 @@ import com.viaoa.appstore.delegate.ModelDelegate;
     noPojo = true
 )
 @OATable(
-    indexes = {
-        @OAIndex(name = "RunningAppAppUserLogin", fkey = true, columns = { @OAIndexColumn(name = "AppUserLoginId") })
-    }
 )
 public class RunningApp extends OAObject {
     private static final long serialVersionUID = 1L;
@@ -41,8 +38,8 @@ public class RunningApp extends OAObject {
     public static final String P_CpuSeconds = "cpuSeconds";
     public static final String P_Stopped = "stopped";
      
+    public static final String P_AppStoreServer = "appStoreServer";
     public static final String P_AppUserLogin = "appUserLogin";
-    public static final String P_AppUserLoginId = "appUserLoginId"; // fkey
     public static final String P_ClientApp = "clientApp";
     public static final String P_ServerApplication = "serverApplication";
     public static final String P_SingleApp = "singleApp";
@@ -56,8 +53,6 @@ public class RunningApp extends OAObject {
     protected volatile long cpuSeconds;
     protected volatile OADateTime stopped;
      
-    // Links to other objects.
-    protected volatile transient AppUserLogin appUserLogin;
      
     public RunningApp() {
         if (!isLoading()) setObjectDefaults();
@@ -65,7 +60,6 @@ public class RunningApp extends OAObject {
     @Override
     public void setObjectDefaults() {
         setCreated(new OADateTime());
-        getClientApp(); // have it autoCreated
         getServerApplication(); // have it autoCreated
     }
      
@@ -160,39 +154,32 @@ public class RunningApp extends OAObject {
     }
 
     @OAOne(
-        displayName = "App User Login", 
-        reverseName = AppUserLogin.P_RunningApps, 
-        required = true, 
+        displayName = "App Store Server", 
+        reverseName = AppStoreServer.P_RunningApp, 
         allowCreateNew = false, 
-        fkeys = {@OAFkey(fromProperty = P_AppUserLoginId, toProperty = AppUserLogin.P_Id)}
+        allowAddExisting = false, 
+        isOneAndOnlyOne = true
     )
-    public AppUserLogin getAppUserLogin() {
-        if (appUserLogin == null) {
-            appUserLogin = (AppUserLogin) getObject(P_AppUserLogin);
-        }
-        return appUserLogin;
+    private AppStoreServer getAppStoreServer() {
+        // oamodel has createMethod set to false, this method exists only for annotations.
+        return null;
     }
-    public void setAppUserLogin(AppUserLogin newValue) {
-        AppUserLogin old = this.appUserLogin;
-        fireBeforePropertyChange(P_AppUserLogin, old, newValue);
-        this.appUserLogin = newValue;
-        firePropertyChange(P_AppUserLogin, old, this.appUserLogin);
-    }
-    @OAProperty(isFkeyOnly = true)
-    @OAColumn(name = "AppUserLoginId")
-    public Integer getAppUserLoginId() {
-        return (Integer) getFkeyProperty(P_AppUserLoginId);
-    }
-    public void setAppUserLoginId(Integer newValue) {
-        this.appUserLogin = null;
-        setFkeyProperty(P_AppUserLoginId, newValue);
+
+    @OAOne(
+        displayName = "App User Login", 
+        reverseName = AppUserLogin.P_RunningApp, 
+        allowCreateNew = false, 
+        allowAddExisting = false
+    )
+    private AppUserLogin getAppUserLogin() {
+        // oamodel has createMethod set to false, this method exists only for annotations.
+        return null;
     }
 
     @OAOne(
         displayName = "Client App", 
         reverseName = ClientApp.P_RunningApp, 
         allowCreateNew = false, 
-        autoCreateNew = true, 
         allowAddExisting = false, 
         isOneAndOnlyOne = true
     )
@@ -244,8 +231,6 @@ public class RunningApp extends OAObject {
         OAObjectInfoDelegate.setPrimitiveNull(this, P_CpuSeconds, rs.wasNull());
         timestamp = rs.getTimestamp(7);
         if (timestamp != null) this.stopped = new OADateTime(timestamp);
-        int appUserLoginFkey = rs.getInt(8);
-        setFkeyProperty(P_AppUserLogin, rs.wasNull() ? null : appUserLoginFkey);
 
         this.changedFlag = false;
         this.newFlag = false;

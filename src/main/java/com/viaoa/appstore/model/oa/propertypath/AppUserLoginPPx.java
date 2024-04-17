@@ -40,8 +40,8 @@ public class AppUserLoginPPx implements PPxInterface, Serializable {
         return ppx;
     }
 
-    public RunningAppPPx runningApps() {
-        RunningAppPPx ppx = new RunningAppPPx(this, AppUserLogin.P_RunningApps);
+    public RunningAppPPx runningApp() {
+        RunningAppPPx ppx = new RunningAppPPx(this, AppUserLogin.P_RunningApp);
         return ppx;
     }
 

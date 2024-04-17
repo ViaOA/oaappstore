@@ -27,23 +27,24 @@ public class AppUserLoginModel extends OAObjectModel {
     protected Hub<AppUserLogin> hubMultiSelect;
     // detail hubs
     protected Hub<AppUser> hubAppUser;
+    protected Hub<RunningApp> hubRunningApp;
     protected Hub<AppServer> hubAppServers;
     protected Hub<AppUserError> hubAppUserErrors;
-    protected Hub<RunningApp> hubRunningApps;
     
     // AddHubs used for references
     protected Hub<AppUser> hubAppUserSelectFrom;
     
     // ObjectModels
     protected AppUserModel modelAppUser;
+    protected RunningAppModel modelRunningApp;
     protected AppServerModel modelAppServers;
     protected AppUserErrorModel modelAppUserErrors;
-    protected RunningAppModel modelRunningApps;
     
     // selectFrom
     protected AppUserModel modelAppUserSelectFrom;
     
     // SearchModels used for references
+    protected RunningAppSearchModel modelRunningAppSearch;
     protected AppServerSearchModel modelAppServersSearch;
     
     public AppUserLoginModel() {
@@ -72,6 +73,11 @@ public class AppUserLoginModel extends OAObjectModel {
         hubAppUser = getHub().getDetailHub(AppUserLogin.P_AppUser);
         return hubAppUser;
     }
+    public Hub<RunningApp> getRunningAppHub() {
+        if (hubRunningApp != null) return hubRunningApp;
+        hubRunningApp = getHub().getDetailHub(AppUserLogin.P_RunningApp);
+        return hubRunningApp;
+    }
     public Hub<AppServer> getAppServers() {
         // createMethod=false, used by getAppServersSearchModel() for searches
         if (hubAppServers != null) return hubAppServers;
@@ -85,12 +91,6 @@ public class AppUserLoginModel extends OAObjectModel {
             hubAppUserErrors = getHub().getDetailHub(AppUserLogin.P_AppUserErrors);
         }
         return hubAppUserErrors;
-    }
-    public Hub<RunningApp> getRunningApps() {
-        if (hubRunningApps == null) {
-            hubRunningApps = getHub().getDetailHub(AppUserLogin.P_RunningApps);
-        }
-        return hubRunningApps;
     }
     public Hub<AppUser> getAppUserSelectFromHub() {
         if (hubAppUserSelectFrom != null) return hubAppUserSelectFrom;
@@ -140,6 +140,27 @@ public class AppUserLoginModel extends OAObjectModel {
         OAObjectCallbackDelegate.onObjectCallbackModel(AppUserLogin.class, AppUserLogin.P_AppUser, modelAppUser);
     
         return modelAppUser;
+    }
+    public RunningAppModel getRunningAppModel() {
+        if (modelRunningApp != null) return modelRunningApp;
+        modelRunningApp = new RunningAppModel(getRunningAppHub());
+        modelRunningApp.setDisplayName("Running App");
+        modelRunningApp.setPluralDisplayName("Running Apps");
+        modelRunningApp.setForJfc(getForJfc());
+        modelRunningApp.setAllowNew(true);
+        modelRunningApp.setAllowSave(true);
+        modelRunningApp.setAllowAdd(false);
+        modelRunningApp.setAllowRemove(true);
+        modelRunningApp.setAllowClear(true);
+        modelRunningApp.setAllowDelete(false);
+        modelRunningApp.setAllowSearch(true);
+        modelRunningApp.setAllowHubSearch(false);
+        modelRunningApp.setAllowGotoEdit(true);
+        modelRunningApp.setViewOnly(getViewOnly());
+        // call AppUserLogin.runningAppModelCallback(RunningAppModel) to be able to customize this model
+        OAObjectCallbackDelegate.onObjectCallbackModel(AppUserLogin.class, AppUserLogin.P_RunningApp, modelRunningApp);
+    
+        return modelRunningApp;
     }
     public AppServerModel getAppServersModel() {
         if (modelAppServers != null) return modelAppServers;
@@ -202,38 +223,6 @@ public class AppUserLoginModel extends OAObjectModel {
     
         return modelAppUserErrors;
     }
-    public RunningAppModel getRunningAppsModel() {
-        if (modelRunningApps != null) return modelRunningApps;
-        modelRunningApps = new RunningAppModel(getRunningApps());
-        modelRunningApps.setDisplayName("Running App");
-        modelRunningApps.setPluralDisplayName("Running Apps");
-        if (HubDetailDelegate.getIsFromSameMasterHub(getOriginalHub(), getRunningApps())) {
-            modelRunningApps.setCreateUI(false);
-        }
-        modelRunningApps.setForJfc(getForJfc());
-        modelRunningApps.setAllowNew(true);
-        modelRunningApps.setAllowSave(true);
-        modelRunningApps.setAllowAdd(false);
-        modelRunningApps.setAllowMove(false);
-        modelRunningApps.setAllowRemove(false);
-        modelRunningApps.setAllowDelete(true);
-        modelRunningApps.setAllowRefresh(false);
-        modelRunningApps.setAllowSearch(false);
-        modelRunningApps.setAllowHubSearch(false);
-        modelRunningApps.setAllowDownload(true);
-        modelRunningApps.setAllowGotoEdit(true);
-        modelRunningApps.setViewOnly(getViewOnly());
-        modelRunningApps.setAllowTableFilter(true);
-        modelRunningApps.setAllowTableSorting(true);
-        modelRunningApps.setAllowMultiSelect(false);
-        modelRunningApps.setAllowCopy(false);
-        modelRunningApps.setAllowCut(false);
-        modelRunningApps.setAllowPaste(false);
-        // call AppUserLogin.runningAppsModelCallback(RunningAppModel) to be able to customize this model
-        OAObjectCallbackDelegate.onObjectCallbackModel(AppUserLogin.class, AppUserLogin.P_RunningApps, modelRunningApps);
-    
-        return modelRunningApps;
-    }
     
     public AppUserModel getAppUserSelectFromModel() {
         if (modelAppUserSelectFrom != null) return modelAppUserSelectFrom;
@@ -259,6 +248,12 @@ public class AppUserLoginModel extends OAObjectModel {
         modelAppUserSelectFrom.setAllowPaste(false);
         modelAppUserSelectFrom.setAllowMultiSelect(false);
         return modelAppUserSelectFrom;
+    }
+    public RunningAppSearchModel getRunningAppSearchModel() {
+        if (modelRunningAppSearch != null) return modelRunningAppSearch;
+        modelRunningAppSearch = new RunningAppSearchModel();
+        HubSelectDelegate.adoptWhereHub(modelRunningAppSearch.getHub(), AppUserLogin.P_RunningApp, getHub());
+        return modelRunningAppSearch;
     }
     public AppServerSearchModel getAppServersSearchModel() {
         if (modelAppServersSearch != null) return modelAppServersSearch;

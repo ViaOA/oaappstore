@@ -107,8 +107,8 @@ public class AppUserPPx implements PPxInterface, Serializable {
         return pp + "." + AppUser.P_DisplayName;
     }
 
-    public String calcCheckVersions() {
-        return pp + "." + AppUser.P_CalcCheckVersions;
+    public String showAppStoreServers() {
+        return pp + "." + AppUser.P_ShowAppStoreServers;
     }
 
     @Override
