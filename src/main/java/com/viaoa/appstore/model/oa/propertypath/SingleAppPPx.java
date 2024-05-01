@@ -40,6 +40,11 @@ public class SingleAppPPx implements PPxInterface, Serializable {
         return ppx;
     }
 
+    public PropertyValuePPx propertyValues() {
+        PropertyValuePPx ppx = new PropertyValuePPx(this, SingleApp.P_PropertyValues);
+        return ppx;
+    }
+
     public RunningAppPPx runningApp() {
         RunningAppPPx ppx = new RunningAppPPx(this, SingleApp.P_RunningApp);
         return ppx;
@@ -53,8 +58,8 @@ public class SingleAppPPx implements PPxInterface, Serializable {
         return pp + "." + SingleApp.P_Created;
     }
 
-    public String console() {
-        return pp + "." + SingleApp.P_Console;
+    public String name() {
+        return pp + "." + SingleApp.P_Name;
     }
 
     public String run() {

@@ -19,7 +19,10 @@ public class ApplicationTypeDelegate {
 
         //  "https://github.com/ViaOA/oaappstore-run/raw/master/executable-jar";
         
-        URL url = new URL(urlDownload + "/version.ini");
+        String s = applicationType.getAppDirectory();
+        s = OAStr.convert(s, "\\", "/");
+        
+        URL url = new URL(urlDownload + "/appstore/" + s +  "/version.ini");
         URLConnection conn = url.openConnection();
 
         OAProperties gitProps = new OAProperties(conn.getInputStream());
@@ -37,9 +40,40 @@ public class ApplicationTypeDelegate {
             }
         }
         
-        ApplicationVersion ap = new ApplicationVersion();
-        ap.setVersion(version);
-        ap.setRelease(release);
-        applicationType.getApplicationVersions().add(ap);
+        ApplicationVersion av = new ApplicationVersion();
+        av.setVersion(version);
+        av.setRelease(release);
+
+        // jars 
+        for (int i = 1;; i++) {
+            String fn = gitProps.getProperty("jar" + i);
+            if (OAStr.isEmpty(fn)) {
+                if (i >= 20) break;
+                continue;
+            }
+            VersionFile vf = new VersionFile();
+            vf.setFilePath(fn);
+            if (OAStr.isNotEmpty(applicationType.getJarFileName()) && OAStr.indexOf(fn, applicationType.getJarFileName(), 0, true) >= 0) vf.setType(VersionFile.TYPE_AppJar);
+            else if (OAStr.indexOf(fn, "oa-", 0, true) >= 0) vf.setType(VersionFile.TYPE_OAJar);
+            else if (OAStr.indexOf(fn, "dependency-uber", 0, true) >= 0) vf.setType(VersionFile.TYPE_DependencyUber);
+            else vf.setType(VersionFile.TYPE_OtherJar);
+            av.getVersionFiles().add(vf);
+        }
+
+        // files
+        for (int i = 1;; i++) {
+            String fn = gitProps.getProperty("file" + i);
+            if (OAStr.isEmpty(fn)) {
+                if (i >= 20) break;
+                continue;
+            }
+            VersionFile vf = new VersionFile();
+            vf.setFilePath(fn);
+            if (fn.toLowerCase().endsWith(".ini")) vf.setType(VersionFile.TYPE_IniFile);
+            else vf.setType(VersionFile.TYPE_Other);
+            av.getVersionFiles().add(vf);
+        }        
+        
+        applicationType.getApplicationVersions().add(av);
     }
 }

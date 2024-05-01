@@ -124,24 +124,6 @@ public class DataGenerator {
         }
     }
     
-    public AppStoreServer createAppStoreServer() {
-        AppStoreServer appStoreServer = new AppStoreServer();
-        return appStoreServer;
-    }
-    
-    public void prepopulate(AppStoreServer obj) {
-        prepopulate(obj, 0);
-    }
-    public void prepopulate(AppStoreServer obj, int level) {
-        int x;
-        int tot;
-        if (add(obj, AppStoreServer.P_RunningApp)) {
-            // runningApp
-            RunningApp runningApp = null;
-            done(obj, AppStoreServer.P_RunningApp);
-        }
-    }
-    
     public AppUser createAppUser() {
         AppUser appUser = new AppUser();
         return appUser;
@@ -239,6 +221,19 @@ public class DataGenerator {
         prepopulate(obj, 0);
     }
     public void prepopulate(Environment obj, int level) {
+        int x;
+        int tot;
+    }
+    
+    public PropertyValue createPropertyValue() {
+        PropertyValue propertyValue = new PropertyValue();
+        return propertyValue;
+    }
+    
+    public void prepopulate(PropertyValue obj) {
+        prepopulate(obj, 0);
+    }
+    public void prepopulate(PropertyValue obj, int level) {
         int x;
         int tot;
     }
@@ -345,6 +340,24 @@ public class DataGenerator {
         }
     }
     
+    public VersionFile createVersionFile() {
+        VersionFile versionFile = new VersionFile();
+        return versionFile;
+    }
+    
+    public void prepopulate(VersionFile obj) {
+        prepopulate(obj, 0);
+    }
+    public void prepopulate(VersionFile obj, int level) {
+        int x;
+        int tot;
+        if (add(obj, VersionFile.P_ApplicationVersion)) {
+            // applicationVersion
+            //    owned
+            done(obj, VersionFile.P_ApplicationVersion);
+        }
+    }
+    
     public void populate(ApplicationType obj) {
         populate(obj, 0);
     }
@@ -355,12 +368,12 @@ public class DataGenerator {
         // created has a default value
         obj.setName(OAString.getDummyText(14, 0, 40));
         obj.setAbbrevName(OAString.getDummyText(8, 0, 8));
-        // directoryName has a default value
         obj.setSingleTypeOnly(Math.random() < .5 ? true : false);
         obj.setClientPort((int) (Math.random() * 900));
         obj.setHttpPort((int) (Math.random() * 900));
         obj.setHttpsPort((int) (Math.random() * 900));
         // downloadUrl has a default value
+        // appDirectory has a default value
         obj.setJarFileName(OAString.getDummyText(15, 0, 70));
         // mainClass has a default value
         // jvmOptions has a default value
@@ -390,6 +403,24 @@ public class DataGenerator {
                 }
             }
             done(obj, ApplicationType.P_AppUsers);
+        }
+        if (add(obj, ApplicationType.P_PropertyValues)) {
+            // propertyValues
+            tot = ((int) (Math.random()*4));
+            tot -= obj.getPropertyValues().size();
+            for (int cnt=0; cnt<tot; cnt++) {
+                PropertyValue propertyValue = null;
+                if (Math.random() < .75) {
+                    propertyValue = (PropertyValue) OAObjectCacheDelegate.getRandom(PropertyValue.class, 500);
+                    if (propertyValue != null) obj.getPropertyValues().add(propertyValue);
+                }
+                if (propertyValue == null) {
+                    propertyValue = createPropertyValue();
+                    obj.getPropertyValues().add(propertyValue);
+                    populate(propertyValue);
+                }
+            }
+            done(obj, ApplicationType.P_PropertyValues);
         }
         if (add(obj, ApplicationType.P_ServerApplications)) {
             // serverApplications
@@ -443,6 +474,18 @@ public class DataGenerator {
                 }
             }
             done(obj, ApplicationVersion.P_SingleApps);
+        }
+        if (add(obj, ApplicationVersion.P_VersionFiles)) {
+            // versionFiles
+            tot = ((int) (Math.random()*4));
+            tot -= obj.getVersionFiles().size();
+            for (int cnt=0; cnt<tot; cnt++) {
+                VersionFile versionFile = null;
+                versionFile = createVersionFile();
+                obj.getVersionFiles().add(versionFile);
+                populate(versionFile);
+            }
+            done(obj, ApplicationVersion.P_VersionFiles);
         }
     }
     
@@ -498,19 +541,6 @@ public class DataGenerator {
         obj.setStarted((new OADateTime()).addDays((int) (Math.random() * 1000)));
         obj.setDemoMode(Math.random() < .5 ? true : false);
         obj.setRelease(OAString.getDummyText(18, 0, 18));
-    }
-    
-    public void populate(AppStoreServer obj) {
-        populate(obj, 0);
-    }
-    public void populate(AppStoreServer obj, int level) {
-        int x;
-        int tot;
-        // id is auto assigned
-        // created has a default value
-        obj.setName(OAString.getDummyText(20, 0, 70));
-        obj.setServer(OAString.getDummyText(20, 0, 75));
-        obj.setConsole(OAString.getDummyText(22, 0, 254));
     }
     
     public void populate(AppUser obj) {
@@ -621,10 +651,29 @@ public class DataGenerator {
         int tot;
         // id is auto assigned
         // created has a default value
+        obj.setName(OAString.getDummyText(18, 0, 55));
         if (obj.getAppUser() == null) {
             hub = ModelDelegate.getAppUsers();
             x = (int) (Math.random()*hub.getSize());
             obj.setAppUser((AppUser) hub.getAt(x));
+        }
+        if (add(obj, ClientApp.P_PropertyValues)) {
+            // propertyValues
+            tot = ((int) (Math.random()*4));
+            tot -= obj.getPropertyValues().size();
+            for (int cnt=0; cnt<tot; cnt++) {
+                PropertyValue propertyValue = null;
+                if (Math.random() < .75) {
+                    propertyValue = (PropertyValue) OAObjectCacheDelegate.getRandom(PropertyValue.class, 500);
+                    if (propertyValue != null) obj.getPropertyValues().add(propertyValue);
+                }
+                if (propertyValue == null) {
+                    propertyValue = createPropertyValue();
+                    obj.getPropertyValues().add(propertyValue);
+                    populate(propertyValue);
+                }
+            }
+            done(obj, ClientApp.P_PropertyValues);
         }
         if (add(obj, ClientApp.P_ServerApplication)) {
             // serverApplication
@@ -663,6 +712,20 @@ public class DataGenerator {
         }
     }
     
+    public void populate(PropertyValue obj) {
+        populate(obj, 0);
+    }
+    public void populate(PropertyValue obj, int level) {
+        int x;
+        int tot;
+        // id is auto assigned
+        // created has a default value
+        obj.setName(OAString.getDummyText(18, 0, 35));
+        obj.setValue(OAString.getDummyText(22, 0, 250));
+        obj.setIgnore(Math.random() < .5 ? true : false);
+        obj.setNote(OAString.getDummyText(22, 0, 120));
+    }
+    
     public void populate(RunningApp obj) {
         populate(obj, 0);
     }
@@ -671,11 +734,10 @@ public class DataGenerator {
         int tot;
         // id is auto assigned
         // created has a default value
-        obj.setStopRequest((new OADateTime()).addDays((int) (Math.random() * 1000)));
         obj.setPid((long) (Math.random() * 900));
-        obj.setError(OAString.getDummyText(20, 0, 240));
-        obj.setCpuSeconds((long) (Math.random() * 900));
         obj.setStopped((new OADateTime()).addDays((int) (Math.random() * 1000)));
+        obj.setConfigText(OAString.getDummyText(30, 0, 500));
+        obj.setConsole(OAString.getDummyText(20, 0, 254));
     }
     
     public void populate(Server obj) {
@@ -710,10 +772,10 @@ public class DataGenerator {
         int tot;
         // id is auto assigned
         // created has a default value
+        obj.setName(OAString.getDummyText(18, 0, 55));
         obj.setClientPort((int) (Math.random() * 900));
         obj.setHttpPort((int) (Math.random() * 900));
         obj.setHttpsPort((int) (Math.random() * 900));
-        obj.setCheckingVersion((new OADateTime()).addDays((int) (Math.random() * 1000)));
         obj.setLastConnect((new OADateTime()).addDays((int) (Math.random() * 1000)));
         if (add(obj, ServerApplication.P_ApplicationVersion)) {
             // applicationVersion
@@ -729,6 +791,24 @@ public class DataGenerator {
             //   will be created by AppUser
             done(obj, ServerApplication.P_ClientApps);
         }
+        if (add(obj, ServerApplication.P_PropertyValues)) {
+            // propertyValues
+            tot = ((int) (Math.random()*4));
+            tot -= obj.getPropertyValues().size();
+            for (int cnt=0; cnt<tot; cnt++) {
+                PropertyValue propertyValue = null;
+                if (Math.random() < .75) {
+                    propertyValue = (PropertyValue) OAObjectCacheDelegate.getRandom(PropertyValue.class, 500);
+                    if (propertyValue != null) obj.getPropertyValues().add(propertyValue);
+                }
+                if (propertyValue == null) {
+                    propertyValue = createPropertyValue();
+                    obj.getPropertyValues().add(propertyValue);
+                    populate(propertyValue);
+                }
+            }
+            done(obj, ServerApplication.P_PropertyValues);
+        }
     }
     
     public void populate(SingleApp obj) {
@@ -739,7 +819,7 @@ public class DataGenerator {
         int tot;
         // id is auto assigned
         // created has a default value
-        obj.setConsole(OAString.getDummyText(20, 0, 254));
+        obj.setName(OAString.getDummyText(18, 0, 55));
         if (add(obj, SingleApp.P_ApplicationType)) {
             // applicationType
             hub = (Hub) obj.getProperty(OAString.cpp(SingleApp.P_AppUser, AppUser.P_ApplicationTypes));
@@ -758,6 +838,36 @@ public class DataGenerator {
             }
             done(obj, SingleApp.P_ApplicationVersion);
         }
+        if (add(obj, SingleApp.P_PropertyValues)) {
+            // propertyValues
+            tot = ((int) (Math.random()*4));
+            tot -= obj.getPropertyValues().size();
+            for (int cnt=0; cnt<tot; cnt++) {
+                PropertyValue propertyValue = null;
+                if (Math.random() < .75) {
+                    propertyValue = (PropertyValue) OAObjectCacheDelegate.getRandom(PropertyValue.class, 500);
+                    if (propertyValue != null) obj.getPropertyValues().add(propertyValue);
+                }
+                if (propertyValue == null) {
+                    propertyValue = createPropertyValue();
+                    obj.getPropertyValues().add(propertyValue);
+                    populate(propertyValue);
+                }
+            }
+            done(obj, SingleApp.P_PropertyValues);
+        }
+    }
+    
+    public void populate(VersionFile obj) {
+        populate(obj, 0);
+    }
+    public void populate(VersionFile obj, int level) {
+        int x;
+        int tot;
+        // id is auto assigned
+        // created has a default value
+        obj.setType((int) (Math.random() * 7));
+        obj.setFilePath(OAString.getDummyText(22, 0, 125));
     }
     public void createSamples() {
         int x;
@@ -779,11 +889,6 @@ public class DataGenerator {
         }
         x = 5 + ((int) (Math.random()*20));
         for (int i=0; i<x; i++) {
-            AppStoreServer appStoreServer = createAppStoreServer();
-            ModelDelegate.getAppStoreServers().add(appStoreServer);
-        }
-        x = 5 + ((int) (Math.random()*20));
-        for (int i=0; i<x; i++) {
             AppUser appUser = createAppUser();
             ModelDelegate.getAppUsers().add(appUser);
         }
@@ -794,6 +899,11 @@ public class DataGenerator {
         }
         
         // others
+        x = 5 + ((int) (Math.random()*20));
+        for (int i=0; i<x; i++) {
+            PropertyValue propertyValue = createPropertyValue();
+            hubPropertyValue.add(propertyValue);
+        }
         x = 5 + ((int) (Math.random()*20));
         for (int i=0; i<x; i++) {
             RunningApp runningApp = createRunningApp();
@@ -811,9 +921,6 @@ public class DataGenerator {
         for (AppServer appServer : ModelDelegate.getCreateOneAppServerHub()) {
             prepopulate(appServer);
         }
-        for (AppStoreServer appStoreServer : ModelDelegate.getAppStoreServers()) {
-            prepopulate(appStoreServer);
-        }
         for (AppUser appUser : ModelDelegate.getAppUsers()) {
             prepopulate(appUser);
         }
@@ -822,6 +929,9 @@ public class DataGenerator {
         }
         
         // others
+        for (PropertyValue propertyValue : hubPropertyValue) {
+            prepopulate(propertyValue);
+        }
         for (RunningApp runningApp : hubRunningApp) {
             prepopulate(runningApp);
         }
@@ -837,9 +947,6 @@ public class DataGenerator {
         for (AppServer appServer : ModelDelegate.getCreateOneAppServerHub()) {
             populate(appServer);
         }
-        for (AppStoreServer appStoreServer : ModelDelegate.getAppStoreServers()) {
-            populate(appStoreServer);
-        }
         for (AppUser appUser : ModelDelegate.getAppUsers()) {
             populate(appUser);
         }
@@ -848,12 +955,16 @@ public class DataGenerator {
         }
         
         // others
+        for (PropertyValue propertyValue : hubPropertyValue) {
+            populate(propertyValue);
+        }
         for (RunningApp runningApp : hubRunningApp) {
             populate(runningApp);
         }
     }
     
     // Hubs to hold sample data that is not in ModelDelegate
+    private Hub<PropertyValue> hubPropertyValue = new Hub<PropertyValue>(PropertyValue.class);
     private Hub<RunningApp> hubRunningApp = new Hub<RunningApp>(RunningApp.class);
     
     public static void main(String[] args) {

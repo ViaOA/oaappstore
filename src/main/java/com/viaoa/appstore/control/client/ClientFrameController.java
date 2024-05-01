@@ -45,7 +45,6 @@ import com.viaoa.appstore.model.oa.AppUserLogin;
 import com.viaoa.appstore.resource.Resource;
 import com.viaoa.appstore.view.client.ClientFrame;
 /*$$Start: ClientFrameController.customize0 $$*/
-import com.viaoa.appstore.view.client.panel.appStoreServers.AppStoreServersPanel;
 import com.viaoa.appstore.view.client.panel.myApps.MyAppsPanel;
 import com.viaoa.appstore.view.client.panel.envs.EnvsPanel;
 import com.viaoa.appstore.view.client.panel.appTypes.AppTypesPanel;
@@ -646,8 +645,6 @@ public abstract class ClientFrameController {
 
 	protected void customize() {
 		/*$$Start: ClientFrameController.customize1 $$*/
-        AppStoreServersPanel panAppStoreServers = new AppStoreServersPanel();
-        frm.addPanel(panAppStoreServers.getMainComponent(), "AppStoreServersPanel", panAppStoreServers.getMenuItem(), panAppStoreServers.getToggleButton());
         MyAppsPanel panMyApps = new MyAppsPanel();
         frm.addPanel(panMyApps.getMainComponent(), "MyAppsPanel", panMyApps.getMenuItem(), panMyApps.getToggleButton());
         EnvsPanel panEnvs = new EnvsPanel();

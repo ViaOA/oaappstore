@@ -74,8 +74,10 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
     public static final String CARD_Edit = "edit";
     protected static final String CARD_ServerApplications = "ServerApplications";
     protected static final String CARD_SingleApps = "SingleApps";
+    protected static final String CARD_VersionFiles = "VersionFiles";
     protected int TAB_ServerApplications = -1;
     protected int TAB_SingleApps = -1;
+    protected int TAB_VersionFiles = -1;
     protected JPanel cardPanel;
     protected CardLayout cardLayout;
     protected JTabbedPane tabbedPane;
@@ -96,6 +98,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
     protected ApplicationTypeJfc jfcApplicationType;
     protected ServerApplicationJfc jfcServerApplications;
     protected SingleAppJfc jfcSingleApps;
+    protected VersionFileJfc jfcVersionFiles;
     
     public ApplicationVersionJfcBase() {
         this.model = new ApplicationVersionModel();
@@ -359,6 +362,10 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         mi = getSingleAppsJfc().createNewMenuItem();
         if (mi != null) menu.add(mi);
         mi = getSingleAppsJfc().createAddMenuItem();
+        if (mi != null) menu.add(mi);
+        mi = getVersionFilesJfc().createNewMenuItem();
+        if (mi != null) menu.add(mi);
+        mi = getVersionFilesJfc().createAddMenuItem();
         if (mi != null) menu.add(mi);
     
         menu.addSeparator();
@@ -1352,6 +1359,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         pan.add(new OAScroller(createToolBar(ToolBarOptions.createOneToolBar())), BorderLayout.NORTH);
         // cardPanel.add(getServerApplicationsJfc().getCardPanel(), CARD_ServerApplications); // this will be created when needed by showCardPanel(..)
         // cardPanel.add(getSingleAppsJfc().getCardPanel(), CARD_SingleApps); // this will be created when needed by showCardPanel(..)
+        // cardPanel.add(getVersionFilesJfc().getCardPanel(), CARD_VersionFiles); // this will be created when needed by showCardPanel(..)
         return pan;
     }
     
@@ -1369,6 +1377,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         pan.add(new OAScroller(createToolBar(ToolBarOptions.createEditPanelToolBar())), BorderLayout.NORTH);
         // cardPanel.add(getServerApplicationsJfc().getCardPanel(), CARD_ServerApplications); // this will be created when needed by showCardPanel(..)
         // cardPanel.add(getSingleAppsJfc().getCardPanel(), CARD_SingleApps); // this will be created when needed by showCardPanel(..)
+        // cardPanel.add(getVersionFilesJfc().getCardPanel(), CARD_VersionFiles); // this will be created when needed by showCardPanel(..)
         return pan;
     }
     public CardLayout getCardLayout() {
@@ -1544,7 +1553,8 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
                     @Override
                     protected Void doInBackground() throws Exception {
                         try {
-                            panThis = getSingleAppsJfc().createTablePanel();
+                            if (bUseCombinedDetail) panThis = getSingleAppsJfc().createCombinedPanel();
+                            else panThis = getSingleAppsJfc().createTablePanel();
                         }
                         catch (Exception e) {
                             ex = e;
@@ -1567,11 +1577,59 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         if (getModel().getSingleAppsModel().getCreateUI()) {
             if ((this.TAB_SingleApps = tabbedPane.getTabCount()) == 0) {
                 JPanel panThis;
-                panThis = getSingleAppsJfc().createTablePanel();
+                if (bUseCombinedDetail) panThis = getSingleAppsJfc().createCombinedPanel();
+                else panThis = getSingleAppsJfc().createTablePanel();
                 tabbedPane.setComponentAt(ApplicationVersionJfcBase.this.TAB_SingleApps, panThis);
             }
             else {
                 tabbedPane.addTab("Single Apps", icon, new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), "Single Apps");
+            }
+        }
+        icon = Resource.getJarIcon("versionFile.gif");
+        icon = new ScaledImageIcon(icon, 32, 20);
+        tabbedPane.addChangeListener(new ChangeListener() {
+            volatile JPanel panThis;
+            volatile Exception ex;
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (panThis != null) return;
+                if (ApplicationVersionJfcBase.this.TAB_VersionFiles == 0) return;
+                final JTabbedPane tp = (JTabbedPane) e.getSource();
+                if (tp.getSelectedIndex() != ApplicationVersionJfcBase.this.TAB_VersionFiles) return;
+                SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        try {
+                            if (bUseCombinedDetail) panThis = getVersionFilesJfc().createCombinedPanel();
+                            else panThis = getVersionFilesJfc().createTablePanel();
+                        }
+                        catch (Exception e) {
+                            ex = e;
+                        }
+                        return null;
+                    }
+                    @Override
+                    protected void done() {
+                        if (ex != null) {
+                            LOG.log(Level.WARNING, "UI exception creating UI for ApplicationVersion", ex);
+                            JOptionPane.showMessageDialog(null, "Exception while creating UI, message sent to tech support", "UI Exception", JOptionPane.ERROR_MESSAGE);
+                        }
+                        if (panThis == null) panThis = new JPanel();
+                        tp.setComponentAt(ApplicationVersionJfcBase.this.TAB_VersionFiles, panThis);
+                    }
+                };
+                sw.execute();
+            }
+        });
+        if (getModel().getVersionFilesModel().getCreateUI()) {
+            if ((this.TAB_VersionFiles = tabbedPane.getTabCount()) == 0) {
+                JPanel panThis;
+                if (bUseCombinedDetail) panThis = getVersionFilesJfc().createCombinedPanel();
+                else panThis = getVersionFilesJfc().createTablePanel();
+                tabbedPane.setComponentAt(ApplicationVersionJfcBase.this.TAB_VersionFiles, panThis);
+            }
+            else {
+                tabbedPane.addTab("Version Files", icon, new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), "Version Files");
             }
         }
         panel = panMain;
@@ -1705,7 +1763,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
     }
     
     public OAButton createApplicationVersionDownloadMethodButton() {
-        OAButton cmd = new OAButton(getHub(), "Download", getModel().getAllowMultiSelect() ? OAButton.HUB_METHOD : OAButton.OBJECT_METHOD) { 
+        OAButton cmd = new OAButton(getHub(), "Download Files", getModel().getAllowMultiSelect() ? OAButton.HUB_METHOD : OAButton.OBJECT_METHOD) { 
             @Override
             public boolean onActionPerformed() throws Exception {
                 if (ApplicationVersionJfcBase.this.getModel().getAllowMultiSelect() && ApplicationVersionJfcBase.this.getModel().getMultiSelectHub().getSize() > 0) {
@@ -1727,7 +1785,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         };
         cmd.setIcon(Resource.getJarIcon("command16.png"));
         cmd.setUseSwingWorker(true);
-        cmd.setProcessingText("Download", "Processing ...");
+        cmd.setProcessingText("Download Files", "Processing ...");
         cmd.setAllowCancel(false);
         cmd.setConsoleProperty(ApplicationVersionPP.applicationType().console());
         cmd.setMethodName(ApplicationVersion.M_Download);
@@ -1945,6 +2003,72 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         OAModelJfcUtil.setParent(jfcSingleApps, this);
         return jfcSingleApps;
     }
+    public VersionFileJfc getVersionFilesJfc() {
+        if (jfcVersionFiles == null) {
+            jfcVersionFiles = createVersionFilesJfc();
+        }
+        return jfcVersionFiles;
+    }
+    public VersionFileJfc createVersionFilesJfc() {
+        return createVersionFilesJfc(true);
+    }
+    public VersionFileJfc createVersionFilesJfc(final boolean bIsEmbedded) {
+        jfcVersionFiles = new VersionFileJfc(getModel().getVersionFilesModel()) {
+            @Override
+            public JPanel getCardPanel() {
+                if (cardPanel != null) return cardPanel;
+                if (!bIsEmbedded) return super.getCardPanel();
+                cardPanel = new JPanel(getCardLayout());
+                JPanel pan = new JPanel(new BorderLayout());
+                pan.add(createToolBar(ToolBarOptions.createEditPanelToolBar()), BorderLayout.NORTH);
+                pan.add(createEditPanel(), BorderLayout.CENTER);
+                cardPanel.add(pan, CARD_Edit);
+                return cardPanel;
+            }
+    
+            @Override
+            public void showCardPanel(String name) {
+                if (!bIsEmbedded) {
+                    super.showCardPanel(name);
+                    ApplicationVersionJfcBase.this.showCardPanel(name);
+                    return;
+                }
+                if (name.equals(VersionFileJfc.CARD_List)) {
+                    ApplicationVersionJfcBase.this.showCardPanel(CARD_Edit);
+                    if (ApplicationVersionJfcBase.this.TAB_VersionFiles >= 0) {
+                        ApplicationVersionJfcBase.this.getTabbedPane().setSelectedIndex(ApplicationVersionJfcBase.this.TAB_VersionFiles);
+                    }
+                }
+                else if (name.equals(VersionFileJfcBase.CARD_Edit)) {
+                    ApplicationVersionJfcBase.this.showCardPanel(CARD_Edit);
+                    if (ApplicationVersionJfcBase.this.TAB_VersionFiles >= 0) {
+                        ApplicationVersionJfcBase.this.getTabbedPane().setSelectedIndex(ApplicationVersionJfcBase.this.TAB_VersionFiles);
+                    }
+                }
+                else {
+                    ApplicationVersionJfcBase.this.showCardPanel(CARD_VersionFiles);
+                    super.showCardPanel(name);
+                }
+            }
+            public JButton createGoBackButton() {
+                JButton cmd = new JButton();
+                cmd.setIcon(Resource.getJarIcon(Resource.getValue(Resource.IMG_GoBack)));
+                cmd.setToolTipText("Go to " + ApplicationVersionJfcBase.this.getModel().getDisplayName());
+                cmd.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        ApplicationVersionJfcBase.this.showCardPanel(ApplicationVersionJfcBase.this.CARD_Edit);
+                        ApplicationVersionJfcBase.this.getHub().resetAO(); // this will set selected treeNode
+                    }
+                });
+                OAButton.setup(cmd);
+                return cmd;
+            }
+        };
+        jfcVersionFiles.setLevel(getLevel()+1);
+        OAModelJfcUtil.setParent(jfcVersionFiles, this);
+        return jfcVersionFiles;
+    }
     // OnShowCommands
     public void showCardPanel(String name) {
         if (name == null) return;
@@ -1957,6 +2081,11 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         else if (name.equalsIgnoreCase(CARD_SingleApps)) {
             if ( !OAArray.contains(cardPanel.getComponents(), getSingleAppsJfc().getCardPanel()) ) {
                 cardPanel.add(getSingleAppsJfc().getCardPanel(), CARD_SingleApps);
+            }
+        }
+        else if (name.equalsIgnoreCase(CARD_VersionFiles)) {
+            if ( !OAArray.contains(cardPanel.getComponents(), getVersionFilesJfc().getCardPanel()) ) {
+                cardPanel.add(getVersionFilesJfc().getCardPanel(), CARD_VersionFiles);
             }
         }
         getCardLayout().show(getCardPanel(), name);

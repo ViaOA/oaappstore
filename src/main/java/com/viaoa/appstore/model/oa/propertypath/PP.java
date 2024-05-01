@@ -37,12 +37,6 @@ public class PP {
     public static AppServerPPx appServers() {
         return new AppServerPPx("AppServers");
     }
-    public static AppStoreServerPPx appStoreServer() {
-        return new AppStoreServerPPx("AppStoreServer");
-    }
-    public static AppStoreServerPPx appStoreServers() {
-        return new AppStoreServerPPx("AppStoreServers");
-    }
     public static AppUserPPx appUser() {
         return new AppUserPPx("AppUser");
     }
@@ -73,6 +67,12 @@ public class PP {
     public static EnvironmentPPx environments() {
         return new EnvironmentPPx("Environments");
     }
+    public static PropertyValuePPx propertyValue() {
+        return new PropertyValuePPx("PropertyValue");
+    }
+    public static PropertyValuePPx propertyValues() {
+        return new PropertyValuePPx("PropertyValues");
+    }
     public static RunningAppPPx runningApp() {
         return new RunningAppPPx("RunningApp");
     }
@@ -96,6 +96,12 @@ public class PP {
     }
     public static SingleAppPPx singleApps() {
         return new SingleAppPPx("SingleApps");
+    }
+    public static VersionFilePPx versionFile() {
+        return new VersionFilePPx("VersionFile");
+    }
+    public static VersionFilePPx versionFiles() {
+        return new VersionFilePPx("VersionFiles");
     }
     /*$$End: PPInterface.code $$*/
 }

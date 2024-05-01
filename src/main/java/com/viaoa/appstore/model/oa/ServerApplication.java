@@ -41,10 +41,10 @@ public class ServerApplication extends OAObject {
 
     public static final String P_Id = "id";
     public static final String P_Created = "created";
+    public static final String P_Name = "name";
     public static final String P_ClientPort = "clientPort";
     public static final String P_HttpPort = "httpPort";
     public static final String P_HttpsPort = "httpsPort";
-    public static final String P_CheckingVersion = "checkingVersion";
     public static final String P_LastConnect = "lastConnect";
      
     public static final String P_DisplayName = "displayName";
@@ -56,6 +56,8 @@ public class ServerApplication extends OAObject {
     public static final String P_ClientApps = "clientApps";
     public static final String P_MergeAppUsers = "mergeAppUsers";
     public static final String P_MergeEnvironment = "mergeEnvironment";
+    public static final String P_PropertyValues = "propertyValues";
+    public static final String P_PropertyValuesId = "propertyValuesId"; // fkey
     public static final String P_RunningApp = "runningApp";
     public static final String P_RunningAppId = "runningAppId"; // fkey
     public static final String P_Server = "server";
@@ -64,16 +66,17 @@ public class ServerApplication extends OAObject {
     public static final String M_Run = "run";
     protected volatile int id;
     protected volatile OADateTime created;
+    protected volatile String name;
     protected volatile int clientPort;
     protected volatile int httpPort;
     protected volatile int httpsPort;
-    protected volatile OADateTime checkingVersion;
     protected volatile OADateTime lastConnect;
      
     // Links to other objects.
     protected volatile transient ApplicationType applicationType;
     protected volatile transient ApplicationVersion applicationVersion;
     protected transient Hub<ClientApp> hubClientApps;
+    protected transient Hub<PropertyValue> hubPropertyValues;
     protected volatile transient RunningApp runningApp;
     protected volatile transient Server server;
      
@@ -115,6 +118,18 @@ public class ServerApplication extends OAObject {
         firePropertyChange(P_Created, old, this.created);
     }
 
+    @OAProperty(maxLength = 55, displayLength = 18)
+    @OAColumn(name = "Name", maxLength = 55)
+    public String getName() {
+        return name;
+    }
+    public void setName(String newValue) {
+        String old = name;
+        fireBeforePropertyChange(P_Name, old, newValue);
+        this.name = newValue;
+        firePropertyChange(P_Name, old, this.name);
+    }
+
     @OAProperty(displayName = "Client Port", displayLength = 6, uiColumnLength = 11, format = "#")
     @OAColumn(name = "ClientPort", sqlType = java.sql.Types.INTEGER)
     public int getClientPort() {
@@ -149,17 +164,6 @@ public class ServerApplication extends OAObject {
         fireBeforePropertyChange(P_HttpsPort, old, newValue);
         this.httpsPort = newValue;
         firePropertyChange(P_HttpsPort, old, this.httpsPort);
-    }
-
-    @OAProperty(displayName = "Checking Version", displayLength = 15, uiColumnLength = 16, isProcessed = true)
-    public OADateTime getCheckingVersion() {
-        return checkingVersion;
-    }
-    public void setCheckingVersion(OADateTime newValue) {
-        OADateTime old = checkingVersion;
-        fireBeforePropertyChange(P_CheckingVersion, old, newValue);
-        this.checkingVersion = newValue;
-        firePropertyChange(P_CheckingVersion, old, this.checkingVersion);
     }
 
     @OAProperty(displayName = "Last Connect", displayLength = 15, isProcessed = true)
@@ -284,6 +288,19 @@ public class ServerApplication extends OAObject {
         return null;
     }
 
+    @OAMany(
+        displayName = "Property Values", 
+        toClass = PropertyValue.class, 
+        reverseName = PropertyValue.P_ServerApplication
+    )
+    @OALinkTable(name = "ServerApplicationPropertyValue", indexName = "PropertyValueServerApplication", columns = {"ServerApplicationId"})
+    public Hub<PropertyValue> getPropertyValues() {
+        if (hubPropertyValues == null) {
+            hubPropertyValues = (Hub<PropertyValue>) getHub(P_PropertyValues);
+        }
+        return hubPropertyValues;
+    }
+
     @OAOne(
         displayName = "Running App", 
         reverseName = RunningApp.P_ServerApplication, 
@@ -349,21 +366,22 @@ public class ServerApplication extends OAObject {
         java.sql.Timestamp timestamp;
         timestamp = rs.getTimestamp(2);
         if (timestamp != null) this.created = new OADateTime(timestamp);
-        this.clientPort = rs.getInt(3);
+        this.name = rs.getString(3);
+        this.clientPort = rs.getInt(4);
         OAObjectInfoDelegate.setPrimitiveNull(this, P_ClientPort, rs.wasNull());
-        this.httpPort = rs.getInt(4);
+        this.httpPort = rs.getInt(5);
         OAObjectInfoDelegate.setPrimitiveNull(this, P_HttpPort, rs.wasNull());
-        this.httpsPort = rs.getInt(5);
+        this.httpsPort = rs.getInt(6);
         OAObjectInfoDelegate.setPrimitiveNull(this, P_HttpsPort, rs.wasNull());
-        timestamp = rs.getTimestamp(6);
+        timestamp = rs.getTimestamp(7);
         if (timestamp != null) this.lastConnect = new OADateTime(timestamp);
-        int applicationTypeFkey = rs.getInt(7);
+        int applicationTypeFkey = rs.getInt(8);
         setFkeyProperty(P_ApplicationType, rs.wasNull() ? null : applicationTypeFkey);
-        int applicationVersionFkey = rs.getInt(8);
+        int applicationVersionFkey = rs.getInt(9);
         setFkeyProperty(P_ApplicationVersion, rs.wasNull() ? null : applicationVersionFkey);
-        int runningAppFkey = rs.getInt(9);
+        int runningAppFkey = rs.getInt(10);
         setFkeyProperty(P_RunningApp, rs.wasNull() ? null : runningAppFkey);
-        int serverFkey = rs.getInt(10);
+        int serverFkey = rs.getInt(11);
         setFkeyProperty(P_Server, rs.wasNull() ? null : serverFkey);
 
         this.changedFlag = false;

@@ -40,6 +40,11 @@ public class ApplicationVersionPPx implements PPxInterface, Serializable {
         return ppx;
     }
 
+    public VersionFilePPx versionFiles() {
+        VersionFilePPx ppx = new VersionFilePPx(this, ApplicationVersion.P_VersionFiles);
+        return ppx;
+    }
+
     public String id() {
         return pp + "." + ApplicationVersion.P_Id;
     }
@@ -66,6 +71,10 @@ public class ApplicationVersionPPx implements PPxInterface, Serializable {
 
     public String download() {
         return pp + ".download";
+    }
+
+    public String getConfigFileText() {
+        return pp + ".getConfigFileText";
     }
 
     @Override

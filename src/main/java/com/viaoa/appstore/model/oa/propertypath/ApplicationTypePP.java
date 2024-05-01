@@ -6,6 +6,7 @@ import com.viaoa.appstore.model.oa.*;
 public class ApplicationTypePP {
     private static ApplicationVersionPPx applicationVersions;
     private static AppUserPPx appUsers;
+    private static PropertyValuePPx propertyValues;
     private static ServerApplicationPPx serverApplications;
     private static SingleAppPPx singleApps;
      
@@ -18,6 +19,11 @@ public class ApplicationTypePP {
     public static AppUserPPx appUsers() {
         if (appUsers == null) appUsers = new AppUserPPx(ApplicationType.P_AppUsers);
         return appUsers;
+    }
+
+    public static PropertyValuePPx propertyValues() {
+        if (propertyValues == null) propertyValues = new PropertyValuePPx(ApplicationType.P_PropertyValues);
+        return propertyValues;
     }
 
     public static ServerApplicationPPx serverApplications() {
@@ -50,11 +56,6 @@ public class ApplicationTypePP {
         return s;
     }
 
-    public static String directoryName() {
-        String s = ApplicationType.P_DirectoryName;
-        return s;
-    }
-
     public static String singleTypeOnly() {
         String s = ApplicationType.P_SingleTypeOnly;
         return s;
@@ -77,6 +78,11 @@ public class ApplicationTypePP {
 
     public static String downloadUrl() {
         String s = ApplicationType.P_DownloadUrl;
+        return s;
+    }
+
+    public static String appDirectory() {
+        String s = ApplicationType.P_AppDirectory;
         return s;
     }
 

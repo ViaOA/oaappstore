@@ -1405,6 +1405,7 @@ public class ServerJfcBase implements OAModelJfcInterface {
         OAJfcController jfcController;
         OADateTimeTextField dttxt;
         OATextField txt;
+        OAComboBox cbo;
         JPanel pan;
         JPanel panMain = new JPanel(new BorderLayout());
         panel = new JPanel(new GridBagLayout());
@@ -1504,11 +1505,11 @@ public class ServerJfcBase implements OAModelJfcInterface {
             gc.anchor = gc.NORTHWEST;
             gc.gridwidth = gc.REMAINDER;
             gc.fill = gc.HORIZONTAL;
-            olbl = createAppUserLabel();
-            if (getModel().getViewOnly()) olbl.getController().setViewOnly(true);
+            cbo = createAppUserComboBox();
+            if (getModel().getViewOnly()) cbo.getController().setViewOnly(true);
             OAJfcControllerFactory.createOnlyAoNotNull(getHub(), lbl);
             cmd = createAppUserCommand();
-            comp = olbl;
+            comp = cbo;
             comp = new OAResizePanel(comp, cmd);
             panel.add(comp, gc);
             gc.gridwidth = 1;
@@ -1698,9 +1699,9 @@ public class ServerJfcBase implements OAModelJfcInterface {
         return txt;
     }
     
-    public OALabel createAppUserLabel() {
-        OALabel lbl = getAppUserJfc().createLabel();
-        return lbl;
+    public OAComboBox createAppUserComboBox() {
+        OAComboBox cbo = getAppUserJfc().createComboBox();
+        return cbo;
     }
     public JButton createAppUserCommand() {
         JButton cmd = null;
@@ -1861,8 +1862,6 @@ public class ServerJfcBase implements OAModelJfcInterface {
                 };
                 final JPanel panPopup = new JPanel(new BorderLayout());
                 final OATable table = jfcApplicationType.createReadOnlyTable();
-                table.setMultiSelectControlKey(true);
-                table.setSelectHub(modelApplicationType.getMultiSelectHub());
                 table.setPreferredColumns(5);
                 panPopup.add(new JScrollPane(table), BorderLayout.CENTER);
                 final JPanel panCommand = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
@@ -1870,8 +1869,14 @@ public class ServerJfcBase implements OAModelJfcInterface {
                 final OAButton cmdOk = new OAButton(ServerJfcBase.this.getHub(), OAButton.OK) {
                     @Override
                     protected boolean onActionPerformed() {
-                        HubAutoAdd<ServerApplication, ApplicationType> hubAutoAdd = new HubAutoAdd(ServerJfcBase.this.getModel().getServerApplications(), ServerApplication.P_ApplicationType, modelApplicationType.getMultiSelectHub(), true);
-                        hubAutoAdd.update();
+                        ApplicationType applicationType = modelApplicationType.getHub().getAO();
+                        if (applicationType != null) {
+                            ServerApplication serverApplication = new ServerApplication();
+                            serverApplication.setApplicationType(applicationType);
+                            ServerJfcBase.this.getModel().getServerApplications().add(serverApplication);
+                            modelApplicationType.getHub().setAO(null);
+                            ServerJfcBase.this.getModel().getServerApplications().setAO(serverApplication);
+                        }
                         return true;
                     }
                 };

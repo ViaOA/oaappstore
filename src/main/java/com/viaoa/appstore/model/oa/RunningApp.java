@@ -32,13 +32,11 @@ public class RunningApp extends OAObject {
 
     public static final String P_Id = "id";
     public static final String P_Created = "created";
-    public static final String P_StopRequest = "stopRequest";
     public static final String P_Pid = "pid";
-    public static final String P_Error = "error";
-    public static final String P_CpuSeconds = "cpuSeconds";
     public static final String P_Stopped = "stopped";
+    public static final String P_ConfigText = "configText";
+    public static final String P_Console = "console";
      
-    public static final String P_AppStoreServer = "appStoreServer";
     public static final String P_AppUserLogin = "appUserLogin";
     public static final String P_ClientApp = "clientApp";
     public static final String P_ServerApplication = "serverApplication";
@@ -47,11 +45,10 @@ public class RunningApp extends OAObject {
     public static final String M_StopProcess = "stopProcess";
     protected volatile int id;
     protected volatile OADateTime created;
-    protected volatile OADateTime stopRequest;
     protected volatile long pid;
-    protected volatile String error;
-    protected volatile long cpuSeconds;
     protected volatile OADateTime stopped;
+    protected volatile String configText;
+    protected volatile String console;
      
      
     public RunningApp() {
@@ -93,18 +90,6 @@ public class RunningApp extends OAObject {
         firePropertyChange(P_Created, old, this.created);
     }
 
-    @OAProperty(displayName = "Stop Request", displayLength = 15, isProcessed = true)
-    @OAColumn(name = "StopRequest", sqlType = java.sql.Types.TIMESTAMP)
-    public OADateTime getStopRequest() {
-        return stopRequest;
-    }
-    public void setStopRequest(OADateTime newValue) {
-        OADateTime old = stopRequest;
-        fireBeforePropertyChange(P_StopRequest, old, newValue);
-        this.stopRequest = newValue;
-        firePropertyChange(P_StopRequest, old, this.stopRequest);
-    }
-
     @OAProperty(displayLength = 6, isProcessed = true)
     @OAColumn(name = "Pid", sqlType = java.sql.Types.BIGINT)
     public long getPid() {
@@ -115,30 +100,6 @@ public class RunningApp extends OAObject {
         fireBeforePropertyChange(P_Pid, old, newValue);
         this.pid = newValue;
         firePropertyChange(P_Pid, old, this.pid);
-    }
-
-    @OAProperty(maxLength = 240, displayLength = 20, isProcessed = true)
-    @OAColumn(name = "Error", maxLength = 240)
-    public String getError() {
-        return error;
-    }
-    public void setError(String newValue) {
-        String old = error;
-        fireBeforePropertyChange(P_Error, old, newValue);
-        this.error = newValue;
-        firePropertyChange(P_Error, old, this.error);
-    }
-
-    @OAProperty(displayName = "Cpu Seconds", displayLength = 6, uiColumnLength = 11, isProcessed = true)
-    @OAColumn(name = "CpuSeconds", sqlType = java.sql.Types.BIGINT)
-    public long getCpuSeconds() {
-        return cpuSeconds;
-    }
-    public void setCpuSeconds(long newValue) {
-        long old = cpuSeconds;
-        fireBeforePropertyChange(P_CpuSeconds, old, newValue);
-        this.cpuSeconds = newValue;
-        firePropertyChange(P_CpuSeconds, old, this.cpuSeconds);
     }
 
     @OAProperty(displayLength = 15, isProcessed = true)
@@ -153,16 +114,27 @@ public class RunningApp extends OAObject {
         firePropertyChange(P_Stopped, old, this.stopped);
     }
 
-    @OAOne(
-        displayName = "App Store Server", 
-        reverseName = AppStoreServer.P_RunningApp, 
-        allowCreateNew = false, 
-        allowAddExisting = false, 
-        isOneAndOnlyOne = true
-    )
-    private AppStoreServer getAppStoreServer() {
-        // oamodel has createMethod set to false, this method exists only for annotations.
-        return null;
+    @OAProperty(displayName = "Config Text", displayLength = 30, uiColumnLength = 20, isProcessed = true)
+    @OAColumn(name = "ConfigText", sqlType = java.sql.Types.CLOB)
+    public String getConfigText() {
+        return configText;
+    }
+    public void setConfigText(String newValue) {
+        String old = configText;
+        fireBeforePropertyChange(P_ConfigText, old, newValue);
+        this.configText = newValue;
+        firePropertyChange(P_ConfigText, old, this.configText);
+    }
+
+    @OAProperty(maxLength = 254, displayLength = 20)
+    public String getConsole() {
+        return console;
+    }
+    public void setConsole(String newValue) {
+        String old = console;
+        fireBeforePropertyChange(P_Console, old, newValue);
+        this.console = newValue;
+        firePropertyChange(P_Console, old, this.console);
     }
 
     @OAOne(
@@ -213,8 +185,12 @@ public class RunningApp extends OAObject {
         return null;
     }
     @OAMethod(displayName = "Stop Process")
-    public void stopProcess() {
-        setStopRequest(new OADateTime());
+    public void stopProcess() throws Exception {
+        // custom code
+        RunningAppDelegate.stopProcess(this);
+    }
+    @OAObjCallback(enabledProperty = RunningApp.P_Stopped, enabledValue = false)
+    public void stopProcessCallback(OAObjectCallback cb) {
     }
 
     public void load(ResultSet rs, int id) throws SQLException {
@@ -222,15 +198,11 @@ public class RunningApp extends OAObject {
         java.sql.Timestamp timestamp;
         timestamp = rs.getTimestamp(2);
         if (timestamp != null) this.created = new OADateTime(timestamp);
-        timestamp = rs.getTimestamp(3);
-        if (timestamp != null) this.stopRequest = new OADateTime(timestamp);
-        this.pid = rs.getLong(4);
+        this.pid = rs.getLong(3);
         OAObjectInfoDelegate.setPrimitiveNull(this, P_Pid, rs.wasNull());
-        this.error = rs.getString(5);
-        this.cpuSeconds = rs.getLong(6);
-        OAObjectInfoDelegate.setPrimitiveNull(this, P_CpuSeconds, rs.wasNull());
-        timestamp = rs.getTimestamp(7);
+        timestamp = rs.getTimestamp(4);
         if (timestamp != null) this.stopped = new OADateTime(timestamp);
+        this.configText = rs.getString(5);
 
         this.changedFlag = false;
         this.newFlag = false;

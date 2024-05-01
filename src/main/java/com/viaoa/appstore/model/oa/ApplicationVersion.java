@@ -43,8 +43,10 @@ public class ApplicationVersion extends OAObject {
     public static final String P_ApplicationTypeId = "applicationTypeId"; // fkey
     public static final String P_ServerApplications = "serverApplications";
     public static final String P_SingleApps = "singleApps";
+    public static final String P_VersionFiles = "versionFiles";
      
     public static final String M_Download = "download";
+    public static final String M_GetConfigFileText = "getConfigFileText";
     protected volatile int id;
     protected volatile OADateTime created;
     protected volatile String version;
@@ -56,6 +58,7 @@ public class ApplicationVersion extends OAObject {
     protected volatile transient ApplicationType applicationType;
     protected transient Hub<ServerApplication> hubServerApplications;
     protected transient Hub<SingleApp> hubSingleApps;
+    protected transient Hub<VersionFile> hubVersionFiles;
      
     public ApplicationVersion() {
         if (!isLoading()) setObjectDefaults();
@@ -195,10 +198,31 @@ public class ApplicationVersion extends OAObject {
         }
         return hubSingleApps;
     }
-    @OAMethod(displayName = "Download")
+
+    @OAMany(
+        displayName = "Version Files", 
+        toClass = VersionFile.class, 
+        owner = true, 
+        reverseName = VersionFile.P_ApplicationVersion, 
+        cascadeSave = true, 
+        cascadeDelete = true
+    )
+    public Hub<VersionFile> getVersionFiles() {
+        if (hubVersionFiles == null) {
+            hubVersionFiles = (Hub<VersionFile>) getHub(P_VersionFiles);
+        }
+        return hubVersionFiles;
+    }
+    @OAMethod(displayName = "Download Files")
     public void download() throws Exception {
         // custom code
         ApplicationVersionDelegate.download(this);
+    }
+
+    @OAMethod(displayName = "Get Config File Text")
+    public String getConfigFileText() throws Exception {
+        // custom code
+        return ApplicationVersionDelegate.getConfigFileText(this);
     }
 
     public void load(ResultSet rs, int id) throws SQLException {

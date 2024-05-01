@@ -753,6 +753,7 @@ public abstract class ClientController {
 		if (controlRemote != null) return controlRemote;
 		
 		// Custom
+/*qqqqqqqqqqqqqqqqqqqqqq		
         RemoteClientJarStoreInterface remoteClientJarStore = new RemoteClientJarStoreInterface() {
             @Override
             public int getRelease(ServerApplication serverApp) throws Exception {
@@ -777,7 +778,7 @@ public abstract class ClientController {
 				return ClientController.this.getFrame();
 			}
 		};
-
+*/
 		return controlRemote;
 	}
 
@@ -793,6 +794,7 @@ public abstract class ClientController {
                     
                     ApplicationType appType = appVer.getApplicationType();
                     LOG.fine("checking and loading application version from server, application="+appType.getName());
+/*qqqqqqqqqqqqqqqqqqqqqq                    
                     int release = ClientController.this.getClientJarStoreController().getRelease(serverApp);
                     
                     if (appVer.getRelease() != release) {
@@ -801,6 +803,7 @@ public abstract class ClientController {
                     else {
                         ClientController.this.getClientJarStoreController().getJarFromServer(serverApp);
                     }
+*/                    
                 }
             };
         }

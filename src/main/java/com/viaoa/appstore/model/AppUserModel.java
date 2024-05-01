@@ -384,7 +384,6 @@ public class AppUserModel extends OAObjectModel {
         modelClientAppsPickFromServerApplication.setAllowCut(false);
         modelClientAppsPickFromServerApplication.setAllowCopy(false);
         modelClientAppsPickFromServerApplication.setAllowPaste(false);
-        modelClientAppsPickFromServerApplication.setAllowMultiSelect(true);
         new HubMerger<ClientApp, ServerApplication>(getClientApps(), modelClientAppsPickFromServerApplication.getMultiSelectHub(), ClientApp.P_ServerApplication);
         return modelClientAppsPickFromServerApplication;
     }
@@ -418,7 +417,6 @@ public class AppUserModel extends OAObjectModel {
         modelSingleAppsPickFromApplicationType.setAllowCut(false);
         modelSingleAppsPickFromApplicationType.setAllowCopy(false);
         modelSingleAppsPickFromApplicationType.setAllowPaste(false);
-        modelSingleAppsPickFromApplicationType.setAllowMultiSelect(true);
         new HubMerger<SingleApp, ApplicationType>(getSingleApps(), modelSingleAppsPickFromApplicationType.getMultiSelectHub(), SingleApp.P_ApplicationType);
         return modelSingleAppsPickFromApplicationType;
     }

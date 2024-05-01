@@ -97,6 +97,7 @@ public class ServerJarStoreController {
 
     // Save jar file from Client
     protected void saveJar(final ObjectInputStream ois, final ObjectOutputStream oos) throws Exception {
+/*qqqqqq        
         LOG.fine("ServerSocket saving jar file");
         ApplicationVersion applicationVersion = (ApplicationVersion) ois.readObject();
         LOG.fine("applicationVersion="+applicationVersion.getVersion());
@@ -127,10 +128,12 @@ public class ServerJarStoreController {
         oos.write(1);
         oos.flush();
         LOG.fine(String.format("ServerSocket saved jar file, Application.file=%s", s));
+*/        
     }
 
     // send Jar file to Client
     protected void getJar(final ObjectInputStream ois, final ObjectOutputStream oos) throws Exception {
+/*qqqqqqqqqqqqqqqqqqq        
         LOG.fine("ServerSocket get jar file");
         ApplicationVersion applicationVersion = (ApplicationVersion) ois.readObject();
         LOG.fine("applicationVersion="+applicationVersion.getVersion());
@@ -169,6 +172,7 @@ public class ServerJarStoreController {
         oos.flush();
         ois.readInt();  // wait for resposne
         LOG.fine(String.format("ServerSocket get jar file, Application.file=%s", s));
+*/        
     }
 
     public static void main(String[] args) throws Exception {

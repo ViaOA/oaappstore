@@ -61,7 +61,7 @@ public class JarStoreController {
                 }
             }
         };
-        hubAppUserLogin.addHubListener(hl, "xxx", AppUserLoginPP.appUser().calcCheckVersions());
+//qqqqqqqqqqq        hubAppUserLogin.addHubListener(hl, "xxx", AppUserLoginPP.appUser().calcCheckVersions());
         hl.onNewList(null);
     }
 
@@ -104,13 +104,14 @@ public class JarStoreController {
         LOG.fine("console logging started for JarStore controller");
     }
     
-    public String getDisplay(Application app) {
+    public String getDisplay(ApplicationType app) {
         if (app == null) return null;
         String display = "";
+/*qqqqqqqqqqq        
         Server server = app.getServer();
         if (server != null) display = OAString.concat(display, server.getDisplayName());
         display = OAString.concat(display, app.getFullName());
-        
+*/        
         return display;
     }
     
@@ -151,6 +152,7 @@ public class JarStoreController {
         AppUser user = appUserLogin.getAppUser();
         LOG.fine("checking releases for user="+user.getDisplayName());
         
+/*qqqqqqqqqqq        
         for (ApplicationType appType : user.getApplicationTypes()) {
             OAFinder<Environment, Application> finder = new OAFinder<Environment, Application>(ModelDelegate.getEnvironments(), EnvironmentPP.servers().applications().pp) {
                 @Override
@@ -161,8 +163,10 @@ public class JarStoreController {
             finder.addEqualFilter(Application.P_ApplicationType, appType);
             finder.find();
         }
+*/        
     }
 
+/*qqqqq    
     private final Object lockUpdateRelease = new Object();
     protected void updateRelease(final AppUserLogin appUserLogin, final Application app, final RemoteClientJarStoreInterface rcs) {
         if (bStop) return;
@@ -237,7 +241,7 @@ public class JarStoreController {
             hmApplicationVersion.remove(appVersion);
         }
     }
-    
+*/    
     
     
     protected void onNewClientJarStore(RemoteClientJarStoreInterface clientJarStore, int connectionId) {

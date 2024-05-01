@@ -9,6 +9,7 @@ public class ServerApplicationPP {
     private static ClientAppPPx clientApps;
     private static AppUserPPx mergeAppUsers;
     private static EnvironmentPPx mergeEnvironment;
+    private static PropertyValuePPx propertyValues;
     private static RunningAppPPx runningApp;
     private static ServerPPx server;
      
@@ -38,6 +39,11 @@ public class ServerApplicationPP {
         return mergeEnvironment;
     }
 
+    public static PropertyValuePPx propertyValues() {
+        if (propertyValues == null) propertyValues = new PropertyValuePPx(ServerApplication.P_PropertyValues);
+        return propertyValues;
+    }
+
     public static RunningAppPPx runningApp() {
         if (runningApp == null) runningApp = new RunningAppPPx(ServerApplication.P_RunningApp);
         return runningApp;
@@ -58,6 +64,11 @@ public class ServerApplicationPP {
         return s;
     }
 
+    public static String name() {
+        String s = ServerApplication.P_Name;
+        return s;
+    }
+
     public static String clientPort() {
         String s = ServerApplication.P_ClientPort;
         return s;
@@ -70,11 +81,6 @@ public class ServerApplicationPP {
 
     public static String httpsPort() {
         String s = ServerApplication.P_HttpsPort;
-        return s;
-    }
-
-    public static String checkingVersion() {
-        String s = ServerApplication.P_CheckingVersion;
         return s;
     }
 

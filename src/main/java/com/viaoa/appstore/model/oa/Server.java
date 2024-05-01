@@ -139,7 +139,6 @@ public class Server extends OAObject {
         displayName = "App User", 
         reverseName = AppUser.P_Server, 
         allowCreateNew = false, 
-        allowAddExisting = false, 
         fkeys = {@OAFkey(fromProperty = P_AppUserId, toProperty = AppUser.P_Id)}
     )
     public AppUser getAppUser() {

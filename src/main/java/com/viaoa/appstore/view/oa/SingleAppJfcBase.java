@@ -72,8 +72,11 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
     // Card Panel
     public static final String CARD_List = "list";
     public static final String CARD_Edit = "edit";
+    protected static final String CARD_PropertyValues = "PropertyValues";
+    protected int TAB_PropertyValues = -1;
     protected JPanel cardPanel;
     protected CardLayout cardLayout;
+    protected JTabbedPane tabbedPane;
     
     // Search
     protected SingleAppSearchJfc jfcSearch;
@@ -92,6 +95,7 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
     protected ApplicationVersionJfc jfcApplicationVersion;
     protected AppUserJfc jfcAppUser;
     protected RunningAppJfc jfcRunningApp;
+    protected PropertyValueJfc jfcPropertyValues;
     
     public SingleAppJfcBase() {
         this.model = new SingleAppModel();
@@ -351,7 +355,13 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         if (miInsert != null) menu.add(miInsert);
         if (miSearch != null || miNew != null) menu.addSeparator();
     
+        OAMenuItem mi;
+        mi = getPropertyValuesJfc().createNewMenuItem();
+        if (mi != null) menu.add(mi);
+        mi = getPropertyValuesJfc().createAddMenuItem();
+        if (mi != null) menu.add(mi);
     
+        menu.addSeparator();
         JMenuItem miRemove = createRemoveMenuItem();
         if (miRemove != null) menu.add(miRemove);
         JMenuItem miDelete = createDeleteMenuItem();
@@ -536,7 +546,7 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         table.setAllowSorting(false);
         table.addCounterColumn();
         getSearchJfc().createTableColumns(table);
-        table.setPreferredSize(15, 5, true);
+        table.setPreferredSize(15, 6, true);
         table.resizeColumnsToFitHeading();
         
         OATableComboBox cboTable = new OATableComboBox(table, getHub(), PP_Display) {
@@ -701,8 +711,13 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
     protected boolean bHasCombinedPanel;
     public JPanel createCombinedPanel(final boolean bUseList) {
         bHasCombinedPanel = true;
-        final JComponent comp = new JScrollPane(createEditPanel(false));
+        JTabbedPane tp;
         Dimension d = new Dimension(5,5);
+        if (this.tabbedPane == null) tp = getTabbedPane();
+        else tp = createTabbedPane();
+        tp.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        if (this.tabbedPane == null) tp = getTabbedPane();
+        final JComponent comp = createEditPanel(tp, false);
         comp.setMinimumSize(d);
         JSplitPane splitPane = new OASplitPane(bUseList ? JSplitPane.HORIZONTAL_SPLIT : JSplitPane.VERTICAL_SPLIT,
                 bUseList ? new JScrollPane(createList()) : createTableScrollPane(createTable()), 
@@ -869,6 +884,10 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         OATableColumn tc;
         tableDtTxtCreated = createCreatedDateTimeTextField();
         tc = table.addColumn("Created", 15, tableDtTxtCreated);
+        tc = table.addColumn("Name", 18, createNameTextField());
+        if (getModel().getAllowTableFilter()) {
+            tc.setFilterComponent(new OATextFieldFilter(SingleApp.P_Name));
+        }
         if (getModel().getApplicationTypeModel().getCreateUI()) {
             OALabel olbl = createApplicationTypeLabel();
             olbl.setToolTipText("Application Type");
@@ -941,6 +960,11 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         OATableColumn tc;
         lbl = new OALabel(getHub(), SingleApp.P_Created, 15);
         tc = table.addColumn("Created", 15, lbl);
+        lbl = new OALabel(getHub(), SingleApp.P_Name, 18);
+        tc = table.addColumn("Name", 18, lbl);
+        if (getModel().getAllowTableFilter()) {
+            tc.setFilterComponent(new OATextFieldFilter(SingleApp.P_Name));
+        }
         lbl = new OALabel(getHub(), OAString.cpp(SingleApp.P_ApplicationType, ApplicationType.P_Name));
         lbl.setToolTipText("Application Type");
         if (ApplicationTypeJfc.PP_IconColor != null) {
@@ -1302,6 +1326,7 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
     protected void addDownloadProperties(DownloadDialog dd) {
         dd.addProperty("Id", SingleApp.P_Id);
         dd.addProperty("created", SingleApp.P_Created);
+        dd.addProperty("name", SingleApp.P_Name);
         dd.addProperty("applicationType.id", SingleAppPP.applicationType().id());
         dd.addProperty("applicationType.name", SingleAppPP.applicationType().name());
         dd.addProperty("applicationVersion.id", SingleAppPP.applicationVersion().id());
@@ -1348,8 +1373,13 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
     }
     public JPanel createEditOnePanel(JTabbedPane tp) {
         JPanel pan = new JPanel(new BorderLayout());
-        pan.add(new JScrollPane(createEditPanel(true)), BorderLayout.CENTER);
+        if (tp == null) {
+            if (this.tabbedPane == null) tp = getTabbedPane();
+            else tp = createTabbedPane();
+        }
+        pan.add(createEditPanel(tp, true), BorderLayout.CENTER);
         pan.add(new OAScroller(createToolBar(ToolBarOptions.createOneToolBar())), BorderLayout.NORTH);
+        // cardPanel.add(getPropertyValuesJfc().getCardPanel(), CARD_PropertyValues); // this will be created when needed by showCardPanel(..)
         return pan;
     }
     
@@ -1359,8 +1389,13 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
     
     public JPanel createEditCardPanel(JTabbedPane tp) {
         JPanel pan = new JPanel(new BorderLayout());
-        pan.add(new JScrollPane(createEditPanel(true)), BorderLayout.CENTER);
+        if (tp == null) {
+            if (this.tabbedPane == null) tp = getTabbedPane();
+            else tp = createTabbedPane();
+        }
+        pan.add(createEditPanel(tp, true), BorderLayout.CENTER);
         pan.add(new OAScroller(createToolBar(ToolBarOptions.createEditPanelToolBar())), BorderLayout.NORTH);
+        // cardPanel.add(getPropertyValuesJfc().getCardPanel(), CARD_PropertyValues); // this will be created when needed by showCardPanel(..)
         return pan;
     }
     public CardLayout getCardLayout() {
@@ -1372,9 +1407,14 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
     
     // Edit Panel
     public JPanel createEditPanel() {
-        return createEditPanel(true);
+        return createEditPanel(null, true);
     }
-    public JPanel createEditPanel(boolean bUseCombinedDetail) {
+    public JPanel createEditPanel(JTabbedPane tabbedPane, final boolean bUseCombinedDetail) {
+        if (tabbedPane == null) {
+            if (this.tabbedPane == null) tabbedPane = getTabbedPane();
+            else tabbedPane = createTabbedPane();
+        }
+        else if (this.tabbedPane == null) this.tabbedPane = tabbedPane;
         GridBagConstraints gc = new GridBagConstraints();
         gc.insets = new Insets(2, 2, 2, 2);
         gc.anchor = gc.WEST;
@@ -1386,9 +1426,10 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         JComponent comp;
         OAJfcController jfcController;
         OADateTimeTextField dttxt;
-        OAConsole con;
+        OATextField txt;
         OATableComboBox cboTable;
         JPanel pan;
+        JPanel panMain = new JPanel(new BorderLayout());
         panel = new JPanel(new GridBagLayout());
         panel.setBorder(new EmptyBorder(5,5, 3,3));
     
@@ -1417,6 +1458,20 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         gc.gridwidth = gc.REMAINDER;
         gc.fill = gc.HORIZONTAL;
         comp = new OAResizePanel(dttxt, 95);
+        panel.add(comp, gc);
+        gc.fill = gc.NONE;
+        gc.gridwidth = 1;
+    
+        lbl = new JLabel("Name:");
+        gc.anchor = gc.WEST;
+        panel.add(lbl, gc);
+        gc.anchor = gc.NORTHWEST;
+        txt = createNameTextField();
+        if (getModel().getViewOnly()) txt.getController().setViewOnly(true);
+        txt.setLabel(lbl);
+        gc.gridwidth = gc.REMAINDER;
+        gc.fill = gc.HORIZONTAL;
+        comp = new OAResizePanel(txt, 95);
         panel.add(comp, gc);
         gc.fill = gc.NONE;
         gc.gridwidth = 1;
@@ -1489,43 +1544,85 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
             gc.fill = gc.NONE;
         }
     
-        lbl = new JLabel("Console:");
-        gc.anchor = gc.NORTHWEST;
-        gc.gridwidth = gc.REMAINDER;
-        panel.add(lbl, gc);
-        con = createConsoleConsole();
-        if (getModel().getViewOnly()) con.getController().setViewOnly(true);
-        con.setLabel(lbl);
-        gc.insets = new Insets(0, 10, 0, 0);
-        gc.weightx = 0.75f;
-        gc.weighty = 0.75f;
-        gc.fill = gc.BOTH;
-        comp = new OAResizePanel(new JScrollPane(con), 90, true);
-        panel.add(comp, gc);
-        gc.fill = gc.NONE;
-        gc.weightx = 0.0f;
-        gc.weighty = 0.0f;
-        gc.insets = new Insets(0, 0, 0, 0);
-        gc.gridwidth = 1;
-    
         // take up remaining space
         lbl = new JLabel("");
         panel.add(lbl, gc);
-        lbl = new JLabel("");
-        panel.add(lbl, gc);
-        lbl = new JLabel("");
         gc.gridwidth = gc.REMAINDER;
-        gc.weightx = 0.25f;
-        gc.weighty = 0.25f;
+        gc.weightx = gc.weighty = 1.0f;
         gc.fill = gc.BOTH;
         panel.add(lbl, gc);
         gc.gridwidth = 1;
         gc.weightx = gc.weighty = 0.0f;
         gc.fill = gc.NONE;
     
+        tabbedPane.addTab(getModel().getDisplayName(), getIcon(), new JScrollPane(panel), null);
+        panMain.add(tabbedPane, BorderLayout.CENTER);
+    
+        Icon icon;
+        icon = Resource.getJarIcon("propertyValue.gif");
+        icon = new ScaledImageIcon(icon, 32, 20);
+        tabbedPane.addChangeListener(new ChangeListener() {
+            volatile JPanel panThis;
+            volatile Exception ex;
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (panThis != null) return;
+                if (SingleAppJfcBase.this.TAB_PropertyValues == 0) return;
+                final JTabbedPane tp = (JTabbedPane) e.getSource();
+                if (tp.getSelectedIndex() != SingleAppJfcBase.this.TAB_PropertyValues) return;
+                SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        try {
+                            if (bUseCombinedDetail) panThis = getPropertyValuesJfc().createCombinedPanel();
+                            else panThis = getPropertyValuesJfc().createTablePanel();
+                        }
+                        catch (Exception e) {
+                            ex = e;
+                        }
+                        return null;
+                    }
+                    @Override
+                    protected void done() {
+                        if (ex != null) {
+                            LOG.log(Level.WARNING, "UI exception creating UI for SingleApp", ex);
+                            JOptionPane.showMessageDialog(null, "Exception while creating UI, message sent to tech support", "UI Exception", JOptionPane.ERROR_MESSAGE);
+                        }
+                        if (panThis == null) panThis = new JPanel();
+                        tp.setComponentAt(SingleAppJfcBase.this.TAB_PropertyValues, panThis);
+                    }
+                };
+                sw.execute();
+            }
+        });
+        if (getModel().getPropertyValuesModel().getCreateUI()) {
+            if ((this.TAB_PropertyValues = tabbedPane.getTabCount()) == 0) {
+                JPanel panThis;
+                if (bUseCombinedDetail) panThis = getPropertyValuesJfc().createCombinedPanel();
+                else panThis = getPropertyValuesJfc().createTablePanel();
+                tabbedPane.setComponentAt(SingleAppJfcBase.this.TAB_PropertyValues, panThis);
+            }
+            else {
+                tabbedPane.addTab("Property Values", icon, new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), "Property Values");
+            }
+        }
+        panel = panMain;
         return panel;
     }
     
+    public JTabbedPane getTabbedPane() {
+        if (tabbedPane == null) {
+            tabbedPane = createTabbedPane();
+        }
+        return tabbedPane;
+    }
+    public JTabbedPane createTabbedPane() {
+        JTabbedPane tabbedPane = new JTabbedPane();
+        new TabbedPaneController(getHub(), tabbedPane);
+        tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT); // WRAP_TAB_LAYOUT
+        tabbedPane.setFocusable(true);
+        return tabbedPane;
+    }
     
     // edit dialog
     public JDialog getEditDialog(Component comp) {
@@ -1533,6 +1630,13 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         if (wrEditDialog != null) {
             dlgEdit = wrEditDialog.get();
             if (dlgEdit != null) return dlgEdit;
+        }
+        if (jfcPropertyValues != null) {
+            // need to create a new Jfc for dialog
+            SingleAppJfc jfc = new SingleAppJfc(getModel());
+            dlgEdit = jfc.getEditDialog(comp);
+            wrEditDialog = new WeakReference(dlgEdit);
+            return dlgEdit;
         }
         Window win = JfcDelegate.getWindow(comp);
         if (win == null) win = OAJfcUtil.getMainWindow();
@@ -1552,7 +1656,7 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         }
         SingleAppJfc jfc = new SingleAppJfc(getModel());
         JPanel panEdit = jfc.createEditPanel();
-        dlgEdit.add(new JScrollPane(panEdit), BorderLayout.CENTER);
+        dlgEdit.add(panEdit, BorderLayout.CENTER);
         
         panEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), "esc");
         panEdit.getActionMap().put("esc", new AbstractAction() {
@@ -1599,13 +1703,12 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         return dttxt;
     }
     
-    public OAConsole createConsoleConsole() {
-        OAConsole con = new OAConsole(getHub(), SingleApp.P_Console, 20);
-        return con;
-    }
-    public OALabel createConsoleLabel() {
-        OALabel lbl = new OALabel(getHub(), SingleApp.P_Console, 20);
-        return lbl;
+    public OATextField createNameTextField() {
+        OATextField txt = new OATextField(getHub(), SingleApp.P_Name, 18);
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(55);
+        // setup(txt);
+        return txt;
     }
     
     public OAButton createSingleAppRunMethodButton() {
@@ -1633,6 +1736,7 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         cmd.setUseSwingWorker(true);
         cmd.setProcessingText("Run", "Processing ...");
         cmd.setAllowCancel(false);
+        cmd.setConsoleProperty(SingleAppPP.runningApp().console());
         cmd.setMethodName(SingleApp.M_Run);
         cmd.setup();
         return cmd;
@@ -1786,10 +1890,88 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         OAModelJfcUtil.setParent(jfcRunningApp, this);
         return jfcRunningApp;
     }
+    public PropertyValueJfc getPropertyValuesJfc() {
+        if (jfcPropertyValues == null) {
+            jfcPropertyValues = createPropertyValuesJfc();
+        }
+        return jfcPropertyValues;
+    }
+    public PropertyValueJfc createPropertyValuesJfc() {
+        return createPropertyValuesJfc(true);
+    }
+    public PropertyValueJfc createPropertyValuesJfc(final boolean bIsEmbedded) {
+        jfcPropertyValues = new PropertyValueJfc(getModel().getPropertyValuesModel()) {
+            @Override
+            protected PropertyValueSearchJfc getSearchJfc() {
+                if (jfcSearch != null) return jfcSearch;
+                PropertyValueSearchModel model = SingleAppJfcBase.this.getModel().getPropertyValuesSearchModel();
+                jfcSearch = new PropertyValueSearchJfc(model, true, false);
+                return jfcSearch;
+            }
+            @Override
+            public JPanel getCardPanel() {
+                if (cardPanel != null) return cardPanel;
+                if (!bIsEmbedded) return super.getCardPanel();
+                cardPanel = new JPanel(getCardLayout());
+                JPanel pan = new JPanel(new BorderLayout());
+                pan.add(createToolBar(ToolBarOptions.createEditPanelToolBar()), BorderLayout.NORTH);
+                pan.add(createEditPanel(), BorderLayout.CENTER);
+                cardPanel.add(pan, CARD_Edit);
+                return cardPanel;
+            }
+    
+            @Override
+            public void showCardPanel(String name) {
+                if (!bIsEmbedded) {
+                    super.showCardPanel(name);
+                    SingleAppJfcBase.this.showCardPanel(name);
+                    return;
+                }
+                if (name.equals(PropertyValueJfc.CARD_List)) {
+                    SingleAppJfcBase.this.showCardPanel(CARD_Edit);
+                    if (SingleAppJfcBase.this.TAB_PropertyValues >= 0) {
+                        SingleAppJfcBase.this.getTabbedPane().setSelectedIndex(SingleAppJfcBase.this.TAB_PropertyValues);
+                    }
+                }
+                else if (name.equals(PropertyValueJfcBase.CARD_Edit)) {
+                    SingleAppJfcBase.this.showCardPanel(CARD_Edit);
+                    if (SingleAppJfcBase.this.TAB_PropertyValues >= 0) {
+                        SingleAppJfcBase.this.getTabbedPane().setSelectedIndex(SingleAppJfcBase.this.TAB_PropertyValues);
+                    }
+                }
+                else {
+                    SingleAppJfcBase.this.showCardPanel(CARD_PropertyValues);
+                    super.showCardPanel(name);
+                }
+            }
+            public JButton createGoBackButton() {
+                JButton cmd = new JButton();
+                cmd.setIcon(Resource.getJarIcon(Resource.getValue(Resource.IMG_GoBack)));
+                cmd.setToolTipText("Go to " + SingleAppJfcBase.this.getModel().getDisplayName());
+                cmd.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        SingleAppJfcBase.this.showCardPanel(SingleAppJfcBase.this.CARD_Edit);
+                        SingleAppJfcBase.this.getHub().resetAO(); // this will set selected treeNode
+                    }
+                });
+                OAButton.setup(cmd);
+                return cmd;
+            }
+        };
+        jfcPropertyValues.setLevel(getLevel()+1);
+        OAModelJfcUtil.setParent(jfcPropertyValues, this);
+        return jfcPropertyValues;
+    }
     // OnShowCommands
     public void showCardPanel(String name) {
         if (name == null) return;
         if (cardPanel == null) return;
+        if (name.equalsIgnoreCase(CARD_PropertyValues)) {
+            if ( !OAArray.contains(cardPanel.getComponents(), getPropertyValuesJfc().getCardPanel()) ) {
+                cardPanel.add(getPropertyValuesJfc().getCardPanel(), CARD_PropertyValues);
+            }
+        }
         getCardLayout().show(getCardPanel(), name);
     }
     protected void onShowListPanel() {
@@ -1799,6 +1981,10 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         showCardPanel(CARD_Edit);
     }
     protected void onNewSingleAppCreated() {
+        onShowEditPanel();
+        if (getTabbedPane().getTabCount() > 0) {
+            getTabbedPane().setSelectedIndex(0);
+        }
     }
     protected void onDoubleClickTreeNode() {
         if (getModel().getAllowGotoEdit()) {

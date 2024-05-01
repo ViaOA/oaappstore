@@ -232,31 +232,6 @@ public class DataSourceController {
         executorService.submit(new Runnable() {
             @Override
             public void run() {
-                String msg = "serverRoot.getAppStoreServers()";
-                try {
-                    alExecutorService.add(msg);
-                    if (isUsingDatabase()) {
-                        select(serverRoot.getAppStoreServers(), "", null);
-                    }
-                    else {
-                        OAObjectCacheDelegate.setSelectAllHub(serverRoot.getAppStoreServers());
-                    }
-                }
-                catch (Exception e) {
-                    String s = "DataSourceController error selecting AppStoreServers, exception="+e;
-                    alSelectError.add(s);
-                    LOG.log(Level.WARNING, s, e);
-                }
-                finally {
-                    aiExecutor.decrementAndGet();
-                    alExecutorService.remove(msg);
-                }
-            }
-        });
-        aiExecutor.incrementAndGet();
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
                 String msg = "serverRoot.getAppUsers()";
                 try {
                     alExecutorService.add(msg);

@@ -29,6 +29,7 @@ public class ApplicationVersionModel extends OAObjectModel {
     protected Hub<ApplicationType> hubApplicationType;
     protected Hub<ServerApplication> hubServerApplications;
     protected Hub<SingleApp> hubSingleApps;
+    protected Hub<VersionFile> hubVersionFiles;
     
     // AddHubs used for references
     protected Hub<ApplicationType> hubApplicationTypeSelectFrom;
@@ -37,6 +38,7 @@ public class ApplicationVersionModel extends OAObjectModel {
     protected ApplicationTypeModel modelApplicationType;
     protected ServerApplicationModel modelServerApplications;
     protected SingleAppModel modelSingleApps;
+    protected VersionFileModel modelVersionFiles;
     
     // selectFrom
     protected ApplicationTypeModel modelApplicationTypeSelectFrom;
@@ -83,6 +85,12 @@ public class ApplicationVersionModel extends OAObjectModel {
             hubSingleApps = getHub().getDetailHub(ApplicationVersion.P_SingleApps);
         }
         return hubSingleApps;
+    }
+    public Hub<VersionFile> getVersionFiles() {
+        if (hubVersionFiles == null) {
+            hubVersionFiles = getHub().getDetailHub(ApplicationVersion.P_VersionFiles);
+        }
+        return hubVersionFiles;
     }
     public Hub<ApplicationType> getApplicationTypeSelectFromHub() {
         if (hubApplicationTypeSelectFrom != null) return hubApplicationTypeSelectFrom;
@@ -196,6 +204,38 @@ public class ApplicationVersionModel extends OAObjectModel {
         OAObjectCallbackDelegate.onObjectCallbackModel(ApplicationVersion.class, ApplicationVersion.P_SingleApps, modelSingleApps);
     
         return modelSingleApps;
+    }
+    public VersionFileModel getVersionFilesModel() {
+        if (modelVersionFiles != null) return modelVersionFiles;
+        modelVersionFiles = new VersionFileModel(getVersionFiles());
+        modelVersionFiles.setDisplayName("Version File");
+        modelVersionFiles.setPluralDisplayName("Version Files");
+        if (HubDetailDelegate.getIsFromSameMasterHub(getOriginalHub(), getVersionFiles())) {
+            modelVersionFiles.setCreateUI(false);
+        }
+        modelVersionFiles.setForJfc(getForJfc());
+        modelVersionFiles.setAllowNew(true);
+        modelVersionFiles.setAllowSave(true);
+        modelVersionFiles.setAllowAdd(false);
+        modelVersionFiles.setAllowMove(false);
+        modelVersionFiles.setAllowRemove(false);
+        modelVersionFiles.setAllowDelete(true);
+        modelVersionFiles.setAllowRefresh(false);
+        modelVersionFiles.setAllowSearch(false);
+        modelVersionFiles.setAllowHubSearch(false);
+        modelVersionFiles.setAllowDownload(true);
+        modelVersionFiles.setAllowGotoEdit(true);
+        modelVersionFiles.setViewOnly(getViewOnly());
+        modelVersionFiles.setAllowTableFilter(true);
+        modelVersionFiles.setAllowTableSorting(true);
+        modelVersionFiles.setAllowMultiSelect(false);
+        modelVersionFiles.setAllowCopy(false);
+        modelVersionFiles.setAllowCut(false);
+        modelVersionFiles.setAllowPaste(false);
+        // call ApplicationVersion.versionFilesModelCallback(VersionFileModel) to be able to customize this model
+        OAObjectCallbackDelegate.onObjectCallbackModel(ApplicationVersion.class, ApplicationVersion.P_VersionFiles, modelVersionFiles);
+    
+        return modelVersionFiles;
     }
     
     public ApplicationTypeModel getApplicationTypeSelectFromModel() {

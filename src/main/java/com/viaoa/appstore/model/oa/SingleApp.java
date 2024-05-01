@@ -37,7 +37,7 @@ public class SingleApp extends OAObject {
 
     public static final String P_Id = "id";
     public static final String P_Created = "created";
-    public static final String P_Console = "console";
+    public static final String P_Name = "name";
      
     public static final String P_ApplicationType = "applicationType";
     public static final String P_ApplicationTypeId = "applicationTypeId"; // fkey
@@ -45,18 +45,21 @@ public class SingleApp extends OAObject {
     public static final String P_ApplicationVersionId = "applicationVersionId"; // fkey
     public static final String P_AppUser = "appUser";
     public static final String P_AppUserId = "appUserId"; // fkey
+    public static final String P_PropertyValues = "propertyValues";
+    public static final String P_PropertyValuesId = "propertyValuesId"; // fkey
     public static final String P_RunningApp = "runningApp";
     public static final String P_RunningAppId = "runningAppId"; // fkey
      
     public static final String M_Run = "run";
     protected volatile int id;
     protected volatile OADateTime created;
-    protected volatile String console;
+    protected volatile String name;
      
     // Links to other objects.
     protected volatile transient ApplicationType applicationType;
     protected volatile transient ApplicationVersion applicationVersion;
     protected volatile transient AppUser appUser;
+    protected transient Hub<PropertyValue> hubPropertyValues;
     protected volatile transient RunningApp runningApp;
      
     public SingleApp() {
@@ -97,15 +100,16 @@ public class SingleApp extends OAObject {
         firePropertyChange(P_Created, old, this.created);
     }
 
-    @OAProperty(maxLength = 254, displayLength = 20)
-    public String getConsole() {
-        return console;
+    @OAProperty(maxLength = 55, displayLength = 18)
+    @OAColumn(name = "Name", maxLength = 55)
+    public String getName() {
+        return name;
     }
-    public void setConsole(String newValue) {
-        String old = console;
-        fireBeforePropertyChange(P_Console, old, newValue);
-        this.console = newValue;
-        firePropertyChange(P_Console, old, this.console);
+    public void setName(String newValue) {
+        String old = name;
+        fireBeforePropertyChange(P_Name, old, newValue);
+        this.name = newValue;
+        firePropertyChange(P_Name, old, this.name);
     }
 
     @OAOne(
@@ -196,6 +200,19 @@ public class SingleApp extends OAObject {
         setFkeyProperty(P_AppUserId, newValue);
     }
 
+    @OAMany(
+        displayName = "Property Values", 
+        toClass = PropertyValue.class, 
+        reverseName = PropertyValue.P_SingleApp
+    )
+    @OALinkTable(name = "SingleAppPropertyValue", indexName = "PropertyValueSingleApp", columns = {"SingleAppId"})
+    public Hub<PropertyValue> getPropertyValues() {
+        if (hubPropertyValues == null) {
+            hubPropertyValues = (Hub<PropertyValue>) getHub(P_PropertyValues);
+        }
+        return hubPropertyValues;
+    }
+
     @OAOne(
         displayName = "Running App", 
         reverseName = RunningApp.P_SingleApp, 
@@ -235,13 +252,14 @@ public class SingleApp extends OAObject {
         java.sql.Timestamp timestamp;
         timestamp = rs.getTimestamp(2);
         if (timestamp != null) this.created = new OADateTime(timestamp);
-        int applicationTypeFkey = rs.getInt(3);
+        this.name = rs.getString(3);
+        int applicationTypeFkey = rs.getInt(4);
         setFkeyProperty(P_ApplicationType, rs.wasNull() ? null : applicationTypeFkey);
-        int applicationVersionFkey = rs.getInt(4);
+        int applicationVersionFkey = rs.getInt(5);
         setFkeyProperty(P_ApplicationVersion, rs.wasNull() ? null : applicationVersionFkey);
-        int appUserFkey = rs.getInt(5);
+        int appUserFkey = rs.getInt(6);
         setFkeyProperty(P_AppUser, rs.wasNull() ? null : appUserFkey);
-        int runningAppFkey = rs.getInt(6);
+        int runningAppFkey = rs.getInt(7);
         setFkeyProperty(P_RunningApp, rs.wasNull() ? null : runningAppFkey);
 
         this.changedFlag = false;

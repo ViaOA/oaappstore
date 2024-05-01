@@ -7,6 +7,7 @@ public class ApplicationVersionPP {
     private static ApplicationTypePPx applicationType;
     private static ServerApplicationPPx serverApplications;
     private static SingleAppPPx singleApps;
+    private static VersionFilePPx versionFiles;
      
 
     public static ApplicationTypePPx applicationType() {
@@ -22,6 +23,11 @@ public class ApplicationVersionPP {
     public static SingleAppPPx singleApps() {
         if (singleApps == null) singleApps = new SingleAppPPx(ApplicationVersion.P_SingleApps);
         return singleApps;
+    }
+
+    public static VersionFilePPx versionFiles() {
+        if (versionFiles == null) versionFiles = new VersionFilePPx(ApplicationVersion.P_VersionFiles);
+        return versionFiles;
     }
 
     public static String id() {
@@ -56,6 +62,11 @@ public class ApplicationVersionPP {
 
     public static String download() {
         String s = "download";
+        return s;
+    }
+
+    public static String getConfigFileText() {
+        String s = "getConfigFileText";
         return s;
     }
 

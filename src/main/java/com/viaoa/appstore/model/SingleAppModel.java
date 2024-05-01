@@ -30,6 +30,7 @@ public class SingleAppModel extends OAObjectModel {
     protected Hub<ApplicationVersion> hubApplicationVersion;
     protected Hub<AppUser> hubAppUser;
     protected Hub<RunningApp> hubRunningApp;
+    protected Hub<PropertyValue> hubPropertyValues;
     
     // AddHubs used for references
     protected Hub<ApplicationType> hubApplicationTypeSelectFrom;
@@ -41,6 +42,7 @@ public class SingleAppModel extends OAObjectModel {
     protected ApplicationVersionModel modelApplicationVersion;
     protected AppUserModel modelAppUser;
     protected RunningAppModel modelRunningApp;
+    protected PropertyValueModel modelPropertyValues;
     
     // selectFrom
     protected ApplicationTypeModel modelApplicationTypeSelectFrom;
@@ -50,6 +52,7 @@ public class SingleAppModel extends OAObjectModel {
     // SearchModels used for references
     protected ApplicationTypeSearchModel modelApplicationTypeSearch;
     protected ApplicationVersionSearchModel modelApplicationVersionSearch;
+    protected PropertyValueSearchModel modelPropertyValuesSearch;
     
     public SingleAppModel() {
         setDisplayName("Single App");
@@ -91,6 +94,12 @@ public class SingleAppModel extends OAObjectModel {
         if (hubRunningApp != null) return hubRunningApp;
         hubRunningApp = getHub().getDetailHub(SingleApp.P_RunningApp);
         return hubRunningApp;
+    }
+    public Hub<PropertyValue> getPropertyValues() {
+        if (hubPropertyValues == null) {
+            hubPropertyValues = getHub().getDetailHub(SingleApp.P_PropertyValues);
+        }
+        return hubPropertyValues;
     }
     public Hub<ApplicationType> getApplicationTypeSelectFromHub() {
         if (hubApplicationTypeSelectFrom != null) return hubApplicationTypeSelectFrom;
@@ -222,6 +231,38 @@ public class SingleAppModel extends OAObjectModel {
     
         return modelRunningApp;
     }
+    public PropertyValueModel getPropertyValuesModel() {
+        if (modelPropertyValues != null) return modelPropertyValues;
+        modelPropertyValues = new PropertyValueModel(getPropertyValues());
+        modelPropertyValues.setDisplayName("Property Value");
+        modelPropertyValues.setPluralDisplayName("Property Values");
+        if (HubDetailDelegate.getIsFromSameMasterHub(getOriginalHub(), getPropertyValues())) {
+            modelPropertyValues.setCreateUI(false);
+        }
+        modelPropertyValues.setForJfc(getForJfc());
+        modelPropertyValues.setAllowNew(true);
+        modelPropertyValues.setAllowSave(true);
+        modelPropertyValues.setAllowAdd(true);
+        modelPropertyValues.setAllowMove(false);
+        modelPropertyValues.setAllowRemove(true);
+        modelPropertyValues.setAllowDelete(false);
+        modelPropertyValues.setAllowRefresh(false);
+        modelPropertyValues.setAllowSearch(false);
+        modelPropertyValues.setAllowHubSearch(false);
+        modelPropertyValues.setAllowDownload(true);
+        modelPropertyValues.setAllowGotoEdit(true);
+        modelPropertyValues.setViewOnly(getViewOnly());
+        modelPropertyValues.setAllowTableFilter(true);
+        modelPropertyValues.setAllowTableSorting(true);
+        modelPropertyValues.setAllowMultiSelect(false);
+        modelPropertyValues.setAllowCopy(false);
+        modelPropertyValues.setAllowCut(false);
+        modelPropertyValues.setAllowPaste(false);
+        // call SingleApp.propertyValuesModelCallback(PropertyValueModel) to be able to customize this model
+        OAObjectCallbackDelegate.onObjectCallbackModel(SingleApp.class, SingleApp.P_PropertyValues, modelPropertyValues);
+    
+        return modelPropertyValues;
+    }
     
     public ApplicationTypeModel getApplicationTypeSelectFromModel() {
         if (modelApplicationTypeSelectFrom != null) return modelApplicationTypeSelectFrom;
@@ -311,6 +352,11 @@ public class SingleAppModel extends OAObjectModel {
         OAFilter filter = new OAInFilter(SingleAppModel.this.getHub(), SingleAppPP.applicationType().applicationVersions().pp);
         modelApplicationVersionSearch.getApplicationVersionSearch().setExtraWhereFilter(filter);
         return modelApplicationVersionSearch;
+    }
+    public PropertyValueSearchModel getPropertyValuesSearchModel() {
+        if (modelPropertyValuesSearch != null) return modelPropertyValuesSearch;
+        modelPropertyValuesSearch = new PropertyValueSearchModel();
+        return modelPropertyValuesSearch;
     }
     
     public HubCopy<SingleApp> createHubCopy() {

@@ -29,6 +29,7 @@ public class ClientAppModel extends OAObjectModel {
     protected Hub<AppUser> hubAppUser;
     protected Hub<RunningApp> hubRunningApp;
     protected Hub<ServerApplication> hubServerApplication;
+    protected Hub<PropertyValue> hubPropertyValues;
     
     // AddHubs used for references
     protected Hub<AppUser> hubAppUserSelectFrom;
@@ -38,6 +39,7 @@ public class ClientAppModel extends OAObjectModel {
     protected AppUserModel modelAppUser;
     protected RunningAppModel modelRunningApp;
     protected ServerApplicationModel modelServerApplication;
+    protected PropertyValueModel modelPropertyValues;
     
     // selectFrom
     protected AppUserModel modelAppUserSelectFrom;
@@ -45,6 +47,7 @@ public class ClientAppModel extends OAObjectModel {
     
     // SearchModels used for references
     protected ServerApplicationSearchModel modelServerApplicationSearch;
+    protected PropertyValueSearchModel modelPropertyValuesSearch;
     
     public ClientAppModel() {
         setDisplayName("Client App");
@@ -81,6 +84,12 @@ public class ClientAppModel extends OAObjectModel {
         if (hubServerApplication != null) return hubServerApplication;
         hubServerApplication = getHub().getDetailHub(ClientApp.P_ServerApplication);
         return hubServerApplication;
+    }
+    public Hub<PropertyValue> getPropertyValues() {
+        if (hubPropertyValues == null) {
+            hubPropertyValues = getHub().getDetailHub(ClientApp.P_PropertyValues);
+        }
+        return hubPropertyValues;
     }
     public Hub<AppUser> getAppUserSelectFromHub() {
         if (hubAppUserSelectFrom != null) return hubAppUserSelectFrom;
@@ -182,6 +191,38 @@ public class ClientAppModel extends OAObjectModel {
     
         return modelServerApplication;
     }
+    public PropertyValueModel getPropertyValuesModel() {
+        if (modelPropertyValues != null) return modelPropertyValues;
+        modelPropertyValues = new PropertyValueModel(getPropertyValues());
+        modelPropertyValues.setDisplayName("Property Value");
+        modelPropertyValues.setPluralDisplayName("Property Values");
+        if (HubDetailDelegate.getIsFromSameMasterHub(getOriginalHub(), getPropertyValues())) {
+            modelPropertyValues.setCreateUI(false);
+        }
+        modelPropertyValues.setForJfc(getForJfc());
+        modelPropertyValues.setAllowNew(true);
+        modelPropertyValues.setAllowSave(true);
+        modelPropertyValues.setAllowAdd(true);
+        modelPropertyValues.setAllowMove(false);
+        modelPropertyValues.setAllowRemove(true);
+        modelPropertyValues.setAllowDelete(false);
+        modelPropertyValues.setAllowRefresh(false);
+        modelPropertyValues.setAllowSearch(false);
+        modelPropertyValues.setAllowHubSearch(false);
+        modelPropertyValues.setAllowDownload(true);
+        modelPropertyValues.setAllowGotoEdit(true);
+        modelPropertyValues.setViewOnly(getViewOnly());
+        modelPropertyValues.setAllowTableFilter(true);
+        modelPropertyValues.setAllowTableSorting(true);
+        modelPropertyValues.setAllowMultiSelect(false);
+        modelPropertyValues.setAllowCopy(false);
+        modelPropertyValues.setAllowCut(false);
+        modelPropertyValues.setAllowPaste(false);
+        // call ClientApp.propertyValuesModelCallback(PropertyValueModel) to be able to customize this model
+        OAObjectCallbackDelegate.onObjectCallbackModel(ClientApp.class, ClientApp.P_PropertyValues, modelPropertyValues);
+    
+        return modelPropertyValues;
+    }
     
     public AppUserModel getAppUserSelectFromModel() {
         if (modelAppUserSelectFrom != null) return modelAppUserSelectFrom;
@@ -239,6 +280,11 @@ public class ClientAppModel extends OAObjectModel {
         OAFilter filter = new OAInFilter(ClientAppModel.this.getHub(), ClientAppPP.appUser().mergeServerApplications().pp);
         modelServerApplicationSearch.getServerApplicationSearch().setExtraWhereFilter(filter);
         return modelServerApplicationSearch;
+    }
+    public PropertyValueSearchModel getPropertyValuesSearchModel() {
+        if (modelPropertyValuesSearch != null) return modelPropertyValuesSearch;
+        modelPropertyValuesSearch = new PropertyValueSearchModel();
+        return modelPropertyValuesSearch;
     }
     
     public HubCopy<ClientApp> createHubCopy() {

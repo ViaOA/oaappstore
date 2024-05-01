@@ -37,9 +37,12 @@ public class ClientApp extends OAObject {
 
     public static final String P_Id = "id";
     public static final String P_Created = "created";
+    public static final String P_Name = "name";
      
     public static final String P_AppUser = "appUser";
     public static final String P_AppUserId = "appUserId"; // fkey
+    public static final String P_PropertyValues = "propertyValues";
+    public static final String P_PropertyValuesId = "propertyValuesId"; // fkey
     public static final String P_RunningApp = "runningApp";
     public static final String P_RunningAppId = "runningAppId"; // fkey
     public static final String P_ServerApplication = "serverApplication";
@@ -48,9 +51,11 @@ public class ClientApp extends OAObject {
     public static final String M_Run = "run";
     protected volatile int id;
     protected volatile OADateTime created;
+    protected volatile String name;
      
     // Links to other objects.
     protected volatile transient AppUser appUser;
+    protected transient Hub<PropertyValue> hubPropertyValues;
     protected volatile transient RunningApp runningApp;
     protected volatile transient ServerApplication serverApplication;
      
@@ -92,6 +97,18 @@ public class ClientApp extends OAObject {
         firePropertyChange(P_Created, old, this.created);
     }
 
+    @OAProperty(maxLength = 55, displayLength = 18)
+    @OAColumn(name = "Name", maxLength = 55)
+    public String getName() {
+        return name;
+    }
+    public void setName(String newValue) {
+        String old = name;
+        fireBeforePropertyChange(P_Name, old, newValue);
+        this.name = newValue;
+        firePropertyChange(P_Name, old, this.name);
+    }
+
     @OAOne(
         displayName = "App User", 
         reverseName = AppUser.P_ClientApps, 
@@ -120,6 +137,19 @@ public class ClientApp extends OAObject {
     public void setAppUserId(Integer newValue) {
         this.appUser = null;
         setFkeyProperty(P_AppUserId, newValue);
+    }
+
+    @OAMany(
+        displayName = "Property Values", 
+        toClass = PropertyValue.class, 
+        reverseName = PropertyValue.P_ClientApp
+    )
+    @OALinkTable(name = "ClientAppPropertyValue", indexName = "PropertyValueClientApp", columns = {"ClientAppId"})
+    public Hub<PropertyValue> getPropertyValues() {
+        if (hubPropertyValues == null) {
+            hubPropertyValues = (Hub<PropertyValue>) getHub(P_PropertyValues);
+        }
+        return hubPropertyValues;
     }
 
     @OAOne(
@@ -190,11 +220,12 @@ public class ClientApp extends OAObject {
         java.sql.Timestamp timestamp;
         timestamp = rs.getTimestamp(2);
         if (timestamp != null) this.created = new OADateTime(timestamp);
-        int appUserFkey = rs.getInt(3);
+        this.name = rs.getString(3);
+        int appUserFkey = rs.getInt(4);
         setFkeyProperty(P_AppUser, rs.wasNull() ? null : appUserFkey);
-        int runningAppFkey = rs.getInt(4);
+        int runningAppFkey = rs.getInt(5);
         setFkeyProperty(P_RunningApp, rs.wasNull() ? null : runningAppFkey);
-        int serverApplicationFkey = rs.getInt(5);
+        int serverApplicationFkey = rs.getInt(6);
         setFkeyProperty(P_ServerApplication, rs.wasNull() ? null : serverApplicationFkey);
 
         this.changedFlag = false;

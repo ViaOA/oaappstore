@@ -28,6 +28,7 @@ public class ApplicationTypeModel extends OAObjectModel {
     // detail hubs
     protected Hub<ApplicationVersion> hubApplicationVersions;
     protected Hub<AppUser> hubAppUsers;
+    protected Hub<PropertyValue> hubPropertyValues;
     protected Hub<ServerApplication> hubServerApplications;
     protected Hub<SingleApp> hubSingleApps;
     
@@ -37,6 +38,7 @@ public class ApplicationTypeModel extends OAObjectModel {
     // ObjectModels
     protected ApplicationVersionModel modelApplicationVersions;
     protected AppUserModel modelAppUsers;
+    protected PropertyValueModel modelPropertyValues;
     protected ServerApplicationModel modelServerApplications;
     protected SingleAppModel modelSingleApps;
     
@@ -46,6 +48,7 @@ public class ApplicationTypeModel extends OAObjectModel {
     // SearchModels used for references
     protected ApplicationVersionSearchModel modelApplicationVersionsSearch;
     protected AppUserSearchModel modelAppUsersSearch;
+    protected PropertyValueSearchModel modelPropertyValuesSearch;
     protected ServerApplicationSearchModel modelServerApplicationsSearch;
     
     public ApplicationTypeModel() {
@@ -79,6 +82,12 @@ public class ApplicationTypeModel extends OAObjectModel {
             hubAppUsers = getHub().getDetailHub(ApplicationType.P_AppUsers);
         }
         return hubAppUsers;
+    }
+    public Hub<PropertyValue> getPropertyValues() {
+        if (hubPropertyValues == null) {
+            hubPropertyValues = getHub().getDetailHub(ApplicationType.P_PropertyValues);
+        }
+        return hubPropertyValues;
     }
     public Hub<ServerApplication> getServerApplications() {
         if (hubServerApplications == null) {
@@ -178,6 +187,38 @@ public class ApplicationTypeModel extends OAObjectModel {
         OAObjectCallbackDelegate.onObjectCallbackModel(ApplicationType.class, ApplicationType.P_AppUsers, modelAppUsers);
     
         return modelAppUsers;
+    }
+    public PropertyValueModel getPropertyValuesModel() {
+        if (modelPropertyValues != null) return modelPropertyValues;
+        modelPropertyValues = new PropertyValueModel(getPropertyValues());
+        modelPropertyValues.setDisplayName("Property Value");
+        modelPropertyValues.setPluralDisplayName("Property Values");
+        if (HubDetailDelegate.getIsFromSameMasterHub(getOriginalHub(), getPropertyValues())) {
+            modelPropertyValues.setCreateUI(false);
+        }
+        modelPropertyValues.setForJfc(getForJfc());
+        modelPropertyValues.setAllowNew(true);
+        modelPropertyValues.setAllowSave(true);
+        modelPropertyValues.setAllowAdd(true);
+        modelPropertyValues.setAllowMove(false);
+        modelPropertyValues.setAllowRemove(true);
+        modelPropertyValues.setAllowDelete(false);
+        modelPropertyValues.setAllowRefresh(false);
+        modelPropertyValues.setAllowSearch(false);
+        modelPropertyValues.setAllowHubSearch(false);
+        modelPropertyValues.setAllowDownload(true);
+        modelPropertyValues.setAllowGotoEdit(true);
+        modelPropertyValues.setViewOnly(getViewOnly());
+        modelPropertyValues.setAllowTableFilter(true);
+        modelPropertyValues.setAllowTableSorting(true);
+        modelPropertyValues.setAllowMultiSelect(false);
+        modelPropertyValues.setAllowCopy(false);
+        modelPropertyValues.setAllowCut(false);
+        modelPropertyValues.setAllowPaste(false);
+        // call ApplicationType.propertyValuesModelCallback(PropertyValueModel) to be able to customize this model
+        OAObjectCallbackDelegate.onObjectCallbackModel(ApplicationType.class, ApplicationType.P_PropertyValues, modelPropertyValues);
+    
+        return modelPropertyValues;
     }
     public ServerApplicationModel getServerApplicationsModel() {
         if (modelServerApplications != null) return modelServerApplications;
@@ -280,6 +321,11 @@ public class ApplicationTypeModel extends OAObjectModel {
         if (modelAppUsersSearch != null) return modelAppUsersSearch;
         modelAppUsersSearch = new AppUserSearchModel();
         return modelAppUsersSearch;
+    }
+    public PropertyValueSearchModel getPropertyValuesSearchModel() {
+        if (modelPropertyValuesSearch != null) return modelPropertyValuesSearch;
+        modelPropertyValuesSearch = new PropertyValueSearchModel();
+        return modelPropertyValuesSearch;
     }
     public ServerApplicationSearchModel getServerApplicationsSearchModel() {
         if (modelServerApplicationsSearch != null) return modelServerApplicationsSearch;

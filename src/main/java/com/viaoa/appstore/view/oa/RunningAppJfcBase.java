@@ -74,6 +74,7 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
     public static final String CARD_Edit = "edit";
     protected JPanel cardPanel;
     protected CardLayout cardLayout;
+    protected JTabbedPane tabbedPane;
     
     // Search
     protected RunningAppSearchJfc jfcSearch;
@@ -532,7 +533,7 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         table.setAllowSorting(false);
         table.addCounterColumn();
         getSearchJfc().createTableColumns(table);
-        table.setPreferredSize(15, 5, true);
+        table.setPreferredSize(15, 3, true);
         table.resizeColumnsToFitHeading();
         
         OATableComboBox cboTable = new OATableComboBox(table, getHub(), PP_Display) {
@@ -697,8 +698,13 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
     protected boolean bHasCombinedPanel;
     public JPanel createCombinedPanel(final boolean bUseList) {
         bHasCombinedPanel = true;
-        final JComponent comp = new JScrollPane(createEditPanel(false));
+        JTabbedPane tp;
         Dimension d = new Dimension(5,5);
+        if (this.tabbedPane == null) tp = getTabbedPane();
+        else tp = createTabbedPane();
+        tp.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        if (this.tabbedPane == null) tp = getTabbedPane();
+        final JComponent comp = createEditPanel(tp, false);
         comp.setMinimumSize(d);
         JSplitPane splitPane = new OASplitPane(bUseList ? JSplitPane.HORIZONTAL_SPLIT : JSplitPane.VERTICAL_SPLIT,
                 bUseList ? new JScrollPane(createList()) : createTableScrollPane(createTable()), 
@@ -869,11 +875,6 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(RunningApp.P_Pid));
         }
-        tc = table.addColumn("Error", 20, createErrorTextField());
-        if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(RunningApp.P_Error));
-        }
-        tc = table.addColumn("Stop Request", 15, createStopRequestDateTimeTextField());
     }
     
     public OATable createReadOnlyTable() {
@@ -927,13 +928,6 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(RunningApp.P_Pid));
         }
-        lbl = new OALabel(getHub(), RunningApp.P_Error, 20);
-        tc = table.addColumn("Error", 20, lbl);
-        if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(RunningApp.P_Error));
-        }
-        lbl = new OALabel(getHub(), RunningApp.P_StopRequest, 15);
-        tc = table.addColumn("Stop Request", 15, lbl);
     }
     
     public OAButton createGotoEditButton() {
@@ -1260,8 +1254,6 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         dd.addProperty("Id", RunningApp.P_Id);
         dd.addProperty("created", RunningApp.P_Created);
         dd.addProperty("pid", RunningApp.P_Pid);
-        dd.addProperty("error", RunningApp.P_Error);
-        dd.addProperty("stopRequest", RunningApp.P_StopRequest);
     }
     // Card Panel
     public JPanel getCardPanel() {
@@ -1302,7 +1294,11 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
     }
     public JPanel createEditOnePanel(JTabbedPane tp) {
         JPanel pan = new JPanel(new BorderLayout());
-        pan.add(new JScrollPane(createEditPanel(true)), BorderLayout.CENTER);
+        if (tp == null) {
+            if (this.tabbedPane == null) tp = getTabbedPane();
+            else tp = createTabbedPane();
+        }
+        pan.add(createEditPanel(tp, true), BorderLayout.CENTER);
         pan.add(new OAScroller(createToolBar(ToolBarOptions.createOneToolBar())), BorderLayout.NORTH);
         return pan;
     }
@@ -1313,7 +1309,11 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
     
     public JPanel createEditCardPanel(JTabbedPane tp) {
         JPanel pan = new JPanel(new BorderLayout());
-        pan.add(new JScrollPane(createEditPanel(true)), BorderLayout.CENTER);
+        if (tp == null) {
+            if (this.tabbedPane == null) tp = getTabbedPane();
+            else tp = createTabbedPane();
+        }
+        pan.add(createEditPanel(tp, true), BorderLayout.CENTER);
         pan.add(new OAScroller(createToolBar(ToolBarOptions.createEditPanelToolBar())), BorderLayout.NORTH);
         return pan;
     }
@@ -1326,9 +1326,14 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
     
     // Edit Panel
     public JPanel createEditPanel() {
-        return createEditPanel(true);
+        return createEditPanel(null, true);
     }
-    public JPanel createEditPanel(boolean bUseCombinedDetail) {
+    public JPanel createEditPanel(JTabbedPane tabbedPane, final boolean bUseCombinedDetail) {
+        if (tabbedPane == null) {
+            if (this.tabbedPane == null) tabbedPane = getTabbedPane();
+            else tabbedPane = createTabbedPane();
+        }
+        else if (this.tabbedPane == null) this.tabbedPane = tabbedPane;
         GridBagConstraints gc = new GridBagConstraints();
         gc.insets = new Insets(2, 2, 2, 2);
         gc.anchor = gc.WEST;
@@ -1341,6 +1346,9 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         OAJfcController jfcController;
         OADateTimeTextField dttxt;
         OATextField txt;
+        OATextArea txta;
+        OAConsole con;
+        JPanel panMain = new JPanel(new BorderLayout());
         panel = new JPanel(new GridBagLayout());
         panel.setBorder(new EmptyBorder(5,5, 3,3));
     
@@ -1373,53 +1381,11 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         gc.fill = gc.NONE;
         gc.gridwidth = 1;
     
-        lbl = new JLabel("Stop Request:");
-        gc.anchor = gc.WEST;
-        panel.add(lbl, gc);
-        gc.anchor = gc.NORTHWEST;
-        dttxt = createStopRequestDateTimeTextField();
-        if (getModel().getViewOnly()) dttxt.getController().setViewOnly(true);
-        dttxt.setLabel(lbl);
-        gc.gridwidth = gc.REMAINDER;
-        gc.fill = gc.HORIZONTAL;
-        comp = new OAResizePanel(dttxt, 95);
-        panel.add(comp, gc);
-        gc.fill = gc.NONE;
-        gc.gridwidth = 1;
-    
-        lbl = new JLabel("Error:");
-        gc.anchor = gc.WEST;
-        panel.add(lbl, gc);
-        gc.anchor = gc.NORTHWEST;
-        txt = createErrorTextField();
-        if (getModel().getViewOnly()) txt.getController().setViewOnly(true);
-        txt.setLabel(lbl);
-        gc.gridwidth = gc.REMAINDER;
-        gc.fill = gc.HORIZONTAL;
-        comp = new OAResizePanel(txt, 95);
-        panel.add(comp, gc);
-        gc.fill = gc.NONE;
-        gc.gridwidth = 1;
-    
         lbl = new JLabel("Pid:");
         gc.anchor = gc.WEST;
         panel.add(lbl, gc);
         gc.anchor = gc.NORTHWEST;
         txt = createPidTextField();
-        if (getModel().getViewOnly()) txt.getController().setViewOnly(true);
-        txt.setLabel(lbl);
-        gc.gridwidth = gc.REMAINDER;
-        gc.fill = gc.HORIZONTAL;
-        comp = new OAResizePanel(txt, 95);
-        panel.add(comp, gc);
-        gc.fill = gc.NONE;
-        gc.gridwidth = 1;
-    
-        lbl = new JLabel("Cpu Seconds:");
-        gc.anchor = gc.WEST;
-        panel.add(lbl, gc);
-        gc.anchor = gc.NORTHWEST;
-        txt = createCpuSecondsTextField();
         if (getModel().getViewOnly()) txt.getController().setViewOnly(true);
         txt.setLabel(lbl);
         gc.gridwidth = gc.REMAINDER;
@@ -1443,20 +1409,64 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         gc.fill = gc.NONE;
         gc.gridwidth = 1;
     
+        lbl = new JLabel("Console:");
+        gc.anchor = gc.NORTHWEST;
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(lbl, gc);
+        con = createConsoleConsole();
+        if (getModel().getViewOnly()) con.getController().setViewOnly(true);
+        con.setLabel(lbl);
+        gc.insets = new Insets(0, 10, 0, 0);
+        gc.weightx = 0.75f;
+        gc.weighty = 0.75f;
+        gc.fill = gc.BOTH;
+        comp = new OAResizePanel(new JScrollPane(con), 90, true);
+        panel.add(comp, gc);
+        gc.fill = gc.NONE;
+        gc.weightx = 0.0f;
+        gc.weighty = 0.0f;
+        gc.insets = new Insets(0, 0, 0, 0);
+        gc.gridwidth = 1;
+    
         // take up remaining space
         lbl = new JLabel("");
         panel.add(lbl, gc);
+        lbl = new JLabel("");
+        panel.add(lbl, gc);
+        lbl = new JLabel("");
         gc.gridwidth = gc.REMAINDER;
-        gc.weightx = gc.weighty = 1.0f;
+        gc.weightx = 0.25f;
+        gc.weighty = 0.25f;
         gc.fill = gc.BOTH;
         panel.add(lbl, gc);
         gc.gridwidth = 1;
         gc.weightx = gc.weighty = 0.0f;
         gc.fill = gc.NONE;
     
+        tabbedPane.addTab(getModel().getDisplayName(), getIcon(), new JScrollPane(panel), null);
+        panMain.add(tabbedPane, BorderLayout.CENTER);
+    
+        Icon icon;
+        icon = Resource.getJarIcon("runningApp.gif");
+        icon = new ScaledImageIcon(icon, 32, 20);
+        tabbedPane.addTab("Config Text", icon, new JScrollPane(createConfigTextTextArea()), null);
+        panel = panMain;
         return panel;
     }
     
+    public JTabbedPane getTabbedPane() {
+        if (tabbedPane == null) {
+            tabbedPane = createTabbedPane();
+        }
+        return tabbedPane;
+    }
+    public JTabbedPane createTabbedPane() {
+        JTabbedPane tabbedPane = new JTabbedPane();
+        new TabbedPaneController(getHub(), tabbedPane);
+        tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT); // WRAP_TAB_LAYOUT
+        tabbedPane.setFocusable(true);
+        return tabbedPane;
+    }
     
     // edit dialog
     public JDialog getEditDialog(Component comp) {
@@ -1483,7 +1493,7 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         }
         RunningAppJfc jfc = new RunningAppJfc(getModel());
         JPanel panEdit = jfc.createEditPanel();
-        dlgEdit.add(new JScrollPane(panEdit), BorderLayout.CENTER);
+        dlgEdit.add(panEdit, BorderLayout.CENTER);
         
         panEdit.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false), "esc");
         panEdit.getActionMap().put("esc", new AbstractAction() {
@@ -1530,32 +1540,8 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         return dttxt;
     }
     
-    public OADateTimeTextField createStopRequestDateTimeTextField() {
-        OADateTimeTextField dttxt = new OADateTimeTextField(getHub(), RunningApp.P_StopRequest, 15);
-        dttxt.setMinimumColumns(0);
-        dttxt.setMaximumColumns(22);
-        // setup(dttxt);
-        return dttxt;
-    }
-    
     public OATextField createPidTextField() {
         OATextField txt = new OATextField(getHub(), RunningApp.P_Pid, 6);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(8);
-        // setup(txt);
-        return txt;
-    }
-    
-    public OATextField createErrorTextField() {
-        OATextField txt = new OATextField(getHub(), RunningApp.P_Error, 20);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(50);
-        // setup(txt);
-        return txt;
-    }
-    
-    public OATextField createCpuSecondsTextField() {
-        OATextField txt = new OATextField(getHub(), RunningApp.P_CpuSeconds, 6);
         txt.setMinimumColumns(0);
         txt.setMaximumColumns(8);
         // setup(txt);
@@ -1568,6 +1554,27 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         dttxt.setMaximumColumns(22);
         // setup(dttxt);
         return dttxt;
+    }
+    
+    public OATextArea createConfigTextTextArea() {
+        OATextArea txta = new OATextArea(getHub(), RunningApp.P_ConfigText, 2, 30);
+        txta.setLineWrap(true);
+        txta.setWrapStyleWord(true);
+        setup(txta);
+        return txta;
+    }
+    public OALabel createConfigTextLabel() {
+        OALabel lbl = new OALabel(getHub(), RunningApp.P_ConfigText, 20);
+        return lbl;
+    }
+    
+    public OAConsole createConsoleConsole() {
+        OAConsole con = new OAConsole(getHub(), RunningApp.P_Console, 20);
+        return con;
+    }
+    public OALabel createConsoleLabel() {
+        OALabel lbl = new OALabel(getHub(), RunningApp.P_Console, 20);
+        return lbl;
     }
     
     public OAButton createRunningAppStopProcessMethodButton() {
@@ -1593,9 +1600,6 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         };
         cmd.setIcon(Resource.getJarIcon("command16.png"));
         cmd.setConfirmMessage("Ok to stop the process");
-        cmd.setUseSwingWorker(true);
-        cmd.setProcessingText("Stop Process", "Processing ...");
-        cmd.setAllowCancel(false);
         cmd.setMethodName(RunningApp.M_StopProcess);
         cmd.setup();
         return cmd;
@@ -1636,6 +1640,9 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
     }
     protected void onNewRunningAppCreated() {
         onShowEditPanel();
+        if (getTabbedPane().getTabCount() > 0) {
+            getTabbedPane().setSelectedIndex(0);
+        }
     }
     protected void onDoubleClickTreeNode() {
         if (getModel().getAllowGotoEdit()) {

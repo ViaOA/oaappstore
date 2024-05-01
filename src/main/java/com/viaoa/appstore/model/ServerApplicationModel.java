@@ -56,6 +56,7 @@ public class ServerApplicationModel extends OAObjectModel {
     protected Hub<RunningApp> hubRunningApp;
     protected Hub<Server> hubServer;
     protected Hub<ClientApp> hubClientApps;
+    protected Hub<PropertyValue> hubPropertyValues;
     
     // AddHubs used for references
     protected Hub<ApplicationType> hubApplicationTypeSelectFrom;
@@ -67,6 +68,7 @@ public class ServerApplicationModel extends OAObjectModel {
     protected RunningAppModel modelRunningApp;
     protected ServerModel modelServer;
     protected ClientAppModel modelClientApps;
+    protected PropertyValueModel modelPropertyValues;
     protected ApplicationTypeModel modelGroupedByApplicationType;
     protected ServerApplicationModel modelServerApplicationsGroupedByApplicationType;
     protected EnvironmentModel modelGroupedByEnvironment;
@@ -81,6 +83,7 @@ public class ServerApplicationModel extends OAObjectModel {
     protected ApplicationVersionSearchModel modelApplicationVersionSearch;
     protected RunningAppSearchModel modelRunningAppSearch;
     protected ServerSearchModel modelServerSearch;
+    protected PropertyValueSearchModel modelPropertyValuesSearch;
     
     public ServerApplicationModel() {
         setDisplayName("Server Application");
@@ -177,6 +180,12 @@ public class ServerApplicationModel extends OAObjectModel {
             hubClientApps = getHub().getDetailHub(ServerApplication.P_ClientApps);
         }
         return hubClientApps;
+    }
+    public Hub<PropertyValue> getPropertyValues() {
+        if (hubPropertyValues == null) {
+            hubPropertyValues = getHub().getDetailHub(ServerApplication.P_PropertyValues);
+        }
+        return hubPropertyValues;
     }
     public Hub<ApplicationType> getApplicationTypeSelectFromHub() {
         if (hubApplicationTypeSelectFrom != null) return hubApplicationTypeSelectFrom;
@@ -372,6 +381,38 @@ public class ServerApplicationModel extends OAObjectModel {
     
         return modelClientApps;
     }
+    public PropertyValueModel getPropertyValuesModel() {
+        if (modelPropertyValues != null) return modelPropertyValues;
+        modelPropertyValues = new PropertyValueModel(getPropertyValues());
+        modelPropertyValues.setDisplayName("Property Value");
+        modelPropertyValues.setPluralDisplayName("Property Values");
+        if (HubDetailDelegate.getIsFromSameMasterHub(getOriginalHub(), getPropertyValues())) {
+            modelPropertyValues.setCreateUI(false);
+        }
+        modelPropertyValues.setForJfc(getForJfc());
+        modelPropertyValues.setAllowNew(true);
+        modelPropertyValues.setAllowSave(true);
+        modelPropertyValues.setAllowAdd(true);
+        modelPropertyValues.setAllowMove(false);
+        modelPropertyValues.setAllowRemove(true);
+        modelPropertyValues.setAllowDelete(false);
+        modelPropertyValues.setAllowRefresh(false);
+        modelPropertyValues.setAllowSearch(false);
+        modelPropertyValues.setAllowHubSearch(false);
+        modelPropertyValues.setAllowDownload(true);
+        modelPropertyValues.setAllowGotoEdit(true);
+        modelPropertyValues.setViewOnly(getViewOnly());
+        modelPropertyValues.setAllowTableFilter(true);
+        modelPropertyValues.setAllowTableSorting(true);
+        modelPropertyValues.setAllowMultiSelect(false);
+        modelPropertyValues.setAllowCopy(false);
+        modelPropertyValues.setAllowCut(false);
+        modelPropertyValues.setAllowPaste(false);
+        // call ServerApplication.propertyValuesModelCallback(PropertyValueModel) to be able to customize this model
+        OAObjectCallbackDelegate.onObjectCallbackModel(ServerApplication.class, ServerApplication.P_PropertyValues, modelPropertyValues);
+    
+        return modelPropertyValues;
+    }
     
     public ApplicationTypeModel getGroupedByApplicationTypeModel() {
         if (modelGroupedByApplicationType != null) return modelGroupedByApplicationType;
@@ -514,6 +555,11 @@ public class ServerApplicationModel extends OAObjectModel {
         modelServerSearch = new ServerSearchModel();
         HubSelectDelegate.adoptWhereHub(modelServerSearch.getHub(), ServerApplication.P_Server, getHub());
         return modelServerSearch;
+    }
+    public PropertyValueSearchModel getPropertyValuesSearchModel() {
+        if (modelPropertyValuesSearch != null) return modelPropertyValuesSearch;
+        modelPropertyValuesSearch = new PropertyValueSearchModel();
+        return modelPropertyValuesSearch;
     }
     
     public HubCopy<ServerApplication> createHubCopy() {

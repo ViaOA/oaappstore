@@ -7,6 +7,7 @@ public class SingleAppPP {
     private static ApplicationTypePPx applicationType;
     private static ApplicationVersionPPx applicationVersion;
     private static AppUserPPx appUser;
+    private static PropertyValuePPx propertyValues;
     private static RunningAppPPx runningApp;
      
 
@@ -25,6 +26,11 @@ public class SingleAppPP {
         return appUser;
     }
 
+    public static PropertyValuePPx propertyValues() {
+        if (propertyValues == null) propertyValues = new PropertyValuePPx(SingleApp.P_PropertyValues);
+        return propertyValues;
+    }
+
     public static RunningAppPPx runningApp() {
         if (runningApp == null) runningApp = new RunningAppPPx(SingleApp.P_RunningApp);
         return runningApp;
@@ -40,8 +46,8 @@ public class SingleAppPP {
         return s;
     }
 
-    public static String console() {
-        String s = SingleApp.P_Console;
+    public static String name() {
+        String s = SingleApp.P_Name;
         return s;
     }
 

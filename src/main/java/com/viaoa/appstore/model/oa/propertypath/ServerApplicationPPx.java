@@ -50,6 +50,11 @@ public class ServerApplicationPPx implements PPxInterface, Serializable {
         return ppx;
     }
 
+    public PropertyValuePPx propertyValues() {
+        PropertyValuePPx ppx = new PropertyValuePPx(this, ServerApplication.P_PropertyValues);
+        return ppx;
+    }
+
     public RunningAppPPx runningApp() {
         RunningAppPPx ppx = new RunningAppPPx(this, ServerApplication.P_RunningApp);
         return ppx;
@@ -68,6 +73,10 @@ public class ServerApplicationPPx implements PPxInterface, Serializable {
         return pp + "." + ServerApplication.P_Created;
     }
 
+    public String name() {
+        return pp + "." + ServerApplication.P_Name;
+    }
+
     public String clientPort() {
         return pp + "." + ServerApplication.P_ClientPort;
     }
@@ -78,10 +87,6 @@ public class ServerApplicationPPx implements PPxInterface, Serializable {
 
     public String httpsPort() {
         return pp + "." + ServerApplication.P_HttpsPort;
-    }
-
-    public String checkingVersion() {
-        return pp + "." + ServerApplication.P_CheckingVersion;
     }
 
     public String lastConnect() {

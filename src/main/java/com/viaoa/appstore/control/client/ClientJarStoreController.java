@@ -46,17 +46,19 @@ public class ClientJarStoreController {
 
         LOG.fine(String.format("ApplicationType=%s, version=%s", appType.getName(), applicationVersion.getVersion()));
         
-        String s = applicationVersion.getFilePath();
+        String s = applicationVersion.getApplicationType().getJarFileName();
         s = Resource.getRootDirectory() + "/" + JarStoreDirectory + "/" + s;
         s = OAFile.convertFileName(s);
         File file = new File(s);
 
+/*qqq        
         LOG.fine(String.format("ApplicationType=%s, version=%s, file=%s, exists=%b, file.length=%d, appVersion.fileLength=%d", 
             appType.getName(), applicationVersion.getVersion(), s, 
             file.exists(), file.length(), applicationVersion.getFileLength()));
-        
+*/        
 
-        if (!file.exists() || file.length() != applicationVersion.getFileLength()) {
+//qqqqqqq        if (!file.exists() || file.length() != applicationVersion.getFileLength()) {
+        if (!file.exists()) {
             final Socket socket = multiplexerClient.createSocket(JarStoreSocketName);
             final ObjectOutputStream oosSocket = new ObjectOutputStream(socket.getOutputStream());
             final ObjectInputStream oisSocket = new ObjectInputStream(socket.getInputStream());
@@ -88,9 +90,10 @@ public class ClientJarStoreController {
     }
 
     // get jar file from an application's server, store locally and send to server.
-    public int getRelease(final Application application) throws Exception {
+    public int getRelease(final ApplicationVersion application) throws Exception {
         if (application == null) throw new Exception("Application can not be null");
         int release = -1;
+        /*qqqqq            
         try {
             application.setRunningNow(Application.RUNNINGNOW_UNKNOWN);
             release = _getRelease(application);
@@ -101,8 +104,11 @@ public class ClientJarStoreController {
             application.setRunningNow(Application.RUNNINGNOW_NO);
             throw e;
         }
+        */
         return release;
     }
+    
+/*qqqqqqqqqq    
     protected int _getRelease(final Application application) throws Exception {
         if (application == null) throw new Exception("Application can not be null");
         final Server server = application.getServer();
@@ -241,9 +247,9 @@ public class ClientJarStoreController {
         multiplexerClientSource.close();
         return applicationVersion;
     }
+*/    
     
-    
-    
+/*qqqqqqq    
     public static void main(String[] args) throws Exception {
         OAObject.setDebugMode(true);
         Application application = new Application();
@@ -268,5 +274,5 @@ public class ClientJarStoreController {
         
         System.out.println("DONE");
     }
-    
+*/    
 }

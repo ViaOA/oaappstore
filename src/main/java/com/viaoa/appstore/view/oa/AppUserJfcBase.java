@@ -1813,7 +1813,8 @@ public class AppUserJfcBase implements OAModelJfcInterface {
                     @Override
                     protected Void doInBackground() throws Exception {
                         try {
-                            panThis = getSingleAppsJfc().createTablePanel();
+                            if (bUseCombinedDetail) panThis = getSingleAppsJfc().createCombinedPanel();
+                            else panThis = getSingleAppsJfc().createTablePanel();
                         }
                         catch (Exception e) {
                             ex = e;
@@ -1836,7 +1837,8 @@ public class AppUserJfcBase implements OAModelJfcInterface {
         if (getModel().getSingleAppsModel().getCreateUI()) {
             if ((this.TAB_SingleApps = tabbedPane.getTabCount()) == 0) {
                 JPanel panThis;
-                panThis = getSingleAppsJfc().createTablePanel();
+                if (bUseCombinedDetail) panThis = getSingleAppsJfc().createCombinedPanel();
+                else panThis = getSingleAppsJfc().createTablePanel();
                 tabbedPane.setComponentAt(AppUserJfcBase.this.TAB_SingleApps, panThis);
             }
             else {
@@ -2410,8 +2412,6 @@ public class AppUserJfcBase implements OAModelJfcInterface {
                 };
                 final JPanel panPopup = new JPanel(new BorderLayout());
                 final OATable table = jfcServerApplication.createReadOnlyTable();
-                table.setMultiSelectControlKey(true);
-                table.setSelectHub(modelServerApplication.getMultiSelectHub());
                 table.setPreferredColumns(5);
                 panPopup.add(new JScrollPane(table), BorderLayout.CENTER);
                 final JPanel panCommand = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
@@ -2419,8 +2419,14 @@ public class AppUserJfcBase implements OAModelJfcInterface {
                 final OAButton cmdOk = new OAButton(AppUserJfcBase.this.getHub(), OAButton.OK) {
                     @Override
                     protected boolean onActionPerformed() {
-                        HubAutoAdd<ClientApp, ServerApplication> hubAutoAdd = new HubAutoAdd(AppUserJfcBase.this.getModel().getClientApps(), ClientApp.P_ServerApplication, modelServerApplication.getMultiSelectHub(), true);
-                        hubAutoAdd.update();
+                        ServerApplication serverApplication = modelServerApplication.getHub().getAO();
+                        if (serverApplication != null) {
+                            ClientApp clientApp = new ClientApp();
+                            clientApp.setServerApplication(serverApplication);
+                            AppUserJfcBase.this.getModel().getClientApps().add(clientApp);
+                            modelServerApplication.getHub().setAO(null);
+                            AppUserJfcBase.this.getModel().getClientApps().setAO(clientApp);
+                        }
                         return true;
                     }
                 };
@@ -2616,8 +2622,6 @@ public class AppUserJfcBase implements OAModelJfcInterface {
                 };
                 final JPanel panPopup = new JPanel(new BorderLayout());
                 final OATable table = jfcApplicationType.createReadOnlyTable();
-                table.setMultiSelectControlKey(true);
-                table.setSelectHub(modelApplicationType.getMultiSelectHub());
                 table.setPreferredColumns(5);
                 panPopup.add(new JScrollPane(table), BorderLayout.CENTER);
                 final JPanel panCommand = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
@@ -2625,8 +2629,14 @@ public class AppUserJfcBase implements OAModelJfcInterface {
                 final OAButton cmdOk = new OAButton(AppUserJfcBase.this.getHub(), OAButton.OK) {
                     @Override
                     protected boolean onActionPerformed() {
-                        HubAutoAdd<SingleApp, ApplicationType> hubAutoAdd = new HubAutoAdd(AppUserJfcBase.this.getModel().getSingleApps(), SingleApp.P_ApplicationType, modelApplicationType.getMultiSelectHub(), true);
-                        hubAutoAdd.update();
+                        ApplicationType applicationType = modelApplicationType.getHub().getAO();
+                        if (applicationType != null) {
+                            SingleApp singleApp = new SingleApp();
+                            singleApp.setApplicationType(applicationType);
+                            AppUserJfcBase.this.getModel().getSingleApps().add(singleApp);
+                            modelApplicationType.getHub().setAO(null);
+                            AppUserJfcBase.this.getModel().getSingleApps().setAO(singleApp);
+                        }
                         return true;
                     }
                 };

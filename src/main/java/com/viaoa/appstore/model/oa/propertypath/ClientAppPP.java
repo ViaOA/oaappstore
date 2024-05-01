@@ -5,6 +5,7 @@ import com.viaoa.appstore.model.oa.*;
  
 public class ClientAppPP {
     private static AppUserPPx appUser;
+    private static PropertyValuePPx propertyValues;
     private static RunningAppPPx runningApp;
     private static ServerApplicationPPx serverApplication;
      
@@ -12,6 +13,11 @@ public class ClientAppPP {
     public static AppUserPPx appUser() {
         if (appUser == null) appUser = new AppUserPPx(ClientApp.P_AppUser);
         return appUser;
+    }
+
+    public static PropertyValuePPx propertyValues() {
+        if (propertyValues == null) propertyValues = new PropertyValuePPx(ClientApp.P_PropertyValues);
+        return propertyValues;
     }
 
     public static RunningAppPPx runningApp() {
@@ -31,6 +37,11 @@ public class ClientAppPP {
 
     public static String created() {
         String s = ClientApp.P_Created;
+        return s;
+    }
+
+    public static String name() {
+        String s = ClientApp.P_Name;
         return s;
     }
 

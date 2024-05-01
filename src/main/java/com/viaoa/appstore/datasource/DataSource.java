@@ -104,20 +104,25 @@ public class DataSource {
         int APPRUNTIME = 3;
         int APPRUNTIMEERROR = 4;
         int APPSERVER = 5;
-        int APPSTORESERVER = 6;
-        int APPUSER = 7;
-        int APPUSERERROR = 8;
-        int APPUSERLOGIN = 9;
-        int CLIENTAPP = 10;
-        int ENVIRONMENT = 11;
+        int APPUSER = 6;
+        int APPUSERERROR = 7;
+        int APPUSERLOGIN = 8;
+        int CLIENTAPP = 9;
+        int ENVIRONMENT = 10;
+        int PROPERTYVALUE = 11;
         int RUNNINGAPP = 12;
         int SERVER = 13;
         int SERVERAPPLICATION = 14;
         int SINGLEAPP = 15;
+        int VERSIONFILE = 16;
         
         // LINK TABLES
-        int APPUSERAPPLICATIONTYPE = 16;
-        int MAX = 17;
+        int APPUSERAPPLICATIONTYPE = 17;
+        int SERVERAPPLICATIONPROPERTYVALUE = 18;
+        int APPLICATIONTYPEPROPERTYVALUE = 19;
+        int CLIENTAPPPROPERTYVALUE = 20;
+        int SINGLEAPPPROPERTYVALUE = 21;
+        int MAX = 22;
         
         Database db = new Database();
         Table[] tables = new Table[MAX];
@@ -132,19 +137,24 @@ public class DataSource {
         tables[APPRUNTIME] = new Table("AppRuntime", AppRuntime.class);
         tables[APPRUNTIMEERROR] = new Table("AppRuntimeError", AppRuntimeError.class);
         tables[APPSERVER] = new Table("AppServer", AppServer.class);
-        tables[APPSTORESERVER] = new Table("AppStoreServer", AppStoreServer.class);
         tables[APPUSER] = new Table("AppUser", AppUser.class);
         tables[APPUSERERROR] = new Table("AppUserError", AppUserError.class);
         tables[APPUSERLOGIN] = new Table("AppUserLogin", AppUserLogin.class);
         tables[CLIENTAPP] = new Table("ClientApp", ClientApp.class);
         tables[ENVIRONMENT] = new Table("Environment", Environment.class);
+        tables[PROPERTYVALUE] = new Table("PropertyValue", PropertyValue.class);
         tables[RUNNINGAPP] = new Table("RunningApp", RunningApp.class);
         tables[SERVER] = new Table("Server", Server.class);
         tables[SERVERAPPLICATION] = new Table("ServerApplication", ServerApplication.class);
         tables[SINGLEAPP] = new Table("SingleApp", SingleApp.class);
+        tables[VERSIONFILE] = new Table("VersionFile", VersionFile.class);
         
         // LINK TABLES
         tables[APPUSERAPPLICATIONTYPE] = new Table("AppUserApplicationType",true);
+        tables[SERVERAPPLICATIONPROPERTYVALUE] = new Table("ServerApplicationPropertyValue",true);
+        tables[APPLICATIONTYPEPROPERTYVALUE] = new Table("ApplicationTypePropertyValue",true);
+        tables[CLIENTAPPPROPERTYVALUE] = new Table("ClientAppPropertyValue",true);
+        tables[SINGLEAPPPROPERTYVALUE] = new Table("SingleAppPropertyValue",true);
         
         // TABLE COLUMNS
         // NextNumber COLUMNS
@@ -162,12 +172,12 @@ public class DataSource {
         columns[1] = new Column("Created", "created", Types.TIMESTAMP);
         columns[2] = new Column("Name", "name", Types.VARCHAR, 40);
         columns[3] = new Column("AbbrevName", "abbrevName", Types.VARCHAR, 8);
-        columns[4] = new Column("DirectoryName", "directoryName", Types.VARCHAR, 45);
-        columns[5] = new Column("SingleTypeOnly", "singleTypeOnly", Types.BOOLEAN);
-        columns[6] = new Column("ClientPort", "clientPort", Types.INTEGER);
-        columns[7] = new Column("HttpPort", "httpPort", Types.INTEGER);
-        columns[8] = new Column("HttpsPort", "httpsPort", Types.INTEGER);
-        columns[9] = new Column("DownloadUrl", "downloadUrl", Types.VARCHAR, 125);
+        columns[4] = new Column("SingleTypeOnly", "singleTypeOnly", Types.BOOLEAN);
+        columns[5] = new Column("ClientPort", "clientPort", Types.INTEGER);
+        columns[6] = new Column("HttpPort", "httpPort", Types.INTEGER);
+        columns[7] = new Column("HttpsPort", "httpsPort", Types.INTEGER);
+        columns[8] = new Column("DownloadUrl", "downloadUrl", Types.VARCHAR, 125);
+        columns[9] = new Column("AppDirectory", "appDirectory", Types.VARCHAR, 45);
         columns[10] = new Column("JarFileName", "jarFileName", Types.VARCHAR, 70);
         columns[11] = new Column("MainClass", "mainClass", Types.VARCHAR, 75);
         columns[12] = new Column("JvmOptions", "jvmOptions", Types.VARCHAR, 120);
@@ -227,18 +237,6 @@ public class DataSource {
         tables[APPSERVER].setColumns(columns);
         tables[APPSERVER].addIndex(new Index("AppServerAppUserLogin", "AppUserLoginId", true));
         
-        // AppStoreServer COLUMNS
-        columns = new Column[5];
-        columns[0] = new Column("Id", "id", Types.INTEGER, 20);
-        columns[0].primaryKey = true;
-        columns[0].assignNextNumber = true;
-        columns[1] = new Column("Created", "created", Types.TIMESTAMP);
-        columns[2] = new Column("Name", "name", Types.VARCHAR, 70);
-        columns[3] = new Column("Server", "server", Types.VARCHAR, 75);
-        columns[4] = new Column("RunningAppId", true);
-        tables[APPSTORESERVER].setColumns(columns);
-        tables[APPSTORESERVER].addIndex(new Index("AppStoreServerRunningApp", "RunningAppId", true));
-        
         // AppUser COLUMNS
         columns = new Column[10];
         columns[0] = new Column("Id", "id", Types.INTEGER, 5);
@@ -291,14 +289,15 @@ public class DataSource {
         tables[APPUSERLOGIN].addIndex(new Index("AppUserLoginRunningApp", "RunningAppId", true));
         
         // ClientApp COLUMNS
-        columns = new Column[5];
+        columns = new Column[6];
         columns[0] = new Column("Id", "id", Types.INTEGER, 20);
         columns[0].primaryKey = true;
         columns[0].assignNextNumber = true;
         columns[1] = new Column("Created", "created", Types.TIMESTAMP);
-        columns[2] = new Column("AppUserId", true);
-        columns[3] = new Column("RunningAppId", true);
-        columns[4] = new Column("ServerApplicationId", true);
+        columns[2] = new Column("Name", "name", Types.VARCHAR, 55);
+        columns[3] = new Column("AppUserId", true);
+        columns[4] = new Column("RunningAppId", true);
+        columns[5] = new Column("ServerApplicationId", true);
         tables[CLIENTAPP].setColumns(columns);
         tables[CLIENTAPP].addIndex(new Index("ClientAppAppUser", "AppUserId", true));
         tables[CLIENTAPP].addIndex(new Index("ClientAppRunningApp", "RunningAppId", true));
@@ -316,17 +315,27 @@ public class DataSource {
         columns[5] = new Column("Seq", "seq", Types.INTEGER);
         tables[ENVIRONMENT].setColumns(columns);
         
-        // RunningApp COLUMNS
-        columns = new Column[7];
+        // PropertyValue COLUMNS
+        columns = new Column[6];
         columns[0] = new Column("Id", "id", Types.INTEGER, 20);
         columns[0].primaryKey = true;
         columns[0].assignNextNumber = true;
         columns[1] = new Column("Created", "created", Types.TIMESTAMP);
-        columns[2] = new Column("StopRequest", "stopRequest", Types.TIMESTAMP);
-        columns[3] = new Column("Pid", "pid", Types.BIGINT);
-        columns[4] = new Column("Error", "error", Types.VARCHAR, 240);
-        columns[5] = new Column("CpuSeconds", "cpuSeconds", Types.BIGINT);
-        columns[6] = new Column("Stopped", "stopped", Types.TIMESTAMP);
+        columns[2] = new Column("Name", "name", Types.VARCHAR, 35);
+        columns[3] = new Column("Value", "value", Types.VARCHAR, 250);
+        columns[4] = new Column("Ignore", "ignore", Types.BOOLEAN);
+        columns[5] = new Column("Note", "note", Types.VARCHAR, 120);
+        tables[PROPERTYVALUE].setColumns(columns);
+        
+        // RunningApp COLUMNS
+        columns = new Column[5];
+        columns[0] = new Column("Id", "id", Types.INTEGER, 20);
+        columns[0].primaryKey = true;
+        columns[0].assignNextNumber = true;
+        columns[1] = new Column("Created", "created", Types.TIMESTAMP);
+        columns[2] = new Column("Pid", "pid", Types.BIGINT);
+        columns[3] = new Column("Stopped", "stopped", Types.TIMESTAMP);
+        columns[4] = new Column("ConfigText", "configText", Types.CLOB);
         tables[RUNNINGAPP].setColumns(columns);
         
         // Server COLUMNS
@@ -345,19 +354,20 @@ public class DataSource {
         tables[SERVER].addIndex(new Index("ServerEnvironment", "EnvironmentId", true));
         
         // ServerApplication COLUMNS
-        columns = new Column[10];
+        columns = new Column[11];
         columns[0] = new Column("Id", "id", Types.INTEGER, 20);
         columns[0].primaryKey = true;
         columns[0].assignNextNumber = true;
         columns[1] = new Column("Created", "created", Types.TIMESTAMP);
-        columns[2] = new Column("ClientPort", "clientPort", Types.INTEGER);
-        columns[3] = new Column("HttpPort", "httpPort", Types.INTEGER);
-        columns[4] = new Column("HttpsPort", "httpsPort", Types.INTEGER);
-        columns[5] = new Column("LastConnect", "lastConnect", Types.TIMESTAMP);
-        columns[6] = new Column("ApplicationTypeId", true);
-        columns[7] = new Column("ApplicationVersionId", true);
-        columns[8] = new Column("RunningAppId", true);
-        columns[9] = new Column("ServerId", true);
+        columns[2] = new Column("Name", "name", Types.VARCHAR, 55);
+        columns[3] = new Column("ClientPort", "clientPort", Types.INTEGER);
+        columns[4] = new Column("HttpPort", "httpPort", Types.INTEGER);
+        columns[5] = new Column("HttpsPort", "httpsPort", Types.INTEGER);
+        columns[6] = new Column("LastConnect", "lastConnect", Types.TIMESTAMP);
+        columns[7] = new Column("ApplicationTypeId", true);
+        columns[8] = new Column("ApplicationVersionId", true);
+        columns[9] = new Column("RunningAppId", true);
+        columns[10] = new Column("ServerId", true);
         tables[SERVERAPPLICATION].setColumns(columns);
         tables[SERVERAPPLICATION].addIndex(new Index("ServerApplicationApplicationType", "ApplicationTypeId", true));
         tables[SERVERAPPLICATION].addIndex(new Index("ServerApplicationApplicationVersion", "ApplicationVersionId", true));
@@ -365,20 +375,33 @@ public class DataSource {
         tables[SERVERAPPLICATION].addIndex(new Index("ServerApplicationServer", "ServerId", true));
         
         // SingleApp COLUMNS
-        columns = new Column[6];
+        columns = new Column[7];
         columns[0] = new Column("Id", "id", Types.INTEGER, 20);
         columns[0].primaryKey = true;
         columns[0].assignNextNumber = true;
         columns[1] = new Column("Created", "created", Types.TIMESTAMP);
-        columns[2] = new Column("ApplicationTypeId", true);
-        columns[3] = new Column("ApplicationVersionId", true);
-        columns[4] = new Column("AppUserId", true);
-        columns[5] = new Column("RunningAppId", true);
+        columns[2] = new Column("Name", "name", Types.VARCHAR, 55);
+        columns[3] = new Column("ApplicationTypeId", true);
+        columns[4] = new Column("ApplicationVersionId", true);
+        columns[5] = new Column("AppUserId", true);
+        columns[6] = new Column("RunningAppId", true);
         tables[SINGLEAPP].setColumns(columns);
         tables[SINGLEAPP].addIndex(new Index("SingleAppApplicationType", "ApplicationTypeId", true));
         tables[SINGLEAPP].addIndex(new Index("SingleAppApplicationVersion", "ApplicationVersionId", true));
         tables[SINGLEAPP].addIndex(new Index("SingleAppAppUser", "AppUserId", true));
         tables[SINGLEAPP].addIndex(new Index("SingleAppRunningApp", "RunningAppId", true));
+        
+        // VersionFile COLUMNS
+        columns = new Column[5];
+        columns[0] = new Column("Id", "id", Types.INTEGER, 20);
+        columns[0].primaryKey = true;
+        columns[0].assignNextNumber = true;
+        columns[1] = new Column("Created", "created", Types.TIMESTAMP);
+        columns[2] = new Column("Type", "type", Types.INTEGER);
+        columns[3] = new Column("FilePath", "filePath", Types.VARCHAR, 125);
+        columns[4] = new Column("ApplicationVersionId", true);
+        tables[VERSIONFILE].setColumns(columns);
+        tables[VERSIONFILE].addIndex(new Index("VersionFileApplicationVersion", "ApplicationVersionId", true));
         
         // Link Tables Columns
         
@@ -390,6 +413,38 @@ public class DataSource {
         tables[APPUSERAPPLICATIONTYPE].addIndex(new Index("ApplicationTypeAppUser", new String[] {"AppUserId"}));
         tables[APPUSERAPPLICATIONTYPE].addIndex(new Index("AppUserApplicationType", new String[] {"ApplicationTypeId"}));
         
+        // ServerApplicationPropertyValue COLUMNS
+        columns = new Column[2];
+        columns[0] = new Column("ServerApplicationId",null);
+        columns[1] = new Column("PropertyValueId",null);
+        tables[SERVERAPPLICATIONPROPERTYVALUE].setColumns(columns);
+        tables[SERVERAPPLICATIONPROPERTYVALUE].addIndex(new Index("PropertyValueServerApplication", new String[] {"ServerApplicationId"}));
+        tables[SERVERAPPLICATIONPROPERTYVALUE].addIndex(new Index("ServerApplicationPropertyValue", new String[] {"PropertyValueId"}));
+        
+        // ApplicationTypePropertyValue COLUMNS
+        columns = new Column[2];
+        columns[0] = new Column("ApplicationTypeId",null);
+        columns[1] = new Column("PropertyValueId",null);
+        tables[APPLICATIONTYPEPROPERTYVALUE].setColumns(columns);
+        tables[APPLICATIONTYPEPROPERTYVALUE].addIndex(new Index("PropertyValueApplicationType", new String[] {"ApplicationTypeId"}));
+        tables[APPLICATIONTYPEPROPERTYVALUE].addIndex(new Index("ApplicationTypePropertyValue", new String[] {"PropertyValueId"}));
+        
+        // ClientAppPropertyValue COLUMNS
+        columns = new Column[2];
+        columns[0] = new Column("ClientAppId",null);
+        columns[1] = new Column("PropertyValueId",null);
+        tables[CLIENTAPPPROPERTYVALUE].setColumns(columns);
+        tables[CLIENTAPPPROPERTYVALUE].addIndex(new Index("PropertyValueClientApp", new String[] {"ClientAppId"}));
+        tables[CLIENTAPPPROPERTYVALUE].addIndex(new Index("ClientAppPropertyValue", new String[] {"PropertyValueId"}));
+        
+        // SingleAppPropertyValue COLUMNS
+        columns = new Column[2];
+        columns[0] = new Column("SingleAppId",null);
+        columns[1] = new Column("PropertyValueId",null);
+        tables[SINGLEAPPPROPERTYVALUE].setColumns(columns);
+        tables[SINGLEAPPPROPERTYVALUE].addIndex(new Index("PropertyValueSingleApp", new String[] {"SingleAppId"}));
+        tables[SINGLEAPPPROPERTYVALUE].addIndex(new Index("SingleAppPropertyValue", new String[] {"PropertyValueId"}));
+        
         // LINKS
         // table.addLink( propertyName, toTableName, reversePropertyName, FKey ColumnNumber(s))
         tables[APPLICATIONTYPE].addLink("applicationVersions", tables[APPLICATIONVERSION], "applicationType", new int[] {0});
@@ -398,10 +453,10 @@ public class DataSource {
         tables[APPLICATIONVERSION].addLink("applicationType", tables[APPLICATIONTYPE], "applicationVersions", new int[] {6});
         tables[APPLICATIONVERSION].addLink("serverApplications", tables[SERVERAPPLICATION], "applicationVersion", new int[] {0});
         tables[APPLICATIONVERSION].addLink("singleApps", tables[SINGLEAPP], "applicationVersion", new int[] {0});
+        tables[APPLICATIONVERSION].addLink("versionFiles", tables[VERSIONFILE], "applicationVersion", new int[] {0});
         tables[APPRUNTIME].addLink("appRuntimeErrors", tables[APPRUNTIMEERROR], "appRuntime", new int[] {0});
         tables[APPRUNTIMEERROR].addLink("appRuntime", tables[APPRUNTIME], "appRuntimeErrors", new int[] {5});
         tables[APPSERVER].addLink("appUserLogin", tables[APPUSERLOGIN], "appServers", new int[] {5});
-        tables[APPSTORESERVER].addLink("runningApp", tables[RUNNINGAPP], "appStoreServer", new int[] {4});
         tables[APPUSER].addLink("appUserLogins", tables[APPUSERLOGIN], "appUser", new int[] {0});
         tables[APPUSER].addLink("clientApps", tables[CLIENTAPP], "appUser", new int[] {0});
         tables[APPUSER].addLink("server", tables[SERVER], "appUser", new int[] {0});
@@ -411,11 +466,10 @@ public class DataSource {
         tables[APPUSERLOGIN].addLink("appUser", tables[APPUSER], "appUserLogins", new int[] {11});
         tables[APPUSERLOGIN].addLink("appUserErrors", tables[APPUSERERROR], "appUserLogin", new int[] {0});
         tables[APPUSERLOGIN].addLink("runningApp", tables[RUNNINGAPP], "appUserLogin", new int[] {12});
-        tables[CLIENTAPP].addLink("appUser", tables[APPUSER], "clientApps", new int[] {2});
-        tables[CLIENTAPP].addLink("runningApp", tables[RUNNINGAPP], "clientApp", new int[] {3});
-        tables[CLIENTAPP].addLink("serverApplication", tables[SERVERAPPLICATION], "clientApps", new int[] {4});
+        tables[CLIENTAPP].addLink("appUser", tables[APPUSER], "clientApps", new int[] {3});
+        tables[CLIENTAPP].addLink("runningApp", tables[RUNNINGAPP], "clientApp", new int[] {4});
+        tables[CLIENTAPP].addLink("serverApplication", tables[SERVERAPPLICATION], "clientApps", new int[] {5});
         tables[ENVIRONMENT].addLink("servers", tables[SERVER], "environment", new int[] {0});
-        tables[RUNNINGAPP].addLink("appStoreServer", tables[APPSTORESERVER], "runningApp", new int[] {0});
         tables[RUNNINGAPP].addLink("appUserLogin", tables[APPUSERLOGIN], "runningApp", new int[] {0});
         tables[RUNNINGAPP].addLink("clientApp", tables[CLIENTAPP], "runningApp", new int[] {0});
         tables[RUNNINGAPP].addLink("serverApplication", tables[SERVERAPPLICATION], "runningApp", new int[] {0});
@@ -423,15 +477,16 @@ public class DataSource {
         tables[SERVER].addLink("appUser", tables[APPUSER], "server", new int[] {5});
         tables[SERVER].addLink("environment", tables[ENVIRONMENT], "servers", new int[] {6});
         tables[SERVER].addLink("serverApplications", tables[SERVERAPPLICATION], "server", new int[] {0});
-        tables[SERVERAPPLICATION].addLink("applicationType", tables[APPLICATIONTYPE], "serverApplications", new int[] {6});
-        tables[SERVERAPPLICATION].addLink("applicationVersion", tables[APPLICATIONVERSION], "serverApplications", new int[] {7});
+        tables[SERVERAPPLICATION].addLink("applicationType", tables[APPLICATIONTYPE], "serverApplications", new int[] {7});
+        tables[SERVERAPPLICATION].addLink("applicationVersion", tables[APPLICATIONVERSION], "serverApplications", new int[] {8});
         tables[SERVERAPPLICATION].addLink("clientApps", tables[CLIENTAPP], "serverApplication", new int[] {0});
-        tables[SERVERAPPLICATION].addLink("runningApp", tables[RUNNINGAPP], "serverApplication", new int[] {8});
-        tables[SERVERAPPLICATION].addLink("server", tables[SERVER], "serverApplications", new int[] {9});
-        tables[SINGLEAPP].addLink("applicationType", tables[APPLICATIONTYPE], "singleApps", new int[] {2});
-        tables[SINGLEAPP].addLink("applicationVersion", tables[APPLICATIONVERSION], "singleApps", new int[] {3});
-        tables[SINGLEAPP].addLink("appUser", tables[APPUSER], "singleApps", new int[] {4});
-        tables[SINGLEAPP].addLink("runningApp", tables[RUNNINGAPP], "singleApp", new int[] {5});
+        tables[SERVERAPPLICATION].addLink("runningApp", tables[RUNNINGAPP], "serverApplication", new int[] {9});
+        tables[SERVERAPPLICATION].addLink("server", tables[SERVER], "serverApplications", new int[] {10});
+        tables[SINGLEAPP].addLink("applicationType", tables[APPLICATIONTYPE], "singleApps", new int[] {3});
+        tables[SINGLEAPP].addLink("applicationVersion", tables[APPLICATIONVERSION], "singleApps", new int[] {4});
+        tables[SINGLEAPP].addLink("appUser", tables[APPUSER], "singleApps", new int[] {5});
+        tables[SINGLEAPP].addLink("runningApp", tables[RUNNINGAPP], "singleApp", new int[] {6});
+        tables[VERSIONFILE].addLink("applicationVersion", tables[APPLICATIONVERSION], "versionFiles", new int[] {4});
         
         // Links for Link Tables
         
@@ -440,6 +495,30 @@ public class DataSource {
         tables[APPUSER].addLink("applicationTypes", tables[APPUSERAPPLICATIONTYPE], "appUsers", new int[] {0});
         tables[APPUSERAPPLICATIONTYPE].addLink("applicationTypes", tables[APPLICATIONTYPE], "appUsers", new int[] {1});
         tables[APPLICATIONTYPE].addLink("appUsers", tables[APPUSERAPPLICATIONTYPE], "applicationTypes", new int[] {0});
+        
+        // ServerApplicationPropertyValue LINKS
+        tables[SERVERAPPLICATIONPROPERTYVALUE].addLink("serverApplication", tables[SERVERAPPLICATION], "propertyValues", new int[] {0});
+        tables[SERVERAPPLICATION].addLink("propertyValues", tables[SERVERAPPLICATIONPROPERTYVALUE], "serverApplication", new int[] {0});
+        tables[SERVERAPPLICATIONPROPERTYVALUE].addLink("propertyValues", tables[PROPERTYVALUE], "serverApplication", new int[] {1});
+        tables[PROPERTYVALUE].addLink("serverApplication", tables[SERVERAPPLICATIONPROPERTYVALUE], "propertyValues", new int[] {0});
+        
+        // ApplicationTypePropertyValue LINKS
+        tables[APPLICATIONTYPEPROPERTYVALUE].addLink("applicationType", tables[APPLICATIONTYPE], "propertyValues", new int[] {0});
+        tables[APPLICATIONTYPE].addLink("propertyValues", tables[APPLICATIONTYPEPROPERTYVALUE], "applicationType", new int[] {0});
+        tables[APPLICATIONTYPEPROPERTYVALUE].addLink("propertyValues", tables[PROPERTYVALUE], "applicationType", new int[] {1});
+        tables[PROPERTYVALUE].addLink("applicationType", tables[APPLICATIONTYPEPROPERTYVALUE], "propertyValues", new int[] {0});
+        
+        // ClientAppPropertyValue LINKS
+        tables[CLIENTAPPPROPERTYVALUE].addLink("clientApp", tables[CLIENTAPP], "propertyValues", new int[] {0});
+        tables[CLIENTAPP].addLink("propertyValues", tables[CLIENTAPPPROPERTYVALUE], "clientApp", new int[] {0});
+        tables[CLIENTAPPPROPERTYVALUE].addLink("propertyValues", tables[PROPERTYVALUE], "clientApp", new int[] {1});
+        tables[PROPERTYVALUE].addLink("clientApp", tables[CLIENTAPPPROPERTYVALUE], "propertyValues", new int[] {0});
+        
+        // SingleAppPropertyValue LINKS
+        tables[SINGLEAPPPROPERTYVALUE].addLink("singleApp", tables[SINGLEAPP], "propertyValues", new int[] {0});
+        tables[SINGLEAPP].addLink("propertyValues", tables[SINGLEAPPPROPERTYVALUE], "singleApp", new int[] {0});
+        tables[SINGLEAPPPROPERTYVALUE].addLink("propertyValues", tables[PROPERTYVALUE], "singleApp", new int[] {1});
+        tables[PROPERTYVALUE].addLink("singleApp", tables[SINGLEAPPPROPERTYVALUE], "propertyValues", new int[] {0});
         db.setTables(tables);
         return db;
     }
@@ -450,7 +529,7 @@ public class DataSource {
         
         dao = new DataAccessObject() {
             private static final String pkeyColumns = "ApplicationType.Id";
-            private static final String columns = "ApplicationType.Id, ApplicationType.Created, ApplicationType.Name, ApplicationType.AbbrevName, ApplicationType.DirectoryName, ApplicationType.SingleTypeOnly, ApplicationType.ClientPort, ApplicationType.HttpPort, ApplicationType.HttpsPort, ApplicationType.DownloadUrl, ApplicationType.JarFileName, ApplicationType.MainClass, ApplicationType.JvmOptions";
+            private static final String columns = "ApplicationType.Id, ApplicationType.Created, ApplicationType.Name, ApplicationType.AbbrevName, ApplicationType.SingleTypeOnly, ApplicationType.ClientPort, ApplicationType.HttpPort, ApplicationType.HttpsPort, ApplicationType.DownloadUrl, ApplicationType.AppDirectory, ApplicationType.JarFileName, ApplicationType.MainClass, ApplicationType.JvmOptions";
             @Override
             public String getPkeySelectColumns() {
                 return pkeyColumns;
@@ -544,25 +623,6 @@ public class DataSource {
         if (table != null) table.setDataAccessObject(dao);
         
         dao = new DataAccessObject() {
-            private static final String pkeyColumns = "AppStoreServer.Id";
-            private static final String columns = "AppStoreServer.Id, AppStoreServer.Created, AppStoreServer.Name, AppStoreServer.Server, AppStoreServer.RunningAppId";
-            @Override
-            public String getPkeySelectColumns() {
-                return pkeyColumns;
-            }
-            @Override
-            public String getSelectColumns() {
-                return columns;
-            }
-            @Override
-            public OAObject getObject(DataAccessObject.ResultSetInfo rsi) throws SQLException {
-                return getAppStoreServer(rsi.getResultSet(), rsi);
-            }
-        };
-        table = db.getTable("AppStoreServer");
-        if (table != null) table.setDataAccessObject(dao);
-        
-        dao = new DataAccessObject() {
             private static final String pkeyColumns = "AppUser.Id";
             private static final String columns = "AppUser.Id, AppUser.LoginId, AppUser.Password, AppUser.Admin, AppUser.EditProcessed, AppUser.FirstName, AppUser.LastName, AppUser.InactiveDate, AppUser.Note, AppUser.DisableAutoLogin";
             @Override
@@ -621,7 +681,7 @@ public class DataSource {
         
         dao = new DataAccessObject() {
             private static final String pkeyColumns = "ClientApp.Id";
-            private static final String columns = "ClientApp.Id, ClientApp.Created, ClientApp.AppUserId, ClientApp.RunningAppId, ClientApp.ServerApplicationId";
+            private static final String columns = "ClientApp.Id, ClientApp.Created, ClientApp.Name, ClientApp.AppUserId, ClientApp.RunningAppId, ClientApp.ServerApplicationId";
             @Override
             public String getPkeySelectColumns() {
                 return pkeyColumns;
@@ -658,8 +718,27 @@ public class DataSource {
         if (table != null) table.setDataAccessObject(dao);
         
         dao = new DataAccessObject() {
+            private static final String pkeyColumns = "PropertyValue.Id";
+            private static final String columns = "PropertyValue.Id, PropertyValue.Created, PropertyValue.Name, PropertyValue.Value, PropertyValue.Ignore, PropertyValue.Note";
+            @Override
+            public String getPkeySelectColumns() {
+                return pkeyColumns;
+            }
+            @Override
+            public String getSelectColumns() {
+                return columns;
+            }
+            @Override
+            public OAObject getObject(DataAccessObject.ResultSetInfo rsi) throws SQLException {
+                return getPropertyValue(rsi.getResultSet(), rsi);
+            }
+        };
+        table = db.getTable("PropertyValue");
+        if (table != null) table.setDataAccessObject(dao);
+        
+        dao = new DataAccessObject() {
             private static final String pkeyColumns = "RunningApp.Id";
-            private static final String columns = "RunningApp.Id, RunningApp.Created, RunningApp.StopRequest, RunningApp.Pid, RunningApp.Error, RunningApp.CpuSeconds, RunningApp.Stopped";
+            private static final String columns = "RunningApp.Id, RunningApp.Created, RunningApp.Pid, RunningApp.Stopped, RunningApp.ConfigText";
             @Override
             public String getPkeySelectColumns() {
                 return pkeyColumns;
@@ -697,7 +776,7 @@ public class DataSource {
         
         dao = new DataAccessObject() {
             private static final String pkeyColumns = "ServerApplication.Id";
-            private static final String columns = "ServerApplication.Id, ServerApplication.Created, ServerApplication.ClientPort, ServerApplication.HttpPort, ServerApplication.HttpsPort, ServerApplication.LastConnect, ServerApplication.ApplicationTypeId, ServerApplication.ApplicationVersionId, ServerApplication.RunningAppId, ServerApplication.ServerId";
+            private static final String columns = "ServerApplication.Id, ServerApplication.Created, ServerApplication.Name, ServerApplication.ClientPort, ServerApplication.HttpPort, ServerApplication.HttpsPort, ServerApplication.LastConnect, ServerApplication.ApplicationTypeId, ServerApplication.ApplicationVersionId, ServerApplication.RunningAppId, ServerApplication.ServerId";
             @Override
             public String getPkeySelectColumns() {
                 return pkeyColumns;
@@ -716,7 +795,7 @@ public class DataSource {
         
         dao = new DataAccessObject() {
             private static final String pkeyColumns = "SingleApp.Id";
-            private static final String columns = "SingleApp.Id, SingleApp.Created, SingleApp.ApplicationTypeId, SingleApp.ApplicationVersionId, SingleApp.AppUserId, SingleApp.RunningAppId";
+            private static final String columns = "SingleApp.Id, SingleApp.Created, SingleApp.Name, SingleApp.ApplicationTypeId, SingleApp.ApplicationVersionId, SingleApp.AppUserId, SingleApp.RunningAppId";
             @Override
             public String getPkeySelectColumns() {
                 return pkeyColumns;
@@ -731,6 +810,25 @@ public class DataSource {
             }
         };
         table = db.getTable("SingleApp");
+        if (table != null) table.setDataAccessObject(dao);
+        
+        dao = new DataAccessObject() {
+            private static final String pkeyColumns = "VersionFile.Id";
+            private static final String columns = "VersionFile.Id, VersionFile.Created, VersionFile.Type, VersionFile.FilePath, VersionFile.ApplicationVersionId";
+            @Override
+            public String getPkeySelectColumns() {
+                return pkeyColumns;
+            }
+            @Override
+            public String getSelectColumns() {
+                return columns;
+            }
+            @Override
+            public OAObject getObject(DataAccessObject.ResultSetInfo rsi) throws SQLException {
+                return getVersionFile(rsi.getResultSet(), rsi);
+            }
+        };
+        table = db.getTable("VersionFile");
         if (table != null) table.setDataAccessObject(dao);
     }
     
@@ -799,19 +897,6 @@ public class DataSource {
         return appServer;
     }
     
-    protected AppStoreServer getAppStoreServer(ResultSet rs, DataAccessObject.ResultSetInfo rsi) throws SQLException {
-        int id = rs.getInt(1);
-        AppStoreServer appStoreServer = (AppStoreServer) OAObjectCacheDelegate.getObject(AppStoreServer.class, id);
-        if (appStoreServer == null) {
-            appStoreServer = new AppStoreServer();
-            appStoreServer.load(rs, id);
-        }
-        else {
-            rsi.setFoundInCache(true);
-        }
-        return appStoreServer;
-    }
-    
     protected AppUser getAppUser(ResultSet rs, DataAccessObject.ResultSetInfo rsi) throws SQLException {
         int id = rs.getInt(1);
         AppUser appUser = (AppUser) OAObjectCacheDelegate.getObject(AppUser.class, id);
@@ -877,6 +962,19 @@ public class DataSource {
         return environment;
     }
     
+    protected PropertyValue getPropertyValue(ResultSet rs, DataAccessObject.ResultSetInfo rsi) throws SQLException {
+        int id = rs.getInt(1);
+        PropertyValue propertyValue = (PropertyValue) OAObjectCacheDelegate.getObject(PropertyValue.class, id);
+        if (propertyValue == null) {
+            propertyValue = new PropertyValue();
+            propertyValue.load(rs, id);
+        }
+        else {
+            rsi.setFoundInCache(true);
+        }
+        return propertyValue;
+    }
+    
     protected RunningApp getRunningApp(ResultSet rs, DataAccessObject.ResultSetInfo rsi) throws SQLException {
         int id = rs.getInt(1);
         RunningApp runningApp = (RunningApp) OAObjectCacheDelegate.getObject(RunningApp.class, id);
@@ -927,5 +1025,18 @@ public class DataSource {
             rsi.setFoundInCache(true);
         }
         return singleApp;
+    }
+    
+    protected VersionFile getVersionFile(ResultSet rs, DataAccessObject.ResultSetInfo rsi) throws SQLException {
+        int id = rs.getInt(1);
+        VersionFile versionFile = (VersionFile) OAObjectCacheDelegate.getObject(VersionFile.class, id);
+        if (versionFile == null) {
+            versionFile = new VersionFile();
+            versionFile.load(rs, id);
+        }
+        else {
+            rsi.setFoundInCache(true);
+        }
+        return versionFile;
     }
 }

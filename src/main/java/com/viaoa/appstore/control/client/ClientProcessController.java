@@ -17,6 +17,9 @@ import com.viaoa.util.OADateTime;
 import com.viaoa.util.OAFile;
 import com.viaoa.util.OAString;
 
+//qqqqqqqqqqqqqqqqq this should be removed ??
+
+
 /**
  * This is used by the ServerApplication.runClient command, 
  * to be able to run a client that connects to a Server Application.
@@ -42,7 +45,7 @@ public abstract class ClientProcessController {
     
     protected void setup() {
         Hub<RunningApp> hubRunApp = ModelDelegate.getLocalAppUserLoginHub().getDetailHub(AppUserLoginPP.appUser().clientApps().runningApp().pp);
-        
+/*qqqqqq        
         hubRunApp.addHubListener(new HubListenerAdapter<RunningApp>() {
             // check for RunningApp.stopRequest = !null
             @Override
@@ -64,16 +67,18 @@ public abstract class ClientProcessController {
                 startProcess(runApp);
             }
         });
+**/        
     }
 
     protected void startProcess(RunningApp runApp) {
         if (runApp == null) return;
+/*qqqqqqq        
         if (runApp.getStopRequest() != null) return;
 
         AppUserLogin appUserLogin = ModelDelegate.getLocalAppUserLogin();
         if (appUserLogin == null) return;
         
-        runApp.setAppUserLogin(appUserLogin);
+//qqqqq        runApp.setAppUserLogin(appUserLogin);
 
         ClientApp clientApp = appUserLogin.getAppUser().getClientApps().find(ClientApp.P_RunningApp, runApp);
         if (clientApp == null) return;
@@ -83,9 +88,11 @@ public abstract class ClientProcessController {
         
         runApp(runApp);
         runThread();
+*/        
     }    
     
     protected void runThread() {
+/*qqqqqqqqqqq        
         if (thread != null) return;
         thread = new Thread(new Runnable() {
             @Override
@@ -115,9 +122,11 @@ public abstract class ClientProcessController {
             }
         }, "ProcessController");
         thread.start();
+*/        
     }
     
     protected void stopProcess(RunningApp runApp) {
+/*qqqqqqqq        
         if (runApp == null) return;
 
         AppUserLogin appUserLogin = ModelDelegate.getLocalAppUserLogin();
@@ -131,9 +140,11 @@ public abstract class ClientProcessController {
             hmRunningAppProcess.remove(runApp);
             runApp.setStopped(new OADateTime());
         }
+*/        
     }
  
     public void runApp(RunningApp runApp) {
+/*qqqqqq        
         try {
             lock.lock();
             _runApp(runApp);
@@ -145,6 +156,7 @@ public abstract class ClientProcessController {
         finally {
             lock.unlock();
         }
+*/        
     }
     protected void _runApp(final RunningApp runApp) throws Exception {
         
@@ -192,7 +204,7 @@ public abstract class ClientProcessController {
 
         
         
-        txt += String.format("app.classpath=$APPDIR\\%s\\release\\%d\\%s.jar\n", appType.getDirectoryName(), appVer.getRelease(), appVer.getServerFileName());
+//qqq        txt += String.format("app.classpath=$APPDIR\\%s\\release\\%d\\%s.jar\n", appType.getDirectoryName(), appVer.getRelease(), appVer.getServerFileName());
         txt += String.format("app.mainclass=%s\n", appType.getMainClass());
         
         txt += "\n";
@@ -207,7 +219,7 @@ public abstract class ClientProcessController {
         txt += "[ArgOptions]\n";
         txt += "arguments=client\n";
         // Important note:  $APPDIR does not work for ArgOptions/arguments
-        txt += String.format("arguments=RootDirectory=app/%s/runtime/client\n",appType.getDirectoryName());
+//qqqq        txt += String.format("arguments=RootDirectory=app/%s/runtime/client\n",appType.getDirectoryName());
 
         int port = serverApp.getClientPort();
         txt += String.format("arguments=ServerPort=%d\n", port);

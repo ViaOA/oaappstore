@@ -34,12 +34,12 @@ public class ApplicationType extends OAObject {
     public static final String P_Created = "created";
     public static final String P_Name = "name";
     public static final String P_AbbrevName = "abbrevName";
-    public static final String P_DirectoryName = "directoryName";
     public static final String P_SingleTypeOnly = "singleTypeOnly";
     public static final String P_ClientPort = "clientPort";
     public static final String P_HttpPort = "httpPort";
     public static final String P_HttpsPort = "httpsPort";
     public static final String P_DownloadUrl = "downloadUrl";
+    public static final String P_AppDirectory = "appDirectory";
     public static final String P_JarFileName = "jarFileName";
     public static final String P_MainClass = "mainClass";
     public static final String P_JvmOptions = "jvmOptions";
@@ -49,6 +49,8 @@ public class ApplicationType extends OAObject {
     public static final String P_ApplicationVersions = "applicationVersions";
     public static final String P_AppUsers = "appUsers";
     public static final String P_AppUsersId = "appUsersId"; // fkey
+    public static final String P_PropertyValues = "propertyValues";
+    public static final String P_PropertyValuesId = "propertyValuesId"; // fkey
     public static final String P_ServerApplications = "serverApplications";
     public static final String P_SingleApps = "singleApps";
      
@@ -57,12 +59,12 @@ public class ApplicationType extends OAObject {
     protected volatile OADateTime created;
     protected volatile String name;
     protected volatile String abbrevName;
-    protected volatile String directoryName;
     protected volatile boolean singleTypeOnly;
     protected volatile int clientPort;
     protected volatile int httpPort;
     protected volatile int httpsPort;
     protected volatile String downloadUrl;
+    protected volatile String appDirectory;
     protected volatile String jarFileName;
     protected volatile String mainClass;
     protected volatile String jvmOptions;
@@ -72,6 +74,7 @@ public class ApplicationType extends OAObject {
     // Links to other objects.
     protected transient Hub<ApplicationVersion> hubApplicationVersions;
     protected transient Hub<AppUser> hubAppUsers;
+    protected transient Hub<PropertyValue> hubPropertyValues;
     protected transient Hub<ServerApplication> hubServerApplications;
     protected transient Hub<SingleApp> hubSingleApps;
      
@@ -81,8 +84,8 @@ public class ApplicationType extends OAObject {
     @Override
     public void setObjectDefaults() {
         setCreated(new OADateTime());
-        setDirectoryName("[appname]");
-        setDownloadUrl("https://github.com/[project]/[appname]-run/raw/master/executable-jar");
+        setDownloadUrl("https://raw.githubusercontent.com/ViaOA/oaappstore-run/master");
+        setAppDirectory("[appname]");
         setMainClass("com.[project].[appname].control.StartupController");
         setJvmOptions("-Xmx1000m");
     }
@@ -145,18 +148,6 @@ public class ApplicationType extends OAObject {
         fireBeforePropertyChange(P_AbbrevName, old, newValue);
         this.abbrevName = newValue;
         firePropertyChange(P_AbbrevName, old, this.abbrevName);
-    }
-
-    @OAProperty(displayName = "Directory Name", defaultValue = "[appname]", maxLength = 45, displayLength = 14, uiColumnName = "Directory")
-    @OAColumn(name = "DirectoryName", maxLength = 45)
-    public String getDirectoryName() {
-        return directoryName;
-    }
-    public void setDirectoryName(String newValue) {
-        String old = directoryName;
-        fireBeforePropertyChange(P_DirectoryName, old, newValue);
-        this.directoryName = newValue;
-        firePropertyChange(P_DirectoryName, old, this.directoryName);
     }
 
     @OAProperty(displayName = "Single Type Only", displayLength = 5, uiColumnLength = 16)
@@ -231,7 +222,7 @@ public class ApplicationType extends OAObject {
         }
     }
 
-    @OAProperty(displayName = "Download Url", defaultValue = "https://github.com/[project]/[appname]-run/raw/master/executable-jar", maxLength = 125, displayLength = 22, uiColumnLength = 20, isUrl = true)
+    @OAProperty(displayName = "Download Url", defaultValue = "https://raw.githubusercontent.com/ViaOA/oaappstore-run/master", maxLength = 125, displayLength = 35, uiColumnLength = 22, isUrl = true)
     @OAColumn(name = "DownloadUrl", maxLength = 125)
     public String getDownloadUrl() {
         return downloadUrl;
@@ -241,6 +232,18 @@ public class ApplicationType extends OAObject {
         fireBeforePropertyChange(P_DownloadUrl, old, newValue);
         this.downloadUrl = newValue;
         firePropertyChange(P_DownloadUrl, old, this.downloadUrl);
+    }
+
+    @OAProperty(displayName = "App Directory", defaultValue = "[appname]", maxLength = 45, displayLength = 14, uiColumnName = "Directory")
+    @OAColumn(name = "AppDirectory", maxLength = 45)
+    public String getAppDirectory() {
+        return appDirectory;
+    }
+    public void setAppDirectory(String newValue) {
+        String old = appDirectory;
+        fireBeforePropertyChange(P_AppDirectory, old, newValue);
+        this.appDirectory = newValue;
+        firePropertyChange(P_AppDirectory, old, this.appDirectory);
     }
 
     @OAProperty(displayName = "Jar File Name", maxLength = 70, displayLength = 15)
@@ -334,6 +337,19 @@ public class ApplicationType extends OAObject {
     }
 
     @OAMany(
+        displayName = "Property Values", 
+        toClass = PropertyValue.class, 
+        reverseName = PropertyValue.P_ApplicationType
+    )
+    @OALinkTable(name = "ApplicationTypePropertyValue", indexName = "PropertyValueApplicationType", columns = {"ApplicationTypeId"})
+    public Hub<PropertyValue> getPropertyValues() {
+        if (hubPropertyValues == null) {
+            hubPropertyValues = (Hub<PropertyValue>) getHub(P_PropertyValues);
+        }
+        return hubPropertyValues;
+    }
+
+    @OAMany(
         displayName = "Server Applications", 
         toClass = ServerApplication.class, 
         reverseName = ServerApplication.P_ApplicationType
@@ -369,16 +385,16 @@ public class ApplicationType extends OAObject {
         if (timestamp != null) this.created = new OADateTime(timestamp);
         this.name = rs.getString(3);
         this.abbrevName = rs.getString(4);
-        this.directoryName = rs.getString(5);
-        this.singleTypeOnly = rs.getBoolean(6);
+        this.singleTypeOnly = rs.getBoolean(5);
         OAObjectInfoDelegate.setPrimitiveNull(this, P_SingleTypeOnly, rs.wasNull());
-        this.clientPort = rs.getInt(7);
+        this.clientPort = rs.getInt(6);
         OAObjectInfoDelegate.setPrimitiveNull(this, P_ClientPort, rs.wasNull());
-        this.httpPort = rs.getInt(8);
+        this.httpPort = rs.getInt(7);
         OAObjectInfoDelegate.setPrimitiveNull(this, P_HttpPort, rs.wasNull());
-        this.httpsPort = rs.getInt(9);
+        this.httpsPort = rs.getInt(8);
         OAObjectInfoDelegate.setPrimitiveNull(this, P_HttpsPort, rs.wasNull());
-        this.downloadUrl = rs.getString(10);
+        this.downloadUrl = rs.getString(9);
+        this.appDirectory = rs.getString(10);
         this.jarFileName = rs.getString(11);
         this.mainClass = rs.getString(12);
         this.jvmOptions = rs.getString(13);

@@ -30,6 +30,11 @@ public class ClientAppPPx implements PPxInterface, Serializable {
         return ppx;
     }
 
+    public PropertyValuePPx propertyValues() {
+        PropertyValuePPx ppx = new PropertyValuePPx(this, ClientApp.P_PropertyValues);
+        return ppx;
+    }
+
     public RunningAppPPx runningApp() {
         RunningAppPPx ppx = new RunningAppPPx(this, ClientApp.P_RunningApp);
         return ppx;
@@ -46,6 +51,10 @@ public class ClientAppPPx implements PPxInterface, Serializable {
 
     public String created() {
         return pp + "." + ClientApp.P_Created;
+    }
+
+    public String name() {
+        return pp + "." + ClientApp.P_Name;
     }
 
     public String run() {

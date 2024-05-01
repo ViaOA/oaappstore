@@ -280,7 +280,6 @@ public class ServerModel extends OAObjectModel {
         modelServerApplicationsPickFromApplicationType.setAllowCut(false);
         modelServerApplicationsPickFromApplicationType.setAllowCopy(false);
         modelServerApplicationsPickFromApplicationType.setAllowPaste(false);
-        modelServerApplicationsPickFromApplicationType.setAllowMultiSelect(true);
         new HubMerger<ServerApplication, ApplicationType>(getServerApplications(), modelServerApplicationsPickFromApplicationType.getMultiSelectHub(), ServerApplication.P_ApplicationType);
         return modelServerApplicationsPickFromApplicationType;
     }

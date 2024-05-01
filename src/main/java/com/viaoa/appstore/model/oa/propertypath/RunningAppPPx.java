@@ -25,11 +25,6 @@ public class RunningAppPPx implements PPxInterface, Serializable {
         pp = s;
     }
 
-    public AppStoreServerPPx appStoreServer() {
-        AppStoreServerPPx ppx = new AppStoreServerPPx(this, RunningApp.P_AppStoreServer);
-        return ppx;
-    }
-
     public AppUserLoginPPx appUserLogin() {
         AppUserLoginPPx ppx = new AppUserLoginPPx(this, RunningApp.P_AppUserLogin);
         return ppx;
@@ -58,24 +53,20 @@ public class RunningAppPPx implements PPxInterface, Serializable {
         return pp + "." + RunningApp.P_Created;
     }
 
-    public String stopRequest() {
-        return pp + "." + RunningApp.P_StopRequest;
-    }
-
     public String pid() {
         return pp + "." + RunningApp.P_Pid;
     }
 
-    public String error() {
-        return pp + "." + RunningApp.P_Error;
-    }
-
-    public String cpuSeconds() {
-        return pp + "." + RunningApp.P_CpuSeconds;
-    }
-
     public String stopped() {
         return pp + "." + RunningApp.P_Stopped;
+    }
+
+    public String configText() {
+        return pp + "." + RunningApp.P_ConfigText;
+    }
+
+    public String console() {
+        return pp + "." + RunningApp.P_Console;
     }
 
     public String stopProcess() {

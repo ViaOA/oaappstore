@@ -12,8 +12,7 @@ import javax.swing.SwingWorker;
 
 import com.viaoa.appstore.control.HelpController;
 import com.viaoa.appstore.control.LogController;
-import com.viaoa.appstore.control.GitHubNewReleaseController;
-import com.viaoa.appstore.control.client.ClientController;
+import com.viaoa.appstore.control.ReleaseController;
 import com.viaoa.appstore.control.client.ClientFrameController;
 import com.viaoa.appstore.control.client.ClientProcessController;
 import com.viaoa.appstore.control.server.DataSourceController;
@@ -28,7 +27,6 @@ import com.viaoa.appstore.model.oa.AppServer;
 import com.viaoa.appstore.model.oa.AppUser;
 import com.viaoa.appstore.model.oa.AppUserLogin;
 import com.viaoa.appstore.model.oa.ServerApplication;
-import com.viaoa.appstore.model.oa.ApplicationVersion;
 import com.viaoa.appstore.model.oa.cs.ClientRoot;
 import com.viaoa.appstore.model.oa.cs.ServerRoot;
 import com.viaoa.appstore.resource.Resource;
@@ -57,7 +55,7 @@ public abstract class SingleController {
     protected ServerSpellCheckController controlServerSpellCheck;
 
     // Custom
-    private GitHubNewReleaseController controlGitHubNewRelease;
+    private ReleaseController controlRelease;
     
     private JFrame frmDummy;
 
@@ -136,46 +134,7 @@ public abstract class SingleController {
         
         // Custom
         if (Resource.getBoolean(Resource.APP_CheckForNewRelease)) {
-            SwingWorker<Void, String> swTask = new SwingWorker<Void, String>() {
-                OAProperties props;
-
-                @Override
-                protected Void doInBackground() throws Exception {
-                    props = getGitHubNewReleaseController().getGitProperties();
-                    return null;
-                }
-
-                @Override
-                protected void done() {
-                    if (props == null) {
-                        return;
-                    }
-                    final String currentRelease = Resource.getValue(Resource.APP_Release);
-                    final String gitRelease = props.getProperty(Resource.APP_Release);
-
-                    LOG.fine(String.format("current release=%s, git release=%s", currentRelease, gitRelease));
-
-                    if (currentRelease.equals(gitRelease)) {
-                        return;
-                    }
-
-                    final String gitVersion = props.getProperty(Resource.APP_Version);
-                    int x = JOptionPane.showConfirmDialog(  getFrame(), "New version " + gitVersion + " is available.\nIs it ok to download?",
-                                                            Resource.getRunTimeName(), JOptionPane.YES_NO_OPTION,
-                                                            JOptionPane.QUESTION_MESSAGE);
-                    if (x != JOptionPane.YES_OPTION) {
-                        return;
-                    }
-
-                    try {
-                        downloadNewRelease();
-                    }
-                    catch (Exception e) {
-                        LOG.log(Level.WARNING, "Exception while downloading new release", e);
-                    }
-                }
-            };
-            swTask.execute();
+            checkForNewRelease();
         }
 
         // Custom
@@ -186,21 +145,68 @@ public abstract class SingleController {
     }
     
     // Custom
-    public GitHubNewReleaseController getGitHubNewReleaseController() {
-        if (controlGitHubNewRelease == null) {
-            controlGitHubNewRelease = new GitHubNewReleaseController();
-        }
-        return controlGitHubNewRelease;
+    public void checkForNewRelease() {
+        SwingWorker<Void, String> swTask = new SwingWorker<Void, String>() {
+            OAProperties props;
+
+            @Override
+            protected Void doInBackground() throws Exception {
+                props = getReleaseController().getGitProperties();
+                if (!getReleaseController().hasUpdate()) props = null;
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                if (props == null) {
+                    return;
+                }
+                final String currentRelease = Resource.getValue(Resource.APP_Release);
+                final String gitRelease = props.getProperty("Release");
+                LOG.fine(String.format("current release=%s, OAAppStore release=%s", currentRelease, gitRelease));
+
+                final String gitVersion = props.getProperty("Version");
+                int x = JOptionPane.showConfirmDialog(  getFrame(), "New version " + gitVersion + " (release: " + gitRelease + ") is available.\nIs it ok to download?",
+                                                        Resource.getRunTimeName(), JOptionPane.YES_NO_OPTION,
+                                                        JOptionPane.QUESTION_MESSAGE);
+                if (x == JOptionPane.YES_OPTION) {
+                    _getNewRelease(gitVersion, gitRelease);
+                }
+            }
+        };
+        swTask.execute();
     }
     
     // Custom
-    protected void downloadNewRelease() throws Exception {
-        String gitVersion = getGitHubNewReleaseController().getGitProperties().getProperty(Resource.APP_Version);
-        getGitHubNewReleaseController().updateSoftwareForJPackageInstaller();
-        JOptionPane.showMessageDialog(  getFrame(), "New version " + gitVersion + " is loaded, please restart anytime.",
-                Resource.getRunTimeName(), JOptionPane.QUESTION_MESSAGE);
+    protected void _getNewRelease(final String gitVersion, final String gitRelease) {
+        setProcessing(true, "Downloading new version " + gitVersion + " (release: " + gitRelease + "), please wait ...");
+        SwingWorker<Void, String> swTask = new SwingWorker<Void, String>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                getReleaseController().getUpdate();
+                getReleaseController().updateConfig();
+                return null;
+            }
+    
+            @Override
+            protected void done() {
+                setProcessing(false);
+    
+                JOptionPane.showMessageDialog(  getFrame(), "New version " + gitVersion + " (" + gitRelease + ") is loaded, please restart.",
+                        Resource.getRunTimeName(), JOptionPane.INFORMATION_MESSAGE);
+            }
+            
+        };
+        swTask.execute();
     }
     
+    // Custom
+    public ReleaseController getReleaseController() {
+        if (controlRelease == null) {
+            controlRelease = new ReleaseController();
+        }
+        return controlRelease;
+    }
 
     private boolean _start() throws Exception {
         // Logging

@@ -35,6 +35,11 @@ public class ApplicationTypePPx implements PPxInterface, Serializable {
         return ppx;
     }
 
+    public PropertyValuePPx propertyValues() {
+        PropertyValuePPx ppx = new PropertyValuePPx(this, ApplicationType.P_PropertyValues);
+        return ppx;
+    }
+
     public ServerApplicationPPx serverApplications() {
         ServerApplicationPPx ppx = new ServerApplicationPPx(this, ApplicationType.P_ServerApplications);
         return ppx;
@@ -61,10 +66,6 @@ public class ApplicationTypePPx implements PPxInterface, Serializable {
         return pp + "." + ApplicationType.P_AbbrevName;
     }
 
-    public String directoryName() {
-        return pp + "." + ApplicationType.P_DirectoryName;
-    }
-
     public String singleTypeOnly() {
         return pp + "." + ApplicationType.P_SingleTypeOnly;
     }
@@ -83,6 +84,10 @@ public class ApplicationTypePPx implements PPxInterface, Serializable {
 
     public String downloadUrl() {
         return pp + "." + ApplicationType.P_DownloadUrl;
+    }
+
+    public String appDirectory() {
+        return pp + "." + ApplicationType.P_AppDirectory;
     }
 
     public String jarFileName() {

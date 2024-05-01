@@ -5,7 +5,6 @@ import java.net.*;
 import java.util.logging.Logger;
 
 import com.viaoa.appstore.model.oa.*;
-import com.viaoa.appstore.resource.Resource;
 import com.viaoa.util.*;
 
 public class ApplicationVersionDelegate {
@@ -21,107 +20,83 @@ public class ApplicationVersionDelegate {
 
     public static boolean download(ApplicationVersion applicationVersion) throws Exception {
         if (applicationVersion == null) return false;
-        
-        ApplicationType applicationType = applicationVersion.getApplicationType();
-        if (applicationType == null) return false;
-        
-        final String urlDownload = applicationType.getDownloadUrl();
-        
-        if (OAStr.isEmpty(urlDownload)) {
-            setConsole(applicationVersion, "URL download is not set");
-            return false;
-        }
-        
-        applicationType.setConsole(String.format("checking download URL=%s", urlDownload));
 
-        //  "https://github.com/ViaOA/oaappstore-run/raw/master/executable-jar";
-
-        URL url;
-        URLConnection conn;
-        DataInputStream dis;
-        int tot;
-        final byte[] bs = new byte[8196];
-
-        url = new URL(urlDownload + "/version.ini");
-        conn = url.openConnection();
-        OAProperties gitProps = new OAProperties(conn.getInputStream());
-        
-        final int release = OAConv.toInt(gitProps.getProperty("Release"));
-        final String version = gitProps.getProperty("Version");
-
-        setConsole(applicationVersion, String.format("version.ini read, version=%s, release=%d", version, release));
-        
-        if (applicationVersion.getRelease() != release) {
-            setConsole(applicationVersion, String.format("release for ApplicationVersion release=%s, does not match version.ini release=%d", applicationVersion.getRelease(), release));
-            return false;
-        }
-
-        url = new URL(urlDownload + "/" + applicationType.getJarFileName());
-        conn = url.openConnection();
-
-        dis = new DataInputStream(new BufferedInputStream(conn.getInputStream()));
-        
-        String dirName = String.format("appstore/%s/%d",  applicationType.getDirectoryName(), release);
-        dirName = OAFile.convertFileName(dirName);
-        File dir = new File(dirName);
-        dir.mkdirs();
-
-        String fileName = dirName + "/" + applicationType.getJarFileName();
-        fileName = OAFile.convertFileName(fileName);
-        File file = new File(fileName); 
-        
-        setConsole(applicationVersion, "file name will be "+ fileName);
-        file.createNewFile();
-        OutputStream fos = new FileOutputStream(file);
-        
-        tot = 0;
-        for (int i = 0;; i++) {
-            int x = dis.read(bs);
-            if (x < 0) {
-                break;
-            }
-            tot += x;
-            fos.write(bs, 0, x);
-        }
-        setConsole(applicationVersion, "loaded file " + fileName + ", from " + url.toString() + ", size=" + tot);
-        fos.close();
-        
-        // load other files
-        for (int i = 1;; i++) {
-            String fn = gitProps.getProperty("getfile" + i);
-            setConsole(applicationVersion, "Checking version.ini for name=getfile" + i + ", value = " + fn);
-            if (OAString.isEmpty(fn)) {
-                if (i > 10) {
-                    break;
+        for (VersionFile vf : applicationVersion.getVersionFiles()) {
+            String fn = vf.getCalcFilePath();
+            File file = new File(fn);
+            if (vf.getCalcIsJarFile()) {
+                if (vf.getType() != VersionFile.TYPE_AppJar) {
+                    if (file.exists()) continue;
                 }
-                continue;
             }
-
-            file = new File(OAFile.convertFileName(dirName + "/" + fn));
-            setConsole(applicationVersion, "gettting file " + file);
-
+            String downloadUrl = vf.getCalcDownloadUrl();
+            setConsole(applicationVersion, String.format("saving %s to file %s", downloadUrl, fn));
+            
+            URL url = new URL(downloadUrl);
+            URLConnection conn = url.openConnection();
+            DataInputStream dis = new DataInputStream(new BufferedInputStream(conn.getInputStream()));
+        
+            OAFile.mkdirsForFile(file);
             file.createNewFile();
-            fos = new FileOutputStream(file);
-
-            url = new URL(urlDownload + "/" + fn);
-            conn = url.openConnection();
-            dis = new DataInputStream(new BufferedInputStream(conn.getInputStream()));
-
-            tot = 0;
-            for (;;) {
+            OutputStream fos = new FileOutputStream(file);
+            byte[] bs = new byte[8196];
+            
+            for ( ;; ) {
                 int x = dis.read(bs);
                 if (x < 0) {
                     break;
                 }
-                tot += x;
                 fos.write(bs, 0, x);
             }
-            setConsole(applicationVersion, "loaded file " + fn + ", from " + url.toString() + ", size=" + tot);
+            fos.close();
+            setConsole(applicationVersion, "saved " + fn);
         }
-        setConsole(applicationVersion, "update done for release=" + release + ", see directory=" + dirName);
-
+        setConsole(applicationVersion, "finished successfully");
+        
         applicationVersion.setCompleted(new OADateTime());
         return true;
     }
 
+    public static String getConfigFileText(ApplicationVersion applicationVersion) {
+        if (applicationVersion == null) return null;
+        
+        final ApplicationType applicationType = applicationVersion.getApplicationType();
+        if (applicationType == null) return null;
+    
+        String txt = "";
+        txt += "[Application]\n";
+        txt += "app.classpath=";
+    
+        int cnt = 0;
+        for (VersionFile vf : applicationVersion.getVersionFiles()) {
+            if (!vf.getCalcIsJarFile()) continue;
+            String fn = vf.getCalcFilePath();
+            if (cnt++ > 0) txt += ";";
+            String s =  fn;
+            txt += s;
+        }
+        txt += "\n";
+        
+        txt += "app.mainclass="+applicationType.getMainClass()+"\n";
+        txt += "\n";
+        txt += "[JavaOptions]\n";
+        
+        String s = applicationType.getJvmOptions();
+        if (OAStr.isEmpty(s)) s = "-Xmx2g"; 
+        txt += "java-options="+s+"\n";
+        txt += "\n";
+        
+        txt += "[ArgOptions]\n";
+        txt += "# replace with  single, client, server\n";
+        txt += "arguments=$RUNTYPE\n";
+        
+        s = applicationType.getAppDirectory();
+        s = OAStr.convert(s, "\\", "/");
+        
+        txt += "arguments=RootDirectory=app/appstore/"+s+"/$RUNTYPE/$ID\n";
+        txt += "arguments=checkForNewRelease=false\n";
+        
+        return txt;
+    }
+    
 }

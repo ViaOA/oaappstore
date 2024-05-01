@@ -4,17 +4,11 @@ package com.viaoa.appstore.model.oa.propertypath;
 import com.viaoa.appstore.model.oa.*;
  
 public class RunningAppPP {
-    private static AppStoreServerPPx appStoreServer;
     private static AppUserLoginPPx appUserLogin;
     private static ClientAppPPx clientApp;
     private static ServerApplicationPPx serverApplication;
     private static SingleAppPPx singleApp;
      
-
-    public static AppStoreServerPPx appStoreServer() {
-        if (appStoreServer == null) appStoreServer = new AppStoreServerPPx(RunningApp.P_AppStoreServer);
-        return appStoreServer;
-    }
 
     public static AppUserLoginPPx appUserLogin() {
         if (appUserLogin == null) appUserLogin = new AppUserLoginPPx(RunningApp.P_AppUserLogin);
@@ -46,28 +40,23 @@ public class RunningAppPP {
         return s;
     }
 
-    public static String stopRequest() {
-        String s = RunningApp.P_StopRequest;
-        return s;
-    }
-
     public static String pid() {
         String s = RunningApp.P_Pid;
         return s;
     }
 
-    public static String error() {
-        String s = RunningApp.P_Error;
-        return s;
-    }
-
-    public static String cpuSeconds() {
-        String s = RunningApp.P_CpuSeconds;
-        return s;
-    }
-
     public static String stopped() {
         String s = RunningApp.P_Stopped;
+        return s;
+    }
+
+    public static String configText() {
+        String s = RunningApp.P_ConfigText;
+        return s;
+    }
+
+    public static String console() {
+        String s = RunningApp.P_Console;
         return s;
     }
 

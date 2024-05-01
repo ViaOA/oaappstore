@@ -27,7 +27,6 @@ public class ServerRoot extends OAObject {
     public static final String P_ApplicationTypes = "ApplicationTypes";
     public static final String P_AppRuntimes = "AppRuntimes";
     public static final String P_AppServers = "AppServers";
-    public static final String P_AppStoreServers = "AppStoreServers";
     public static final String P_AppUsers = "AppUsers";
     public static final String P_Environments = "Environments";
     // autoCreateOne
@@ -47,7 +46,6 @@ public class ServerRoot extends OAObject {
     protected transient Hub<ApplicationType> hubApplicationTypes;
     protected transient Hub<AppRuntime> hubAppRuntimes;
     protected transient Hub<AppServer> hubAppServers;
-    protected transient Hub<AppStoreServer> hubAppStoreServers;
     protected transient Hub<AppUser> hubAppUsers;
     protected transient Hub<Environment> hubEnvironments;
     // autoCreateOne
@@ -99,13 +97,6 @@ public class ServerRoot extends OAObject {
             hubAppServers = (Hub<AppServer>) super.getHub(P_AppServers);
         }
         return hubAppServers;
-    }
-    @OAMany(toClass = AppStoreServer.class, cascadeSave = true)
-    public Hub<AppStoreServer> getAppStoreServers() {
-        if (hubAppStoreServers == null) {
-            hubAppStoreServers = (Hub<AppStoreServer>) super.getHub(P_AppStoreServers);
-        }
-        return hubAppStoreServers;
     }
     @OAMany(toClass = AppUser.class, cascadeSave = true)
     public Hub<AppUser> getAppUsers() {
