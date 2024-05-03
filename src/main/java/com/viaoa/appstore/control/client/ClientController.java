@@ -819,8 +819,10 @@ public abstract class ClientController {
         return controlClientJarStore;
     }
 	
-	
-	public void close() {
+    public void close() {
+        close(false);
+    }    
+	public void close(final boolean bStartupError) {
 		if (controlFrame != null) {
 			controlFrame.close(); // saves window size/location to ini file and frm.setVisible(false)
 		}

@@ -717,8 +717,11 @@ qqqqqqqqqqqq*/
     }
     
     
-    
     public void close() throws Exception {
+        close(false);
+    }
+    
+    public void close(final boolean bStartupError) throws Exception {
         LOG.config("Closing application ... please wait while shutdown completes ...");
 
         bApplicationClosed = true;
@@ -735,17 +738,20 @@ qqqqqqqqqqqq*/
             controlObject.stop();
         }
         
-        _saveData();
-
+        if (!bStartupError) {
+            _saveData();
+        }
         LOG.config("Closing database");
         getDataSourceController().close();
 
-        String s = Resource.getValue(Resource.APP_NewWordsFileName);
-        if (OAStr.isNotEmpty(s)) {
-            String root = Resource.getRootDirectory();
-            s = OAFile.convertFileName(root + "/" + s);
-            LOG.fine("Saving spellcheck new words to file " + s);
-            getSpellCheckController().saveNewWordsTextFile(s);
+        if (!bStartupError) {
+            String s = Resource.getValue(Resource.APP_NewWordsFileName);
+            if (OAStr.isNotEmpty(s)) {
+                String root = Resource.getRootDirectory();
+                s = OAFile.convertFileName(root + "/" + s);
+                LOG.fine("Saving spellcheck new words to file " + s);
+                getSpellCheckController().saveNewWordsTextFile(s);
+            }
         }
         
         if (controlLog != null) {

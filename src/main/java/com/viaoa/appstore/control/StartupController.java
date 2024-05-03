@@ -176,7 +176,7 @@ public class StartupController {
 			JOptionPane.showMessageDialog(getDummyFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
 		}
 		LOG.log(Level.WARNING, "startup exception, will exit", t);
-		exitApplication();
+		exitApplication(true);
 	}
 
 	public ClientController getClientController() {
@@ -282,21 +282,24 @@ public class StartupController {
 		return bValid;
 	}
 
-	private void exitApplication() {
+    private void exitApplication() {
+        exitApplication(false);
+    }
+	private void exitApplication(final boolean bStartupError) {
 		try {
 			if (controlSingle != null) {
-				controlSingle.close();
+				controlSingle.close(bStartupError);
 			} else if (controlClient != null) {
-				controlClient.close();
+				controlClient.close(bStartupError);
 			} else if (controlServer != null) {
-				controlServer.close();
+				controlServer.close(bStartupError);
 			}
 		} catch (Exception e) {
 			LOG.log(Level.WARNING, "Exception during exit", e);
 		}
 
-		LOG.config("Looks Great! :) good bye");
-
+		if (bStartupError) LOG.config("Startup errors, will exit now");
+		else LOG.config("Looks Great! :) good bye");
 		System.exit(0);
 	}
 

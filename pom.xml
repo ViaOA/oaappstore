@@ -268,6 +268,12 @@
 			-->
 
 
+			<!-- 
+				Note:  This will create a single "uber" jar with all of the dependencies (except oa-* jars)
+				
+				** make sure that the dependencies in this pom are the same as OATemplate project 
+			-->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -296,29 +302,14 @@
                                         <exclude>META-INF/*.DSA</exclude>
                                         <exclude>META-INF/*.RSA</exclude>
                                
-                                        <!-- Custom NOTE:
+                                        <!-- 
                                             Only include non-OA and non-OAAppStore, 
-                                            so that the uber.jar is only dependencies
-                                            
-                                            there will be 2 jars created, the one without a version is the 
+                                            so that the uber.jar is only dependencies.
+                                            There will be 2 jars created in the target directory, the one without a version is the 
                                             uber jar for the dependencies. 
                                         --> 
-                             
-qqqqqqqqqqqqqqqqqqqqqqqqq
-> when getting version.ini ... add to ApplicationVersion qqqqqqqqqqqqq
-
-will need to get the extra jar files to build the CP and change the *.cfg
-
-add jarstore to app/jarstore  ?? to download jars
-
-oatemplate needs to include support for OAAppStore
-    lean jar file, etc            
-            
-                             
-                                                                               
                                         <exclude>com/viaoa/oaappstore/**</exclude>
                                         <exclude>com/viaoa/**</exclude>
-                                        
                                         
                                     </excludes>
                                 </filter>
