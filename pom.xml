@@ -167,8 +167,6 @@
           <version>2.3.2</version>
           <type>pom</type>
         </dependency>
-        
-        
 	</dependencies>
 
 	<build>
@@ -307,10 +305,14 @@
                                             so that the uber.jar is only dependencies.
                                             There will be 2 jars created in the target directory, the one without a version is the 
                                             uber jar for the dependencies. 
+                                            
+                                            The uber jar will then be renamed to
+                                            "dependency-uber-1.0.0.jar"
+                                            and added to the OAAppstore-Run project
+                                            in the "jarstore/com/viaoa" directory
                                         --> 
                                         <exclude>com/viaoa/oaappstore/**</exclude>
                                         <exclude>com/viaoa/**</exclude>
-                                        
                                     </excludes>
                                 </filter>
                             </filters>
