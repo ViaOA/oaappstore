@@ -84,8 +84,8 @@ public class ApplicationType extends OAObject {
     @Override
     public void setObjectDefaults() {
         setCreated(new OADateTime());
-        setDownloadUrl("https://raw.githubusercontent.com/ViaOA/oaappstore-run/master");
-        setAppDirectory("[appname]");
+        setDownloadUrl("https://github.com/ViaOA/oaappstore-run/raw/master");
+        setAppDirectory("com/[project]/[appname]");
         setMainClass("com.[project].[appname].control.StartupController");
         setJvmOptions("-Xmx1000m");
     }
@@ -222,7 +222,7 @@ public class ApplicationType extends OAObject {
         }
     }
 
-    @OAProperty(displayName = "Download Url", defaultValue = "https://raw.githubusercontent.com/ViaOA/oaappstore-run/master", maxLength = 125, displayLength = 35, uiColumnLength = 22, isUrl = true)
+    @OAProperty(displayName = "Download Url", defaultValue = "https://github.com/ViaOA/oaappstore-run/raw/master", maxLength = 125, displayLength = 35, uiColumnLength = 22, isUrl = true)
     @OAColumn(name = "DownloadUrl", maxLength = 125)
     public String getDownloadUrl() {
         return downloadUrl;
@@ -234,7 +234,7 @@ public class ApplicationType extends OAObject {
         firePropertyChange(P_DownloadUrl, old, this.downloadUrl);
     }
 
-    @OAProperty(displayName = "App Directory", defaultValue = "[appname]", maxLength = 45, displayLength = 14, uiColumnName = "Directory")
+    @OAProperty(displayName = "App Directory", defaultValue = "com/[project]/[appname]", maxLength = 45, displayLength = 14, uiColumnName = "Directory")
     @OAColumn(name = "AppDirectory", maxLength = 45)
     public String getAppDirectory() {
         return appDirectory;

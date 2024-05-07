@@ -46,7 +46,7 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
     protected static Logger LOG = Logger.getLogger(ApplicationTypeJfc.class.getName());
     
     public static final String PP_Display    = OAString.cpp(ApplicationType.P_Name);
-    public static final String PP_Icon       = OAString.cpp(ApplicationType.P_Icon);
+    public static final String PP_Icon       = null;
     public static final String PP_Image      = null;
     public static final String PP_ForeColor  = null;
     public static final String PP_BackColor  = null;
@@ -105,6 +105,7 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
     protected PropertyValueJfc jfcPropertyValues;
     protected ServerApplicationJfc jfcServerApplications;
     protected SingleAppJfc jfcSingleApps;
+    protected ApplicationTypeWizardJfc jfcApplicationTypeWizard;
     
     public ApplicationTypeJfcBase() {
         this.model = new ApplicationTypeModel();
@@ -204,7 +205,7 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
     
         JMenuItem miSearch = createSearchMenuItem();
         if (miSearch != null) menu.add(miSearch);
-        JMenuItem miNew = createNewMenuItem();
+        JMenuItem miNew = createWizardMenuItem();
         if (miNew != null) menu.add(miNew);
         JMenuItem miInsert = createInsertMenuItem();
         if (miInsert != null) menu.add(miInsert);
@@ -249,6 +250,31 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
         mi.setMnemonic(KeyEvent.VK_N);
         mi.setText("Create a new "+getModel().getDisplayName());
         mi.setToolTipText("Create a new "+getModel().getDisplayName());
+        mi.setFocusComponent(dttxtCreated);
+        return mi;
+    }
+    
+    public OAMenuItem createWizardMenuItem() {
+        if (!getModel().getAllowNew()) return null;
+        OAMenuItem mi = new OAMenuItem(getModel().getWizardHub(), OAMenuItem.WIZARD_NEW) {
+            @Override
+            public void afterActionPerformed() {
+                SwingUtilities.invokeLater(() -> {
+                    ApplicationTypeJfcBase.this.getWizardJfc().showWizard();
+                    if (getWizardJfc().getWasFinishedSelected()) {
+                        ApplicationTypeJfcBase.this.getModel().getWizardHubNewObject().submit();
+                        ApplicationTypeJfcBase.this.onNewApplicationTypeCreated();
+                        
+                    } else {
+                        ApplicationTypeJfcBase.this.getModel().getWizardHubNewObject().cancel();
+                    }
+                });
+                super.afterActionPerformed();
+            }
+        };
+        mi.setMnemonic(KeyEvent.VK_N);
+        mi.setText("Create a new "+getModel().getDisplayName()+" ...");
+        mi.setToolTipText("Use wizard to create a new "+getModel().getDisplayName());
         mi.setFocusComponent(dttxtCreated);
         return mi;
     }
@@ -631,7 +657,7 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
         cmd = createAddButton();
         if (cmd != null) panx.add(cmd);
         
-        cmd = createNewButton();
+        cmd = createWizardButton();
         if (cmd != null) panx.add(cmd);
         
         cmd = createDeleteButton();
@@ -1052,6 +1078,29 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
         cmd.setToolTipText("Create new "+getModel().getDisplayName());
         return cmd;
     }
+    public OAButton createWizardButton() {
+        if (!getModel().getAllowNew()) return null;
+        OAButton cmd = new OAButton(getModel().getWizardHub(), OAButton.WIZARD_NEW) {
+            public void afterActionPerformed() {
+                SwingUtilities.invokeLater(() -> {
+                    ApplicationTypeJfcBase.this.getWizardJfc().showWizard();
+                    if (getWizardJfc().getWasFinishedSelected()) {
+                        ApplicationTypeJfcBase.this.getModel().getWizardHubNewObject().submit();
+                        ApplicationTypeJfcBase.this.onNewApplicationTypeCreated();
+                        
+                    } else {
+                        ApplicationTypeJfcBase.this.getModel().getWizardHubNewObject().cancel();
+                    }
+                });
+                super.afterActionPerformed();
+            }
+        };
+        cmd.getController().setViewOnly(getModel().getViewOnly());
+        cmd.setText("New ...");
+        cmd.setup();
+        cmd.setToolTipText("Use wizard to create a new "+getModel().getDisplayName());
+        return cmd;
+    }
     public OAButton createInsertButton() {
         if (!getModel().getAllowNew() || !getModel().getAllowMove()) return null;
         OAButton cmd = new OAButton(getHub(), OAButton.INSERT) {
@@ -1183,7 +1232,7 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
             cmd = createAddButton();
             if (cmd != null) toolBar.add(cmd);
             
-            cmd = createNewButton();
+            cmd = createWizardButton();
             if (cmd != null) {
                 cmd.setFocusComponent(tableDtTxtCreated);
                 toolBar.add(cmd);
@@ -2016,7 +2065,7 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
         OATextField txt = new OATextField(getHub(), ApplicationType.P_DownloadUrl, 35);
         txt.setMinimumColumns(0);
         txt.setMaximumColumns(120);
-        txt.setToolTipText("ex: https://raw.githubusercontent.com/ViaOA/oaappstore-run/master");
+        txt.setToolTipText("ex: https://github.com/ViaOA/oaappstore-run/raw/master");
         // setup(txt);
         return txt;
     }
@@ -2125,6 +2174,12 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
         return txt;
     }
     
+    
+    public ApplicationTypeWizardJfc getWizardJfc() {
+        if (jfcApplicationTypeWizard != null) return jfcApplicationTypeWizard;
+        jfcApplicationTypeWizard = new ApplicationTypeWizardJfc(getModel().getWizardHub());
+        return jfcApplicationTypeWizard;
+    }
     
     public ApplicationVersionJfc getApplicationVersionsJfc() {
         if (jfcApplicationVersions == null) {

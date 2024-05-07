@@ -25,6 +25,8 @@ public class ApplicationTypeModel extends OAObjectModel {
     protected Hub<ApplicationType> hub;
     // selected applicationTypes
     protected Hub<ApplicationType> hubMultiSelect;
+    // wizard HubNewObject
+    protected HubNewObject hubNewObjectWizard;
     // detail hubs
     protected Hub<ApplicationVersion> hubApplicationVersions;
     protected Hub<AppUser> hubAppUsers;
@@ -122,6 +124,15 @@ public class ApplicationTypeModel extends OAObjectModel {
             hubMultiSelect = new Hub<ApplicationType>(ApplicationType.class);
         }
         return hubMultiSelect;
+    }
+    public Hub<ApplicationType> getWizardHub() {
+        return getWizardHubNewObject().getNewObjectHub();
+    }
+    public HubNewObject<ApplicationType> getWizardHubNewObject() {
+        if (hubNewObjectWizard == null) {
+            hubNewObjectWizard = new HubNewObject(getHub());
+        }
+        return hubNewObjectWizard;
     }
     
     public ApplicationVersionModel getApplicationVersionsModel() {
