@@ -40,12 +40,12 @@
         <dependency>
             <groupId>com.viaoa</groupId>
             <artifactId>oa-jfc</artifactId>
-            <version>3.7.7</version>
+            <version>3.7.8</version>
         </dependency>
         <dependency>
             <groupId>com.viaoa</groupId>
             <artifactId>oa-web</artifactId>
-            <version>3.7.7</version>
+            <version>3.7.8</version>
         </dependency>
 
         <dependency>
