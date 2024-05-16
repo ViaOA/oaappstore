@@ -80,7 +80,11 @@ public class ReleaseController {
             s = "app\\jarstore\\" + s;
         
             file = new File(s);
-            if (file.exists()) continue;
+            if (file.exists()) {
+                if (i != 1) {
+                    continue;
+                }
+            }
             LOG.fine("saving jar to=" + s);
             
             s = urlDownload + "/jarstore/" + fn;
