@@ -216,7 +216,9 @@ public class RunningAppDelegate {
                     BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
                     for (;;) {
                         if (Thread.interrupted()) break;
-                        if ((new OADateTime()).after(dtEndConsole)) break;
+                        
+                        // removed, else it will it will end up blocking
+                        // if ((new OADateTime()).after(dtEndConsole)) break;
                         
                         String txt = null;
                         try {
@@ -229,11 +231,11 @@ public class RunningAppDelegate {
                         }
                         else runningApp.setConsole(txt);
                     }
-                    setConsole(runningApp, "outputstream1 thread ending");
+                    setConsole(runningApp, "outputstream thread ending");
                 }
             };
             
-            Thread t = Thread.ofVirtual().name("outputstream1").start(r);            
+            Thread t = Thread.ofVirtual().name("outputstream").start(r);            
             //final Thread t = new Thread(r, "ProcessOutput1");
             //t.start();
             
@@ -242,7 +244,10 @@ public class RunningAppDelegate {
                     BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream()));
                     for (;;) {
                         if (Thread.interrupted()) break;
-                        if ((new OADateTime()).after(dtEndConsole)) break;
+
+                        // removed, else it will it will end up blocking
+                        // if ((new OADateTime()).after(dtEndConsole)) break;
+                        
                         String txt = null;
                         try {
                             txt = br.readLine();
@@ -254,14 +259,14 @@ public class RunningAppDelegate {
                         }
                         else runningApp.setConsole(txt);
                     }
-                    setConsole(runningApp, "outputstream2 thread ending");
+                    setConsole(runningApp, "errorstream thread ending");
                 }
             };
             /*
             final Thread t2 = new Thread(r2, "ProcessOutput2");
             t2.start();
             */
-            Thread t2 = Thread.ofVirtual().name("outputstream2").start(r2);            
+            Thread t2 = Thread.ofVirtual().name("errorstream").start(r2);            
             
             
             // give process enough time to start and use OAAppStore.cfg before it's overwritten with original
