@@ -16,7 +16,7 @@
                                 <table class="form">
                                     <tr>
                                         <th width="20"><nobr>Server Name</nobr></th>
-                                        <td><%=server.name, '55L.'%></td>
+                                        <td><%=server.calcName, '45L.'%></td>
                                     </tr>
                                     <tr>
                                         <th width="20"><nobr>Show App Store Servers</nobr></th>
@@ -72,23 +72,21 @@
                             <td>
                                 <table class="list" width="100%">
                                     <tr>
-                                        <th colspan="7">ApplicationTypes</th>
+                                        <th colspan="6">ApplicationTypes</th>
                                     </tr>
                                     <tr>
                                         <th style="width: 20px; text-align: right">#</th>
-                                        <th style="width: 30px; text-align: right"><nobr>Id</nobr></th>
-                                        <th style="width: 40px; text-align: left"><nobr>Abbrev</nobr></th>
                                         <th width="100%" style="text-align: left"><nobr>Name</nobr></th>
+                                        <th style="width: 40px; text-align: left"><nobr>Abbrev</nobr></th>
                                         <th style="width: 20px; text-align: right"><nobr>Port</nobr></th>
-                                        <th style="width: 30px; text-align: right"><nobr>HTTP</nobr></th>
-                                        <th style="width: 20px; text-align: right"><nobr>HTTPS</nobr></th>
+                                        <th style="width: 30px; text-align: right"><nobr>Http</nobr></th>
+                                        <th style="width: 20px; text-align: right"><nobr>Https</nobr></th>
                                     </tr>
                                     <%=foreach applicationTypes%>
                                     <tr>
                                         <td style="text-align: right"><%=#counter applicationTypes, '4R,'%></td>
-                                        <td style="text-align: right"><nobr><%=id, '6R,'%></nobr></td>
-                                        <td style="text-align: left"><nobr><%=abbrevName, '6L.'%></nobr></td>
                                         <td style="text-align: left"><nobr><%=name, '40L.'%></nobr></td>
+                                        <td style="text-align: left"><nobr><%=abbrevName, '6L.'%></nobr></td>
                                         <td style="text-align: right"><nobr><%=clientPort, '#'%></nobr></td>
                                         <td style="text-align: right"><nobr><%=httpPort, '#'%></nobr></td>
                                         <td style="text-align: right"><nobr><%=httpsPort, '#'%></nobr></td>
@@ -102,24 +100,32 @@
                             <td>
                                 <table class="list" width="100%">
                                     <tr>
-                                        <th colspan="6">MergeServerApplications</th>
+                                        <th colspan="10">MergeServerApplications</th>
                                     </tr>
                                     <tr>
                                         <th style="width: 20px; text-align: right">#</th>
-                                        <th width="16%" style="text-align: left"><nobr>Environment</nobr></th>
-                                        <th width="31%" style="text-align: left"><nobr>Name</nobr></th>
-                                        <th width="29%" style="text-align: left"><nobr>Server</nobr></th>
-                                        <th width="22%" style="text-align: left"><nobr>Application Type Name</nobr></th>
+                                        <th width="18%" style="text-align: left"><nobr>Environment</nobr></th>
+                                        <th width="23%" style="text-align: left"><nobr>Server</nobr></th>
+                                        <th width="34%" style="text-align: left"><nobr>Name</nobr></th>
+                                        <th width="24%" style="text-align: left"><nobr>App Type</nobr></th>
+                                        <th style="width: 30px; text-align: left"><nobr>Version</nobr></th>
+                                        <th style="width: 30px; text-align: right"><nobr>Release</nobr></th>
+                                        <th style="width: 30px; text-align: right"><nobr>Port</nobr></th>
                                         <th style="width: 30px; text-align: right"><nobr>Http</nobr></th>
+                                        <th style="width: 30px; text-align: right"><nobr>Https</nobr></th>
                                     </tr>
                                     <%=foreach mergeServerApplications%>
                                     <tr>
                                         <td style="text-align: right"><%=#counter mergeServerApplications, '4R,'%></td>
                                         <td style="text-align: left"><nobr><%=server.environment.name, '35L.'%></nobr></td>
+                                        <td style="text-align: left"><nobr><%=server.calcName, '45L.'%></nobr></td>
                                         <td style="text-align: left"><nobr><%=name, '55L.'%></nobr></td>
-                                        <td style="text-align: left"><nobr><%=server.name, '55L.'%></nobr></td>
                                         <td style="text-align: left"><nobr><%=applicationType.name, '40L.'%></nobr></td>
-                                        <td style="text-align: right"><nobr><%=httpPort, '#'%></nobr></td>
+                                        <td style="text-align: left"><nobr><%=applicationVersion.version, '6L.'%></nobr></td>
+                                        <td style="text-align: right"><nobr><%=applicationVersion.release, '#'%></nobr></td>
+                                        <td style="text-align: right"><nobr><%=calcClientPort, '###'%></nobr></td>
+                                        <td style="text-align: right"><nobr><%=calcHttpPort, '###'%></nobr></td>
+                                        <td style="text-align: right"><nobr><%=calcHttpsPort, '###'%></nobr></td>
                                     </tr>
                                     <%=end%>
                                 </table>
@@ -130,20 +136,24 @@
                             <td>
                                 <table class="list" width="100%">
                                     <tr>
-                                        <th colspan="4">ClientApps</th>
+                                        <th colspan="6">ClientApps</th>
                                     </tr>
                                     <tr>
                                         <th style="width: 20px; text-align: right">#</th>
-                                        <th width="59%" style="text-align: left"><nobr>Name</nobr></th>
-                                        <th style="width: 75px; text-align: left"><nobr>Created</nobr></th>
-                                        <th width="40%" style="text-align: left"><nobr>Server Application</nobr></th>
+                                        <th width="18%" style="text-align: left"><nobr>Env</nobr></th>
+                                        <th width="22%" style="text-align: left"><nobr>Server</nobr></th>
+                                        <th width="36%" style="text-align: left"><nobr>App Name</nobr></th>
+                                        <th width="23%" style="text-align: left"><nobr>App Type</nobr></th>
+                                        <th style="width: 30px; text-align: right"><nobr>Port</nobr></th>
                                     </tr>
                                     <%=foreach clientApps%>
                                     <tr>
                                         <td style="text-align: right"><%=#counter clientApps, '4R,'%></td>
-                                        <td style="text-align: left"><nobr><%=name, '55L.'%></nobr></td>
-                                        <td style="text-align: left"><nobr><%=created, '15L.'%></nobr></td>
-                                        <td style="text-align: left"><nobr><%=serverApplication.displayName, '40L.'%></nobr></td>
+                                        <td style="text-align: left"><nobr><%=serverApplication.server.environment.name, '35L.'%></nobr></td>
+                                        <td style="text-align: left"><nobr><%=serverApplication.server.calcName, '45L.'%></nobr></td>
+                                        <td style="text-align: left"><nobr><%=calcName, '40L.'%></nobr></td>
+                                        <td style="text-align: left"><nobr><%=serverApplication.applicationType.name, '40L.'%></nobr></td>
+                                        <td style="text-align: right"><nobr><%=serverApplication.calcClientPort, '###'%></nobr></td>
                                     </tr>
                                     <%=end%>
                                 </table>
@@ -154,24 +164,20 @@
                             <td>
                                 <table class="list" width="100%">
                                     <tr>
-                                        <th colspan="6">SingleApps</th>
+                                        <th colspan="4">SingleApps</th>
                                     </tr>
                                     <tr>
                                         <th style="width: 20px; text-align: right">#</th>
-                                        <th style="width: 75px; text-align: left"><nobr>Created</nobr></th>
+                                        <th width="41%" style="text-align: left"><nobr>App Type</nobr></th>
                                         <th width="58%" style="text-align: left"><nobr>Name</nobr></th>
-                                        <th width="41%" style="text-align: left"><nobr>Application Type</nobr></th>
-                                        <th style="width: 30px; text-align: left"><nobr>Application Version</nobr></th>
-                                        <th style="width: 30px; text-align: right"><nobr>Running App</nobr></th>
+                                        <th style="width: 30px; text-align: left"><nobr>Version</nobr></th>
                                     </tr>
                                     <%=foreach singleApps%>
                                     <tr>
                                         <td style="text-align: right"><%=#counter singleApps, '4R,'%></td>
-                                        <td style="text-align: left"><nobr><%=created, '15L.'%></nobr></td>
-                                        <td style="text-align: left"><nobr><%=name, '55L.'%></nobr></td>
                                         <td style="text-align: left"><nobr><%=applicationType.name, '40L.'%></nobr></td>
+                                        <td style="text-align: left"><nobr><%=name, '55L.'%></nobr></td>
                                         <td style="text-align: left"><nobr><%=applicationVersion.version, '6L.'%></nobr></td>
-                                        <td style="text-align: right"><nobr><%=runningApp.pid, '6R,'%></nobr></td>
                                     </tr>
                                     <%=end%>
                                 </table>

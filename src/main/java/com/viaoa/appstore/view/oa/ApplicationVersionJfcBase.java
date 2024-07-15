@@ -72,11 +72,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
     // Card Panel
     public static final String CARD_List = "list";
     public static final String CARD_Edit = "edit";
-    protected static final String CARD_ServerApplications = "ServerApplications";
-    protected static final String CARD_SingleApps = "SingleApps";
     protected static final String CARD_VersionFiles = "VersionFiles";
-    protected int TAB_ServerApplications = -1;
-    protected int TAB_SingleApps = -1;
     protected int TAB_VersionFiles = -1;
     protected JPanel cardPanel;
     protected CardLayout cardLayout;
@@ -96,8 +92,6 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
     // commands for methods
     
     protected ApplicationTypeJfc jfcApplicationType;
-    protected ServerApplicationJfc jfcServerApplications;
-    protected SingleAppJfc jfcSingleApps;
     protected VersionFileJfc jfcVersionFiles;
     
     public ApplicationVersionJfcBase() {
@@ -295,6 +289,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
             @Override
             public void objectSelected(Object obj) {
                 super.objectSelected(obj);
+                ApplicationVersionJfcBase.this.getCardPanel();
                 ApplicationVersionJfcBase.this.onShowEditPanel();
             }
             @Override
@@ -358,17 +353,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         if (miInsert != null) menu.add(miInsert);
         if (miSearch != null || miNew != null) menu.addSeparator();
     
-        OAMenuItem mi;
-        mi = getSingleAppsJfc().createNewMenuItem();
-        if (mi != null) menu.add(mi);
-        mi = getSingleAppsJfc().createAddMenuItem();
-        if (mi != null) menu.add(mi);
-        mi = getVersionFilesJfc().createNewMenuItem();
-        if (mi != null) menu.add(mi);
-        mi = getVersionFilesJfc().createAddMenuItem();
-        if (mi != null) menu.add(mi);
     
-        menu.addSeparator();
         JMenuItem miRemove = createRemoveMenuItem();
         if (miRemove != null) menu.add(miRemove);
         JMenuItem miDelete = createDeleteMenuItem();
@@ -553,7 +538,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         table.setAllowSorting(false);
         table.addCounterColumn();
         getSearchJfc().createTableColumns(table);
-        table.setPreferredSize(15, 6, true);
+        table.setPreferredSize(15, 7, true);
         table.resizeColumnsToFitHeading();
         
         OATableComboBox cboTable = new OATableComboBox(table, getHub(), PP_Display) {
@@ -908,6 +893,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         tableDtTxtCreated = createCreatedDateTimeTextField();
         tc = table.addColumn("Created", 15, tableDtTxtCreated);
         tc = table.addColumn("Completed", 15, createCompletedDateTimeTextField());
+        tc = table.addColumn("Verified", 15, createVerifiedDateTimeTextField());
     }
     
     public OATable createReadOnlyTable() {
@@ -981,6 +967,8 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         tc = table.addColumn("Created", 15, lbl);
         lbl = new OALabel(getHub(), ApplicationVersion.P_Completed, 15);
         tc = table.addColumn("Completed", 15, lbl);
+        lbl = new OALabel(getHub(), ApplicationVersion.P_Verified, 15);
+        tc = table.addColumn("Verified", 15, lbl);
     }
     
     public OAButton createGotoEditButton() {
@@ -1311,6 +1299,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         dd.addProperty("version", ApplicationVersion.P_Version);
         dd.addProperty("created", ApplicationVersion.P_Created);
         dd.addProperty("completed", ApplicationVersion.P_Completed);
+        dd.addProperty("verified", ApplicationVersion.P_Verified);
     }
     // Card Panel
     public JPanel getCardPanel() {
@@ -1357,8 +1346,6 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         }
         pan.add(createEditPanel(tp, true), BorderLayout.CENTER);
         pan.add(new OAScroller(createToolBar(ToolBarOptions.createOneToolBar())), BorderLayout.NORTH);
-        // cardPanel.add(getServerApplicationsJfc().getCardPanel(), CARD_ServerApplications); // this will be created when needed by showCardPanel(..)
-        // cardPanel.add(getSingleAppsJfc().getCardPanel(), CARD_SingleApps); // this will be created when needed by showCardPanel(..)
         // cardPanel.add(getVersionFilesJfc().getCardPanel(), CARD_VersionFiles); // this will be created when needed by showCardPanel(..)
         return pan;
     }
@@ -1375,8 +1362,6 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         }
         pan.add(createEditPanel(tp, true), BorderLayout.CENTER);
         pan.add(new OAScroller(createToolBar(ToolBarOptions.createEditPanelToolBar())), BorderLayout.NORTH);
-        // cardPanel.add(getServerApplicationsJfc().getCardPanel(), CARD_ServerApplications); // this will be created when needed by showCardPanel(..)
-        // cardPanel.add(getSingleAppsJfc().getCardPanel(), CARD_SingleApps); // this will be created when needed by showCardPanel(..)
         // cardPanel.add(getVersionFilesJfc().getCardPanel(), CARD_VersionFiles); // this will be created when needed by showCardPanel(..)
         return pan;
     }
@@ -1531,60 +1516,6 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         panMain.add(tabbedPane, BorderLayout.CENTER);
     
         Icon icon;
-        icon = Resource.getJarIcon("serverApplication.gif");
-        icon = new ScaledImageIcon(icon, 32, 20);
-        pan = getServerApplicationsJfc().createReadOnlyTablePanel();
-        if (getModel().getServerApplicationsModel().getCreateUI()) {
-            this.TAB_ServerApplications = tabbedPane.getTabCount();
-            tabbedPane.addTab("Server Applications", icon, pan, null);
-        }
-        icon = Resource.getJarIcon("singleApp.gif");
-        icon = new ScaledImageIcon(icon, 32, 20);
-        tabbedPane.addChangeListener(new ChangeListener() {
-            volatile JPanel panThis;
-            volatile Exception ex;
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if (panThis != null) return;
-                if (ApplicationVersionJfcBase.this.TAB_SingleApps == 0) return;
-                final JTabbedPane tp = (JTabbedPane) e.getSource();
-                if (tp.getSelectedIndex() != ApplicationVersionJfcBase.this.TAB_SingleApps) return;
-                SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
-                    @Override
-                    protected Void doInBackground() throws Exception {
-                        try {
-                            if (bUseCombinedDetail) panThis = getSingleAppsJfc().createCombinedPanel();
-                            else panThis = getSingleAppsJfc().createTablePanel();
-                        }
-                        catch (Exception e) {
-                            ex = e;
-                        }
-                        return null;
-                    }
-                    @Override
-                    protected void done() {
-                        if (ex != null) {
-                            LOG.log(Level.WARNING, "UI exception creating UI for ApplicationVersion", ex);
-                            JOptionPane.showMessageDialog(null, "Exception while creating UI, message sent to tech support", "UI Exception", JOptionPane.ERROR_MESSAGE);
-                        }
-                        if (panThis == null) panThis = new JPanel();
-                        tp.setComponentAt(ApplicationVersionJfcBase.this.TAB_SingleApps, panThis);
-                    }
-                };
-                sw.execute();
-            }
-        });
-        if (getModel().getSingleAppsModel().getCreateUI()) {
-            if ((this.TAB_SingleApps = tabbedPane.getTabCount()) == 0) {
-                JPanel panThis;
-                if (bUseCombinedDetail) panThis = getSingleAppsJfc().createCombinedPanel();
-                else panThis = getSingleAppsJfc().createTablePanel();
-                tabbedPane.setComponentAt(ApplicationVersionJfcBase.this.TAB_SingleApps, panThis);
-            }
-            else {
-                tabbedPane.addTab("Single Apps", icon, new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), "Single Apps");
-            }
-        }
         icon = Resource.getJarIcon("versionFile.gif");
         icon = new ScaledImageIcon(icon, 32, 20);
         tabbedPane.addChangeListener(new ChangeListener() {
@@ -1629,7 +1560,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
                 tabbedPane.setComponentAt(ApplicationVersionJfcBase.this.TAB_VersionFiles, panThis);
             }
             else {
-                tabbedPane.addTab("Version Files", icon, new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), "Version Files");
+                tabbedPane.addTab("Files", icon, new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), "Version Files");
             }
         }
         panel = panMain;
@@ -1657,7 +1588,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
             dlgEdit = wrEditDialog.get();
             if (dlgEdit != null) return dlgEdit;
         }
-        if (jfcServerApplications != null) {
+        if (jfcVersionFiles != null) {
             // need to create a new Jfc for dialog
             ApplicationVersionJfc jfc = new ApplicationVersionJfc(getModel());
             dlgEdit = jfc.getEditDialog(comp);
@@ -1857,152 +1788,6 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
         OAModelJfcUtil.setParent(jfcApplicationType, this);
         return jfcApplicationType;
     }
-    public ServerApplicationJfc getServerApplicationsJfc() {
-        if (jfcServerApplications == null) {
-            jfcServerApplications = createServerApplicationsJfc();
-        }
-        return jfcServerApplications;
-    }
-    public ServerApplicationJfc createServerApplicationsJfc() {
-        return createServerApplicationsJfc(true);
-    }
-    public ServerApplicationJfc createServerApplicationsJfc(final boolean bIsEmbedded) {
-        jfcServerApplications = new ServerApplicationJfc(getModel().getServerApplicationsModel()) {
-            @Override
-            protected ServerApplicationSearchJfc getSearchJfc() {
-                if (jfcSearch != null) return jfcSearch;
-                ServerApplicationSearchModel model = ApplicationVersionJfcBase.this.getModel().getServerApplicationsSearchModel();
-                jfcSearch = new ServerApplicationSearchJfc(model, true, false);
-                return jfcSearch;
-            }
-            @Override
-            public JPanel getCardPanel() {
-                if (cardPanel != null) return cardPanel;
-                if (!bIsEmbedded) return super.getCardPanel();
-                cardPanel = new JPanel(getCardLayout());
-                JPanel pan = new JPanel(new BorderLayout());
-                pan.add(createToolBar(ToolBarOptions.createEditPanelToolBar()), BorderLayout.NORTH);
-                pan.add(createEditPanel(), BorderLayout.CENTER);
-                cardPanel.add(pan, CARD_Edit);
-                return cardPanel;
-            }
-    
-            @Override
-            public void showCardPanel(String name) {
-                if (!bIsEmbedded) {
-                    super.showCardPanel(name);
-                    ApplicationVersionJfcBase.this.showCardPanel(name);
-                    return;
-                }
-                if (name.equals(ServerApplicationJfc.CARD_List)) {
-                    ApplicationVersionJfcBase.this.showCardPanel(CARD_Edit);
-                    if (ApplicationVersionJfcBase.this.TAB_ServerApplications >= 0) {
-                        ApplicationVersionJfcBase.this.getTabbedPane().setSelectedIndex(ApplicationVersionJfcBase.this.TAB_ServerApplications);
-                    }
-                }
-                else if (name.equals(ServerApplicationJfcBase.CARD_Edit)) {
-                    ApplicationVersionJfcBase.this.showCardPanel(CARD_Edit);
-                    if (ApplicationVersionJfcBase.this.TAB_ServerApplications >= 0) {
-                        ApplicationVersionJfcBase.this.getTabbedPane().setSelectedIndex(ApplicationVersionJfcBase.this.TAB_ServerApplications);
-                    }
-                }
-                else {
-                    ApplicationVersionJfcBase.this.showCardPanel(CARD_ServerApplications);
-                    super.showCardPanel(name);
-                }
-            }
-            public JButton createGoBackButton() {
-                JButton cmd = new JButton();
-                cmd.setIcon(Resource.getJarIcon(Resource.getValue(Resource.IMG_GoBack)));
-                cmd.setToolTipText("Go to " + ApplicationVersionJfcBase.this.getModel().getDisplayName());
-                cmd.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        ApplicationVersionJfcBase.this.showCardPanel(ApplicationVersionJfcBase.this.CARD_Edit);
-                        ApplicationVersionJfcBase.this.getHub().resetAO(); // this will set selected treeNode
-                    }
-                });
-                OAButton.setup(cmd);
-                return cmd;
-            }
-        };
-        jfcServerApplications.setLevel(getLevel()+1);
-        OAModelJfcUtil.setParent(jfcServerApplications, this);
-        return jfcServerApplications;
-    }
-    public SingleAppJfc getSingleAppsJfc() {
-        if (jfcSingleApps == null) {
-            jfcSingleApps = createSingleAppsJfc();
-        }
-        return jfcSingleApps;
-    }
-    public SingleAppJfc createSingleAppsJfc() {
-        return createSingleAppsJfc(true);
-    }
-    public SingleAppJfc createSingleAppsJfc(final boolean bIsEmbedded) {
-        jfcSingleApps = new SingleAppJfc(getModel().getSingleAppsModel()) {
-            @Override
-            protected SingleAppSearchJfc getSearchJfc() {
-                if (jfcSearch != null) return jfcSearch;
-                SingleAppSearchModel model = ApplicationVersionJfcBase.this.getModel().getSingleAppsSearchModel();
-                jfcSearch = new SingleAppSearchJfc(model, true, false);
-                return jfcSearch;
-            }
-            @Override
-            public JPanel getCardPanel() {
-                if (cardPanel != null) return cardPanel;
-                if (!bIsEmbedded) return super.getCardPanel();
-                cardPanel = new JPanel(getCardLayout());
-                JPanel pan = new JPanel(new BorderLayout());
-                pan.add(createToolBar(ToolBarOptions.createEditPanelToolBar()), BorderLayout.NORTH);
-                pan.add(createEditPanel(), BorderLayout.CENTER);
-                cardPanel.add(pan, CARD_Edit);
-                return cardPanel;
-            }
-    
-            @Override
-            public void showCardPanel(String name) {
-                if (!bIsEmbedded) {
-                    super.showCardPanel(name);
-                    ApplicationVersionJfcBase.this.showCardPanel(name);
-                    return;
-                }
-                if (name.equals(SingleAppJfc.CARD_List)) {
-                    ApplicationVersionJfcBase.this.showCardPanel(CARD_Edit);
-                    if (ApplicationVersionJfcBase.this.TAB_SingleApps >= 0) {
-                        ApplicationVersionJfcBase.this.getTabbedPane().setSelectedIndex(ApplicationVersionJfcBase.this.TAB_SingleApps);
-                    }
-                }
-                else if (name.equals(SingleAppJfcBase.CARD_Edit)) {
-                    ApplicationVersionJfcBase.this.showCardPanel(CARD_Edit);
-                    if (ApplicationVersionJfcBase.this.TAB_SingleApps >= 0) {
-                        ApplicationVersionJfcBase.this.getTabbedPane().setSelectedIndex(ApplicationVersionJfcBase.this.TAB_SingleApps);
-                    }
-                }
-                else {
-                    ApplicationVersionJfcBase.this.showCardPanel(CARD_SingleApps);
-                    super.showCardPanel(name);
-                }
-            }
-            public JButton createGoBackButton() {
-                JButton cmd = new JButton();
-                cmd.setIcon(Resource.getJarIcon(Resource.getValue(Resource.IMG_GoBack)));
-                cmd.setToolTipText("Go to " + ApplicationVersionJfcBase.this.getModel().getDisplayName());
-                cmd.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        ApplicationVersionJfcBase.this.showCardPanel(ApplicationVersionJfcBase.this.CARD_Edit);
-                        ApplicationVersionJfcBase.this.getHub().resetAO(); // this will set selected treeNode
-                    }
-                });
-                OAButton.setup(cmd);
-                return cmd;
-            }
-        };
-        jfcSingleApps.setLevel(getLevel()+1);
-        OAModelJfcUtil.setParent(jfcSingleApps, this);
-        return jfcSingleApps;
-    }
     public VersionFileJfc getVersionFilesJfc() {
         if (jfcVersionFiles == null) {
             jfcVersionFiles = createVersionFilesJfc();
@@ -2073,17 +1858,7 @@ public class ApplicationVersionJfcBase implements OAModelJfcInterface {
     public void showCardPanel(String name) {
         if (name == null) return;
         if (cardPanel == null) return;
-        if (name.equalsIgnoreCase(CARD_ServerApplications)) {
-            if ( !OAArray.contains(cardPanel.getComponents(), getServerApplicationsJfc().getCardPanel()) ) {
-                cardPanel.add(getServerApplicationsJfc().getCardPanel(), CARD_ServerApplications);
-            }
-        }
-        else if (name.equalsIgnoreCase(CARD_SingleApps)) {
-            if ( !OAArray.contains(cardPanel.getComponents(), getSingleAppsJfc().getCardPanel()) ) {
-                cardPanel.add(getSingleAppsJfc().getCardPanel(), CARD_SingleApps);
-            }
-        }
-        else if (name.equalsIgnoreCase(CARD_VersionFiles)) {
+        if (name.equalsIgnoreCase(CARD_VersionFiles)) {
             if ( !OAArray.contains(cardPanel.getComponents(), getVersionFilesJfc().getCardPanel()) ) {
                 cardPanel.add(getVersionFilesJfc().getCardPanel(), CARD_VersionFiles);
             }

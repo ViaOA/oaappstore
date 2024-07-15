@@ -13,20 +13,16 @@
                     <table class="list" width="100%">
                         <tr>
                             <th style="width: 20px; text-align: right">#</th>
-                            <th style="width: 75px; text-align: left"><nobr>Created</nobr></th>
+                            <th width="41%" style="text-align: left"><nobr>App Type</nobr></th>
                             <th width="58%" style="text-align: left"><nobr>Name</nobr></th>
-                            <th width="41%" style="text-align: left"><nobr>Application Type</nobr></th>
-                            <th style="width: 30px; text-align: left"><nobr>Application Version</nobr></th>
-                            <th style="width: 30px; text-align: right"><nobr>Running App</nobr></th>
+                            <th style="width: 30px; text-align: left"><nobr>Version</nobr></th>
                         </tr>
                         <%=foreach%>
                         <tr>
                             <td style="text-align: right"><%=#counter, '4R,'%></td>
-                            <td style="text-align: left"><nobr><%=created, '15L.'%></nobr></td>
-                            <td style="text-align: left"><nobr><%=name, '55L.'%></nobr></td>
                             <td style="text-align: left"><nobr><%=applicationType.name, '40L.'%></nobr></td>
+                            <td style="text-align: left"><nobr><%=name, '55L.'%></nobr></td>
                             <td style="text-align: left"><nobr><%=applicationVersion.version, '6L.'%></nobr></td>
-                            <td style="text-align: right"><nobr><%=runningApp.pid, '6R,'%></nobr></td>
                         </tr>
                         <%=end%>
                     </table>

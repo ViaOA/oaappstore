@@ -309,21 +309,6 @@ public class ServerApplicationSearchJfc {
         OATableComboBox cboTable;
         OACheckBox chk;
     
-        lbl = new JLabel("Id:");
-        txt = createIdTextField();
-        txt.setLabel(lbl);
-        panel.add(lbl, gc);
-        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
-        panx.add(new JLabel("From: "));
-        panx.add(txt);
-        panx.add(new JLabel("To: "));
-        txt = createId2TextField();
-        panx.add(txt);
-        gc.gridwidth = gc.REMAINDER;
-        panel.add(panx, gc);
-        gc.gridwidth = 1;
-    
-    
     
         lbl = new JLabel("Application Type:");
         cboTable = createApplicationTypeTableComboBox();
@@ -338,26 +323,11 @@ public class ServerApplicationSearchJfc {
         panel.add(panx, gc);
         gc.gridwidth = 1;
     
-        lbl = new JLabel("Created:");
-        dcbo = createCreatedDateComboBox();
-        dcbo.setLabel(lbl);
-        panel.add(lbl, gc);
-        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
-        panx.add(dcbo);
-        gc.gridwidth = gc.REMAINDER;
-        panel.add(panx, gc);
-        gc.gridwidth = 1;
-    
-    
         lbl = new JLabel("Client Port:");
         txt = createClientPortTextField();
         txt.setLabel(lbl);
         panel.add(lbl, gc);
         panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
-        panx.add(new JLabel("From: "));
-        panx.add(txt);
-        panx.add(new JLabel("To: "));
-        txt = createClientPort2TextField();
         panx.add(txt);
         gc.gridwidth = gc.REMAINDER;
         panel.add(panx, gc);
@@ -369,10 +339,6 @@ public class ServerApplicationSearchJfc {
         txt.setLabel(lbl);
         panel.add(lbl, gc);
         panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
-        panx.add(new JLabel("From: "));
-        panx.add(txt);
-        panx.add(new JLabel("To: "));
-        txt = createHttpPort2TextField();
         panx.add(txt);
         gc.gridwidth = gc.REMAINDER;
         panel.add(panx, gc);
@@ -384,11 +350,33 @@ public class ServerApplicationSearchJfc {
         txt.setLabel(lbl);
         panel.add(lbl, gc);
         panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("Id:");
+        txt = createIdTextField();
+        txt.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("Created:");
+        dcbo = createCreatedDateComboBox();
+        dcbo.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
         panx.add(new JLabel("From: "));
-        panx.add(txt);
+        panx.add(dcbo);
         panx.add(new JLabel("To: "));
-        txt = createHttpsPort2TextField();
-        panx.add(txt);
+        dcbo = createCreated2DateComboBox();
+        panx.add(dcbo);
         gc.gridwidth = gc.REMAINDER;
         panel.add(panx, gc);
         gc.gridwidth = 1;
@@ -455,16 +443,35 @@ public class ServerApplicationSearchJfc {
     }
     
     
-    public OATextField createIdTextField() {
-        OATextField txt = new OATextField(getModel().getServerApplicationSearchHub(), ServerApplicationSearch.P_Id, 6);
-        txt.addEnabledOnlyIfNew();
+    public OATextField createClientPortTextField() {
+        OATextField txt = new OATextField(getModel().getServerApplicationSearchHub(), ServerApplicationSearch.P_ClientPort, 6);
         txt.setMinimumColumns(0);
         txt.setMaximumColumns(8);
+        txt.setFormat("###");
         // setup(txt);
         return txt;
     }
-    public OATextField createId2TextField() {
-        OATextField txt = new OATextField(getModel().getServerApplicationSearchHub(), ServerApplicationSearch.P_Id2, 6);
+    
+    public OATextField createHttpPortTextField() {
+        OATextField txt = new OATextField(getModel().getServerApplicationSearchHub(), ServerApplicationSearch.P_HttpPort, 6);
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(8);
+        txt.setFormat("###");
+        // setup(txt);
+        return txt;
+    }
+    
+    public OATextField createHttpsPortTextField() {
+        OATextField txt = new OATextField(getModel().getServerApplicationSearchHub(), ServerApplicationSearch.P_HttpsPort, 6);
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(8);
+        txt.setFormat("###");
+        // setup(txt);
+        return txt;
+    }
+    
+    public OATextField createIdTextField() {
+        OATextField txt = new OATextField(getModel().getServerApplicationSearchHub(), ServerApplicationSearch.P_Id, 6);
         txt.addEnabledOnlyIfNew();
         txt.setMinimumColumns(0);
         txt.setMaximumColumns(8);
@@ -479,56 +486,12 @@ public class ServerApplicationSearchJfc {
         dcbo.setEditor(txt);
         return dcbo;
     }
-    
-    public OATextField createClientPortTextField() {
-        OATextField txt = new OATextField(getModel().getServerApplicationSearchHub(), ServerApplicationSearch.P_ClientPort, 6);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(8);
-        txt.setFormat("#");
-        // setup(txt);
-        return txt;
-    }
-    public OATextField createClientPort2TextField() {
-        OATextField txt = new OATextField(getModel().getServerApplicationSearchHub(), ServerApplicationSearch.P_ClientPort2, 6);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(8);
-        txt.setFormat("#");
-        // setup(txt);
-        return txt;
-    }
-    
-    public OATextField createHttpPortTextField() {
-        OATextField txt = new OATextField(getModel().getServerApplicationSearchHub(), ServerApplicationSearch.P_HttpPort, 6);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(8);
-        txt.setFormat("#");
-        // setup(txt);
-        return txt;
-    }
-    public OATextField createHttpPort2TextField() {
-        OATextField txt = new OATextField(getModel().getServerApplicationSearchHub(), ServerApplicationSearch.P_HttpPort2, 6);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(8);
-        txt.setFormat("#");
-        // setup(txt);
-        return txt;
-    }
-    
-    public OATextField createHttpsPortTextField() {
-        OATextField txt = new OATextField(getModel().getServerApplicationSearchHub(), ServerApplicationSearch.P_HttpsPort, 6);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(8);
-        txt.setFormat("#");
-        // setup(txt);
-        return txt;
-    }
-    public OATextField createHttpsPort2TextField() {
-        OATextField txt = new OATextField(getModel().getServerApplicationSearchHub(), ServerApplicationSearch.P_HttpsPort2, 6);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(8);
-        txt.setFormat("#");
-        // setup(txt);
-        return txt;
+    public OADateComboBox createCreated2DateComboBox() {
+        OADateComboBox dcbo = new OADateComboBox(getModel().getServerApplicationSearchHub(), ServerApplicationSearch.P_Created2, 15);
+        dcbo.setMaximumColumns(22);
+        OATextField txt = new OATextField(getModel().getServerApplicationSearchHub(), ServerApplicationSearch.P_Created2, 10);
+        dcbo.setEditor(txt);
+        return dcbo;
     }
     
     public OATextField createMaxResultsTextField() {

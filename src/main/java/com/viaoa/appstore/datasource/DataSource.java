@@ -289,15 +289,16 @@ public class DataSource {
         tables[APPUSERLOGIN].addIndex(new Index("AppUserLoginRunningApp", "RunningAppId", true));
         
         // ClientApp COLUMNS
-        columns = new Column[6];
+        columns = new Column[7];
         columns[0] = new Column("Id", "id", Types.INTEGER, 20);
         columns[0].primaryKey = true;
         columns[0].assignNextNumber = true;
         columns[1] = new Column("Created", "created", Types.TIMESTAMP);
         columns[2] = new Column("Name", "name", Types.VARCHAR, 55);
-        columns[3] = new Column("AppUserId", true);
-        columns[4] = new Column("RunningAppId", true);
-        columns[5] = new Column("ServerApplicationId", true);
+        columns[3] = new Column("AutoLogin", "autoLogin", Types.BOOLEAN);
+        columns[4] = new Column("AppUserId", true);
+        columns[5] = new Column("RunningAppId", true);
+        columns[6] = new Column("ServerApplicationId", true);
         tables[CLIENTAPP].setColumns(columns);
         tables[CLIENTAPP].addIndex(new Index("ClientAppAppUser", "AppUserId", true));
         tables[CLIENTAPP].addIndex(new Index("ClientAppRunningApp", "RunningAppId", true));
@@ -466,9 +467,9 @@ public class DataSource {
         tables[APPUSERLOGIN].addLink("appUser", tables[APPUSER], "appUserLogins", new int[] {11});
         tables[APPUSERLOGIN].addLink("appUserErrors", tables[APPUSERERROR], "appUserLogin", new int[] {0});
         tables[APPUSERLOGIN].addLink("runningApp", tables[RUNNINGAPP], "appUserLogin", new int[] {12});
-        tables[CLIENTAPP].addLink("appUser", tables[APPUSER], "clientApps", new int[] {3});
-        tables[CLIENTAPP].addLink("runningApp", tables[RUNNINGAPP], "clientApp", new int[] {4});
-        tables[CLIENTAPP].addLink("serverApplication", tables[SERVERAPPLICATION], "clientApps", new int[] {5});
+        tables[CLIENTAPP].addLink("appUser", tables[APPUSER], "clientApps", new int[] {4});
+        tables[CLIENTAPP].addLink("runningApp", tables[RUNNINGAPP], "clientApp", new int[] {5});
+        tables[CLIENTAPP].addLink("serverApplication", tables[SERVERAPPLICATION], "clientApps", new int[] {6});
         tables[ENVIRONMENT].addLink("servers", tables[SERVER], "environment", new int[] {0});
         tables[RUNNINGAPP].addLink("appUserLogin", tables[APPUSERLOGIN], "runningApp", new int[] {0});
         tables[RUNNINGAPP].addLink("clientApp", tables[CLIENTAPP], "runningApp", new int[] {0});
@@ -681,7 +682,7 @@ public class DataSource {
         
         dao = new DataAccessObject() {
             private static final String pkeyColumns = "ClientApp.Id";
-            private static final String columns = "ClientApp.Id, ClientApp.Created, ClientApp.Name, ClientApp.AppUserId, ClientApp.RunningAppId, ClientApp.ServerApplicationId";
+            private static final String columns = "ClientApp.Id, ClientApp.Created, ClientApp.Name, ClientApp.AutoLogin, ClientApp.AppUserId, ClientApp.RunningAppId, ClientApp.ServerApplicationId";
             @Override
             public String getPkeySelectColumns() {
                 return pkeyColumns;

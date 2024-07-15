@@ -19,66 +19,34 @@ public class ApplicationTypeSearch extends OAObject {
 
     private static Logger LOG = Logger.getLogger(ApplicationTypeSearch.class.getName());
 
-    public static final String P_Id = "Id";
-    public static final String P_Id2 = "Id2";
-    public static final String P_Created = "Created";
     public static final String P_Name = "Name";
     public static final String P_AbbrevName = "AbbrevName";
     public static final String P_ClientPort = "ClientPort";
-    public static final String P_ClientPort2 = "ClientPort2";
     public static final String P_HttpPort = "HttpPort";
-    public static final String P_HttpPort2 = "HttpPort2";
     public static final String P_HttpsPort = "HttpsPort";
-    public static final String P_HttpsPort2 = "HttpsPort2";
+    public static final String P_DownloadUrl = "DownloadUrl";
+    public static final String P_AppDirectory = "AppDirectory";
+    public static final String P_JarFileName = "JarFileName";
+    public static final String P_MainClass = "MainClass";
+    public static final String P_Id = "Id";
+    public static final String P_Created = "Created";
+    public static final String P_Created2 = "Created2";
     public static final String P_MaxResults = "MaxResults";
 
-    protected int id;
-    protected int id2;
-    protected OADateTime created;
     protected String name;
     protected String abbrevName;
     protected int clientPort;
-    protected int clientPort2;
     protected int httpPort;
-    protected int httpPort2;
     protected int httpsPort;
-    protected int httpsPort2;
+    protected String downloadUrl;
+    protected String appDirectory;
+    protected String jarFileName;
+    protected String mainClass;
+    protected int id;
+    protected OADateTime created;
+    protected OADateTime created2;
     protected int maxResults;
 
-    @OAProperty(displayLength = 6)
-    public int getId() {
-        return id;
-    }
-    public void setId(int newValue) {
-        int old = id;
-        fireBeforePropertyChange(P_Id, old, newValue);
-        this.id = newValue;
-        firePropertyChange(P_Id, old, this.id);
-        if (isLoading()) return;
-        if (id > id2) setId2(this.id);
-    } 
-    public int getId2() {
-        return id2;
-    }
-    public void setId2(int newValue) {
-        int old = id2;
-        fireBeforePropertyChange(P_Id2, old, newValue);
-        this.id2 = newValue;
-        firePropertyChange(P_Id2, old, this.id2);
-        if (isLoading()) return;
-        if (id > id2) setId(this.id2);
-    }
-    @OAProperty(defaultValue = "new OADateTime()", displayLength = 15)
-    public OADateTime getCreated() {
-        return created;
-    }
-    public void setCreated(OADateTime newValue) {
-        OADateTime old = created;
-        fireBeforePropertyChange(P_Created, old, newValue);
-        this.created = newValue;
-        firePropertyChange(P_Created, old, this.created);
-    }
-      
     @OAProperty(maxLength = 40, displayLength = 14, uiColumnLength = 12)
     public String getName() {
         return name;
@@ -110,20 +78,8 @@ public class ApplicationTypeSearch extends OAObject {
         fireBeforePropertyChange(P_ClientPort, old, newValue);
         this.clientPort = newValue;
         firePropertyChange(P_ClientPort, old, this.clientPort);
-        if (isLoading()) return;
-        if (clientPort > clientPort2) setClientPort2(this.clientPort);
-    } 
-    public int getClientPort2() {
-        return clientPort2;
     }
-    public void setClientPort2(int newValue) {
-        int old = clientPort2;
-        fireBeforePropertyChange(P_ClientPort2, old, newValue);
-        this.clientPort2 = newValue;
-        firePropertyChange(P_ClientPort2, old, this.clientPort2);
-        if (isLoading()) return;
-        if (clientPort > clientPort2) setClientPort(this.clientPort2);
-    }
+      
     @OAProperty(displayName = "Http Port", displayLength = 6, uiColumnLength = 4, format = "#", uiColumnName = "HTTP")
     public int getHttpPort() {
         return httpPort;
@@ -133,20 +89,8 @@ public class ApplicationTypeSearch extends OAObject {
         fireBeforePropertyChange(P_HttpPort, old, newValue);
         this.httpPort = newValue;
         firePropertyChange(P_HttpPort, old, this.httpPort);
-        if (isLoading()) return;
-        if (httpPort > httpPort2) setHttpPort2(this.httpPort);
-    } 
-    public int getHttpPort2() {
-        return httpPort2;
     }
-    public void setHttpPort2(int newValue) {
-        int old = httpPort2;
-        fireBeforePropertyChange(P_HttpPort2, old, newValue);
-        this.httpPort2 = newValue;
-        firePropertyChange(P_HttpPort2, old, this.httpPort2);
-        if (isLoading()) return;
-        if (httpPort > httpPort2) setHttpPort(this.httpPort2);
-    }
+      
     @OAProperty(displayName = "Https Port", displayLength = 4, uiColumnLength = 5, format = "#", uiColumnName = "HTTPS")
     public int getHttpsPort() {
         return httpsPort;
@@ -156,19 +100,89 @@ public class ApplicationTypeSearch extends OAObject {
         fireBeforePropertyChange(P_HttpsPort, old, newValue);
         this.httpsPort = newValue;
         firePropertyChange(P_HttpsPort, old, this.httpsPort);
-        if (isLoading()) return;
-        if (httpsPort > httpsPort2) setHttpsPort2(this.httpsPort);
-    } 
-    public int getHttpsPort2() {
-        return httpsPort2;
     }
-    public void setHttpsPort2(int newValue) {
-        int old = httpsPort2;
-        fireBeforePropertyChange(P_HttpsPort2, old, newValue);
-        this.httpsPort2 = newValue;
-        firePropertyChange(P_HttpsPort2, old, this.httpsPort2);
+      
+    @OAProperty(displayName = "Download Url", defaultValue = "https://github.com/ViaOA/oaappstore-run/raw/master", maxLength = 125, displayLength = 35, uiColumnLength = 22, isUrl = true)
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+    public void setDownloadUrl(String newValue) {
+        String old = downloadUrl;
+        fireBeforePropertyChange(P_DownloadUrl, old, newValue);
+        this.downloadUrl = newValue;
+        firePropertyChange(P_DownloadUrl, old, this.downloadUrl);
+    }
+      
+    @OAProperty(displayName = "App Directory", defaultValue = "com/[company]/[appname]", maxLength = 45, displayLength = 14, uiColumnName = "Directory")
+    public String getAppDirectory() {
+        return appDirectory;
+    }
+    public void setAppDirectory(String newValue) {
+        String old = appDirectory;
+        fireBeforePropertyChange(P_AppDirectory, old, newValue);
+        this.appDirectory = newValue;
+        firePropertyChange(P_AppDirectory, old, this.appDirectory);
+    }
+      
+    @OAProperty(displayName = "Jar File Name", maxLength = 70, displayLength = 15)
+    public String getJarFileName() {
+        return jarFileName;
+    }
+    public void setJarFileName(String newValue) {
+        String old = jarFileName;
+        fireBeforePropertyChange(P_JarFileName, old, newValue);
+        this.jarFileName = newValue;
+        firePropertyChange(P_JarFileName, old, this.jarFileName);
+    }
+      
+    @OAProperty(displayName = "Main Class", defaultValue = "com.[project].[appname].control.StartupController", maxLength = 75, displayLength = 20)
+    public String getMainClass() {
+        return mainClass;
+    }
+    public void setMainClass(String newValue) {
+        String old = mainClass;
+        fireBeforePropertyChange(P_MainClass, old, newValue);
+        this.mainClass = newValue;
+        firePropertyChange(P_MainClass, old, this.mainClass);
+    }
+      
+    @OAProperty(displayLength = 6)
+    public int getId() {
+        return id;
+    }
+    public void setId(int newValue) {
+        int old = id;
+        fireBeforePropertyChange(P_Id, old, newValue);
+        this.id = newValue;
+        firePropertyChange(P_Id, old, this.id);
+    }
+      
+    @OAProperty(defaultValue = "new OADateTime()", displayLength = 15)
+    public OADateTime getCreated() {
+        return created;
+    }
+    public void setCreated(OADateTime newValue) {
+        OADateTime old = created;
+        fireBeforePropertyChange(P_Created, old, newValue);
+        this.created = newValue;
+        firePropertyChange(P_Created, old, this.created);
         if (isLoading()) return;
-        if (httpsPort > httpsPort2) setHttpsPort(this.httpsPort2);
+        if (created != null) {
+            if (created2 == null) setCreated2(this.created.addDays(1));
+            else if (created.compareTo(created2) > 0) setCreated2(this.created.addDays(1));
+        }
+    } 
+    public OADateTime getCreated2() {
+        return created2;
+    }
+    public void setCreated2(OADateTime newValue) {
+        OADateTime old = created2;
+        fireBeforePropertyChange(P_Created2, old, newValue);
+        this.created2 = newValue;
+        firePropertyChange(P_Created2, old, this.created2);
+        if (created != null && created2 != null) {
+            if (created.compareTo(created2) > 0) setCreated(this.created2);
+        }
     }
 
     public int getMaxResults() {
@@ -182,35 +196,36 @@ public class ApplicationTypeSearch extends OAObject {
     }
 
     public void reset() {
-        setId(0);
-        setNull(P_Id);
-        setId2(0);
-        setNull(P_Id2);
-        setCreated(null);
         setName(null);
         setAbbrevName(null);
         setClientPort(0);
         setNull(P_ClientPort);
-        setClientPort2(0);
-        setNull(P_ClientPort2);
         setHttpPort(0);
         setNull(P_HttpPort);
-        setHttpPort2(0);
-        setNull(P_HttpPort2);
         setHttpsPort(0);
         setNull(P_HttpsPort);
-        setHttpsPort2(0);
-        setNull(P_HttpsPort2);
+        setDownloadUrl(null);
+        setAppDirectory(null);
+        setJarFileName(null);
+        setMainClass(null);
+        setId(0);
+        setNull(P_Id);
+        setCreated(null);
+        setCreated2(null);
     }
 
     public boolean isDataEntered() {
-        if (!isNull(P_Id)) return true;
-        if (getCreated() != null) return true;
         if (getName() != null) return true;
         if (getAbbrevName() != null) return true;
         if (!isNull(P_ClientPort)) return true;
         if (!isNull(P_HttpPort)) return true;
         if (!isNull(P_HttpsPort)) return true;
+        if (getDownloadUrl() != null) return true;
+        if (getAppDirectory() != null) return true;
+        if (getJarFileName() != null) return true;
+        if (getMainClass() != null) return true;
+        if (!isNull(P_Id)) return true;
+        if (getCreated() != null) return true;
         return false;
     }
 
@@ -238,24 +253,6 @@ public class ApplicationTypeSearch extends OAObject {
         String sql = "";
         String sortOrder = null;
         Object[] args = new Object[0];
-        if (!isNull(P_Id)) {
-            if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_Id2) && id != id2) {
-                sql += ApplicationType.P_Id + " >= ?";
-                args = OAArray.add(Object.class, args, getId());
-                sql += " AND " + ApplicationType.P_Id + " <= ?";
-                args = OAArray.add(Object.class, args, getId2());
-            }
-            else {
-                sql += ApplicationType.P_Id + " = ?";
-                args = OAArray.add(Object.class, args, getId());
-            }
-        }
-        if (created != null) {
-            if (sql.length() > 0) sql += " AND ";
-            sql += ApplicationType.P_Created + " = ?";
-            args = OAArray.add(Object.class, args, this.created);
-        }
         if (OAString.isNotEmpty(this.name)) {
             if (sql.length() > 0) sql += " AND ";
             String val = OAString.convertToLikeSearch(name);
@@ -280,41 +277,79 @@ public class ApplicationTypeSearch extends OAObject {
         }
         if (!isNull(P_ClientPort)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_ClientPort2) && clientPort != clientPort2) {
-                sql += ApplicationType.P_ClientPort + " >= ?";
-                args = OAArray.add(Object.class, args, getClientPort());
-                sql += " AND " + ApplicationType.P_ClientPort + " <= ?";
-                args = OAArray.add(Object.class, args, getClientPort2());
-            }
-            else {
-                sql += ApplicationType.P_ClientPort + " = ?";
-                args = OAArray.add(Object.class, args, getClientPort());
-            }
+            sql += ApplicationType.P_ClientPort + " = ?";
+            args = OAArray.add(Object.class, args, this.clientPort);
         }
         if (!isNull(P_HttpPort)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_HttpPort2) && httpPort != httpPort2) {
-                sql += ApplicationType.P_HttpPort + " >= ?";
-                args = OAArray.add(Object.class, args, getHttpPort());
-                sql += " AND " + ApplicationType.P_HttpPort + " <= ?";
-                args = OAArray.add(Object.class, args, getHttpPort2());
-            }
-            else {
-                sql += ApplicationType.P_HttpPort + " = ?";
-                args = OAArray.add(Object.class, args, getHttpPort());
-            }
+            sql += ApplicationType.P_HttpPort + " = ?";
+            args = OAArray.add(Object.class, args, this.httpPort);
         }
         if (!isNull(P_HttpsPort)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_HttpsPort2) && httpsPort != httpsPort2) {
-                sql += ApplicationType.P_HttpsPort + " >= ?";
-                args = OAArray.add(Object.class, args, getHttpsPort());
-                sql += " AND " + ApplicationType.P_HttpsPort + " <= ?";
-                args = OAArray.add(Object.class, args, getHttpsPort2());
+            sql += ApplicationType.P_HttpsPort + " = ?";
+            args = OAArray.add(Object.class, args, this.httpsPort);
+        }
+        if (OAString.isNotEmpty(this.downloadUrl)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(downloadUrl);
+            if (val.indexOf("%") >= 0) {
+                sql += ApplicationType.P_DownloadUrl + " LIKE ?";
             }
             else {
-                sql += ApplicationType.P_HttpsPort + " = ?";
-                args = OAArray.add(Object.class, args, getHttpsPort());
+                sql += ApplicationType.P_DownloadUrl + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (OAString.isNotEmpty(this.appDirectory)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(appDirectory);
+            if (val.indexOf("%") >= 0) {
+                sql += ApplicationType.P_AppDirectory + " LIKE ?";
+            }
+            else {
+                sql += ApplicationType.P_AppDirectory + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (OAString.isNotEmpty(this.jarFileName)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(jarFileName);
+            if (val.indexOf("%") >= 0) {
+                sql += ApplicationType.P_JarFileName + " LIKE ?";
+            }
+            else {
+                sql += ApplicationType.P_JarFileName + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (OAString.isNotEmpty(this.mainClass)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(mainClass);
+            if (val.indexOf("%") >= 0) {
+                sql += ApplicationType.P_MainClass + " LIKE ?";
+            }
+            else {
+                sql += ApplicationType.P_MainClass + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (!isNull(P_Id)) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += ApplicationType.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
+        if (created != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (created2 != null && !created.equals(created2)) {
+                sql += ApplicationType.P_Created + " >= ?";
+                args = OAArray.add(Object.class, args, this.created);
+                sql += " AND " + ApplicationType.P_Created + " <= ?";
+                args = OAArray.add(Object.class, args, this.created2);
+            }
+            else {
+                sql += ApplicationType.P_Created + " = ?";
+                args = OAArray.add(Object.class, args, this.created);
             }
         }
 
@@ -338,24 +373,6 @@ public class ApplicationTypeSearch extends OAObject {
         final String prefix = fromName + ".";
         String sql = "";
         Object[] args = new Object[0];
-        if (!isNull(P_Id)) {
-            if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_Id2) && id != id2) {
-                sql += prefix + ApplicationType.P_Id + " >= ?";
-                args = OAArray.add(Object.class, args, getId());
-                sql += " AND " + prefix + ApplicationType.P_Id + " <= ?";
-                args = OAArray.add(Object.class, args, getId2());
-            }
-            else {
-                sql += prefix + ApplicationType.P_Id + " = ?";
-                args = OAArray.add(Object.class, args, getId());
-            }
-        }
-        if (created != null) {
-            if (sql.length() > 0) sql += " AND ";
-            sql += prefix + ApplicationType.P_Created + " = ?";
-            args = OAArray.add(Object.class, args, this.created);
-        }
         if (OAString.isNotEmpty(this.name)) {
             if (sql.length() > 0) sql += " AND ";
             String val = OAString.convertToLikeSearch(name);
@@ -380,41 +397,79 @@ public class ApplicationTypeSearch extends OAObject {
         }
         if (!isNull(P_ClientPort)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_ClientPort2) && clientPort != clientPort2) {
-                sql += prefix + ApplicationType.P_ClientPort + " >= ?";
-                args = OAArray.add(Object.class, args, getClientPort());
-                sql += " AND " + prefix + ApplicationType.P_ClientPort + " <= ?";
-                args = OAArray.add(Object.class, args, getClientPort2());
-            }
-            else {
-                sql += prefix + ApplicationType.P_ClientPort + " = ?";
-                args = OAArray.add(Object.class, args, getClientPort());
-            }
+            sql += prefix + ApplicationType.P_ClientPort + " = ?";
+            args = OAArray.add(Object.class, args, this.clientPort);
         }
         if (!isNull(P_HttpPort)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_HttpPort2) && httpPort != httpPort2) {
-                sql += prefix + ApplicationType.P_HttpPort + " >= ?";
-                args = OAArray.add(Object.class, args, getHttpPort());
-                sql += " AND " + prefix + ApplicationType.P_HttpPort + " <= ?";
-                args = OAArray.add(Object.class, args, getHttpPort2());
-            }
-            else {
-                sql += prefix + ApplicationType.P_HttpPort + " = ?";
-                args = OAArray.add(Object.class, args, getHttpPort());
-            }
+            sql += prefix + ApplicationType.P_HttpPort + " = ?";
+            args = OAArray.add(Object.class, args, this.httpPort);
         }
         if (!isNull(P_HttpsPort)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_HttpsPort2) && httpsPort != httpsPort2) {
-                sql += prefix + ApplicationType.P_HttpsPort + " >= ?";
-                args = OAArray.add(Object.class, args, getHttpsPort());
-                sql += " AND " + prefix + ApplicationType.P_HttpsPort + " <= ?";
-                args = OAArray.add(Object.class, args, getHttpsPort2());
+            sql += prefix + ApplicationType.P_HttpsPort + " = ?";
+            args = OAArray.add(Object.class, args, this.httpsPort);
+        }
+        if (OAString.isNotEmpty(this.downloadUrl)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(downloadUrl);
+            if (val.indexOf("%") >= 0) {
+                sql += prefix + ApplicationType.P_DownloadUrl + " LIKE ?";
             }
             else {
-                sql += prefix + ApplicationType.P_HttpsPort + " = ?";
-                args = OAArray.add(Object.class, args, getHttpsPort());
+                sql += prefix + ApplicationType.P_DownloadUrl + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (OAString.isNotEmpty(this.appDirectory)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(appDirectory);
+            if (val.indexOf("%") >= 0) {
+                sql += prefix + ApplicationType.P_AppDirectory + " LIKE ?";
+            }
+            else {
+                sql += prefix + ApplicationType.P_AppDirectory + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (OAString.isNotEmpty(this.jarFileName)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(jarFileName);
+            if (val.indexOf("%") >= 0) {
+                sql += prefix + ApplicationType.P_JarFileName + " LIKE ?";
+            }
+            else {
+                sql += prefix + ApplicationType.P_JarFileName + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (OAString.isNotEmpty(this.mainClass)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(mainClass);
+            if (val.indexOf("%") >= 0) {
+                sql += prefix + ApplicationType.P_MainClass + " LIKE ?";
+            }
+            else {
+                sql += prefix + ApplicationType.P_MainClass + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (!isNull(P_Id)) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += prefix + ApplicationType.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
+        if (created != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (created2 != null && !created.equals(created2)) {
+                sql += prefix + ApplicationType.P_Created + " >= ?";
+                args = OAArray.add(Object.class, args, this.created);
+                sql += " AND " + prefix + ApplicationType.P_Created + " <= ?";
+                args = OAArray.add(Object.class, args, this.created2);
+            }
+            else {
+                sql += prefix + ApplicationType.P_Created + " = ?";
+                args = OAArray.add(Object.class, args, this.created);
             }
         }
         select.add(sql, args);

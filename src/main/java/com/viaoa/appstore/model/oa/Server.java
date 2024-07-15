@@ -19,7 +19,7 @@ import com.viaoa.appstore.model.oa.propertypath.*;
     pluralName = "Servers",
     shortName = "srv",
     displayName = "Server",
-    displayProperty = "name",
+    displayProperty = "calcName",
     noPojo = true
 )
 @OATable(
@@ -37,6 +37,8 @@ public class Server extends OAObject {
     public static final String P_Name = "name";
     public static final String P_Host = "host";
     public static final String P_IpAddress = "ipAddress";
+     
+    public static final String P_CalcName = "calcName";
      
     public static final String P_AppUser = "appUser";
     public static final String P_AppUserId = "appUserId"; // fkey
@@ -133,6 +135,14 @@ public class Server extends OAObject {
         fireBeforePropertyChange(P_IpAddress, old, newValue);
         this.ipAddress = newValue;
         firePropertyChange(P_IpAddress, old, this.ipAddress);
+    }
+    @OACalculatedProperty(displayName = "Name", displayLength = 20, properties = {P_Name, P_Host, P_IpAddress})
+    public String getCalcName() {
+        String name = this.getName();
+        if (OAStr.isNotEmpty(name)) return name;    
+        String host = this.getHost();
+        if (OAStr.isNotEmpty(host)) return host;
+        return this.getIpAddress();
     }
 
     @OAOne(

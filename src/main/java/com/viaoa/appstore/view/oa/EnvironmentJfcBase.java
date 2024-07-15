@@ -289,6 +289,7 @@ public class EnvironmentJfcBase implements OAModelJfcInterface {
             @Override
             public void objectSelected(Object obj) {
                 super.objectSelected(obj);
+                EnvironmentJfcBase.this.getCardPanel();
                 EnvironmentJfcBase.this.onShowEditPanel();
             }
             @Override
@@ -889,16 +890,16 @@ public class EnvironmentJfcBase implements OAModelJfcInterface {
     public void createTableColumns(OATable table) {
         OALabel lbl;
         OATableColumn tc;
-        tc = table.addColumn("Abbrev", 6, createAbbrevNameTextField());
-        tc.setToolTipText("Abbrev Name");
-        if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(Environment.P_AbbrevName));
-        }
         tc = table.addColumn("Name", 15, createNameTextField());
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(Environment.P_Name));
         }
         tc = table.addColumn("Type", 16, createTypeComboBox());
+        tc = table.addColumn("Abbrev", 6, createAbbrevNameTextField());
+        tc.setToolTipText("Abbrev Name");
+        if (getModel().getAllowTableFilter()) {
+            tc.setFilterComponent(new OATextFieldFilter(Environment.P_AbbrevName));
+        }
     }
     
     public OATable createReadOnlyTable() {
@@ -945,12 +946,6 @@ public class EnvironmentJfcBase implements OAModelJfcInterface {
     protected void createReadOnlyTableColumns(OATable table) {
         OALabel lbl;
         OATableColumn tc;
-        lbl = new OALabel(getHub(), Environment.P_AbbrevName, 5);
-        lbl.setToolTipText("Abbrev Name");
-        tc = table.addColumn("Abbrev", 6, lbl);
-        if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(Environment.P_AbbrevName));
-        }
         lbl = new OALabel(getHub(), Environment.P_Name, 15);
         tc = table.addColumn("Name", 15, lbl);
         if (getModel().getAllowTableFilter()) {
@@ -960,6 +955,12 @@ public class EnvironmentJfcBase implements OAModelJfcInterface {
         h.setLinkHubOnPos(getModel().getHub(), Environment.P_Type);
         lbl = new OALabel(h, "");
         tc = table.addColumn("Type", 16, lbl);
+        lbl = new OALabel(getHub(), Environment.P_AbbrevName, 5);
+        lbl.setToolTipText("Abbrev Name");
+        tc = table.addColumn("Abbrev", 6, lbl);
+        if (getModel().getAllowTableFilter()) {
+            tc.setFilterComponent(new OATextFieldFilter(Environment.P_AbbrevName));
+        }
     }
     
     public OAButton createGotoEditButton() {
@@ -1280,9 +1281,9 @@ public class EnvironmentJfcBase implements OAModelJfcInterface {
     }
     protected void addDownloadProperties(DownloadDialog dd) {
         dd.addProperty("Id", Environment.P_Id);
-        dd.addProperty("abbrevName", Environment.P_AbbrevName);
         dd.addProperty("name", Environment.P_Name);
         dd.addProperty("type", Environment.P_Type);
+        dd.addProperty("abbrevName", Environment.P_AbbrevName);
     }
     // Card Panel
     public JPanel getCardPanel() {
@@ -1414,16 +1415,16 @@ public class EnvironmentJfcBase implements OAModelJfcInterface {
         gc.fill = gc.NONE;
         gc.gridwidth = 1;
     
-        lbl = new JLabel("Abbrev Name:");
+        lbl = new JLabel("Type:");
         gc.anchor = gc.WEST;
         panel.add(lbl, gc);
         gc.anchor = gc.NORTHWEST;
-        txt = createAbbrevNameTextField();
-        if (getModel().getViewOnly()) txt.getController().setViewOnly(true);
-        txt.setLabel(lbl);
+        cbo = createTypeComboBox();
+        if (getModel().getViewOnly()) cbo.getController().setViewOnly(true);
+        cbo.setLabel(lbl);
         gc.gridwidth = gc.REMAINDER;
         gc.fill = gc.HORIZONTAL;
-        comp = new OAResizePanel(txt, 95);
+        comp = new OAResizePanel(cbo, 95);
         panel.add(comp, gc);
         gc.fill = gc.NONE;
         gc.gridwidth = 1;
@@ -1442,16 +1443,16 @@ public class EnvironmentJfcBase implements OAModelJfcInterface {
         gc.fill = gc.NONE;
         gc.gridwidth = 1;
     
-        lbl = new JLabel("Type:");
+        lbl = new JLabel("Abbrev Name:");
         gc.anchor = gc.WEST;
         panel.add(lbl, gc);
         gc.anchor = gc.NORTHWEST;
-        cbo = createTypeComboBox();
-        if (getModel().getViewOnly()) cbo.getController().setViewOnly(true);
-        cbo.setLabel(lbl);
+        txt = createAbbrevNameTextField();
+        if (getModel().getViewOnly()) txt.getController().setViewOnly(true);
+        txt.setLabel(lbl);
         gc.gridwidth = gc.REMAINDER;
         gc.fill = gc.HORIZONTAL;
-        comp = new OAResizePanel(cbo, 95);
+        comp = new OAResizePanel(txt, 95);
         panel.add(comp, gc);
         gc.fill = gc.NONE;
         gc.gridwidth = 1;
@@ -1708,8 +1709,9 @@ public class EnvironmentJfcBase implements OAModelJfcInterface {
     }
     public OAAutoCompleteTextField createAutoCompleteTextField(String propertyPath) {
         OAAutoCompleteTextField txt = new OAAutoCompleteTextField(getHub(), propertyPath, 15);
-        txt.setMaximumColumns(35);
+        txt.setMaximumColumns(50);
         txt.setToolTipText("Search using Name");
+        txt.setSearchTemplate("<%=name%> (<%=abbrevName%>)");
         return txt;
     }
     

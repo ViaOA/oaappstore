@@ -49,6 +49,11 @@ public class ServerPP {
         return s;
     }
 
+    public static String calcName() {
+        String s = Server.P_CalcName;
+        return s;
+    }
+
     public static String pp() {
         return ""; // this
     }

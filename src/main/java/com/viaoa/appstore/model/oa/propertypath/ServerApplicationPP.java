@@ -89,8 +89,28 @@ public class ServerApplicationPP {
         return s;
     }
 
-    public static String displayName() {
-        String s = ServerApplication.P_DisplayName;
+    public static String calcFullName() {
+        String s = ServerApplication.P_CalcFullName;
+        return s;
+    }
+
+    public static String calcClientPort() {
+        String s = ServerApplication.P_CalcClientPort;
+        return s;
+    }
+
+    public static String calcHttpPort() {
+        String s = ServerApplication.P_CalcHttpPort;
+        return s;
+    }
+
+    public static String calcHttpsPort() {
+        String s = ServerApplication.P_CalcHttpsPort;
+        return s;
+    }
+
+    public static String calcName() {
+        String s = ServerApplication.P_CalcName;
         return s;
     }
 

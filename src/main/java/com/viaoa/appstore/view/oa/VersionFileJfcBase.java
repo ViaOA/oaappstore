@@ -283,6 +283,7 @@ public class VersionFileJfcBase implements OAModelJfcInterface {
             @Override
             public void objectSelected(Object obj) {
                 super.objectSelected(obj);
+                VersionFileJfcBase.this.getCardPanel();
                 VersionFileJfcBase.this.onShowEditPanel();
             }
             @Override

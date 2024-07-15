@@ -44,7 +44,7 @@ import com.viaoa.appstore.view.*;
 public class ServerJfcBase implements OAModelJfcInterface {
     protected static Logger LOG = Logger.getLogger(ServerJfc.class.getName());
     
-    public static final String PP_Display    = OAString.cpp(Server.P_Name);
+    public static final String PP_Display    = OAString.cpp(Server.P_CalcName);
     public static final String PP_Icon       = null;
     public static final String PP_Image      = null;
     public static final String PP_ForeColor  = null;
@@ -284,10 +284,11 @@ public class ServerJfcBase implements OAModelJfcInterface {
         if (hubRoot == null && OAString.isEmpty(leadingPropertyPath)) {
             hubRoot = getModel().getHub();
         }
-        OATreeNode node = new OATreeNode(OAString.cpp(leadingPropertyPath, Server.P_Name), hubRoot, getHub()) {
+        OATreeNode node = new OATreeNode(OAString.cpp(leadingPropertyPath, Server.P_CalcName), hubRoot, getHub()) {
             @Override
             public void objectSelected(Object obj) {
                 super.objectSelected(obj);
+                ServerJfcBase.this.getCardPanel();
                 ServerJfcBase.this.onShowEditPanel();
             }
             @Override
@@ -480,7 +481,7 @@ public class ServerJfcBase implements OAModelJfcInterface {
     
     // Label
     public OALabel createLabel() {
-        OALabel lbl = new OALabel(getHub(), OAString.cpp(Server.P_Name), 20) {
+        OALabel lbl = new OALabel(getHub(), OAString.cpp(Server.P_CalcName), 20) {
             @Override
             public void customizeRenderer(JLabel lbl, Object object, Object value, boolean isSelected, boolean hasFocus, int row, boolean wasChanged, boolean wasMouseOver) {
                 ServerJfcBase.this.customizeRenderer(lbl, ServerJfcBase.this.getHub().getAt(row), isSelected, hasFocus, row, wasChanged, wasMouseOver);
@@ -490,7 +491,7 @@ public class ServerJfcBase implements OAModelJfcInterface {
                 return ServerJfcBase.this.getToolTipText(ServerJfcBase.this.getHub().getAt(row), row, defaultValue);
             }
         };
-        lbl.setMaximumColumns(55);
+        lbl.setMaximumColumns(45);
         lbl.setMinimumColumns(10);
         lbl.setIconColorProperty(PP_IconColor);
         lbl.setImageProperty(PP_Icon);
@@ -516,7 +517,7 @@ public class ServerJfcBase implements OAModelJfcInterface {
     }
     
     public OAComboBox createComboBox() {
-        OAComboBox cbo = new OAComboBox(getHub(), OAString.cpp(Server.P_Name), 20) {
+        OAComboBox cbo = new OAComboBox(getHub(), OAString.cpp(Server.P_CalcName), 20) {
             @Override
             public void customizeRenderer(JLabel lbl, Object object, Object value, boolean isSelected, boolean hasFocus, int row, boolean wasChanged, boolean wasMouseOver) {
                 ServerJfcBase.this.customizeRenderer(lbl, ServerJfcBase.this.getHub().getAt(row), isSelected, hasFocus, row, wasChanged, wasMouseOver);
@@ -527,9 +528,9 @@ public class ServerJfcBase implements OAModelJfcInterface {
             }
         };
     
-        cbo.setPopupColumns(35);
+        cbo.setPopupColumns(32);
         cbo.setMaximumRowCount(15);
-        cbo.setMaximumColumns(55);
+        cbo.setMaximumColumns(45);
         cbo.setMinimumColumns(10);
         cbo.setIconColorProperty(PP_IconColor);
         cbo.setImageProperty(PP_Icon);
@@ -552,7 +553,7 @@ public class ServerJfcBase implements OAModelJfcInterface {
         table.setAllowSorting(false);
         table.addCounterColumn();
         getSearchJfc().createTableColumns(table);
-        table.setPreferredSize(15, 6, true);
+        table.setPreferredSize(15, 5, true);
         table.resizeColumnsToFitHeading();
         
         OATableComboBox cboTable = new OATableComboBox(table, getHub(), PP_Display) {
@@ -564,7 +565,7 @@ public class ServerJfcBase implements OAModelJfcInterface {
         cboTable.allowClearButton(true);
         cboTable.setIconColorProperty(PP_IconColor);
         cboTable.setColumns(20);
-        cboTable.setMaximumColumns(55);
+        cboTable.setMaximumColumns(45);
         return cboTable;
     }
     
@@ -577,7 +578,7 @@ public class ServerJfcBase implements OAModelJfcInterface {
         return lst;
     }
     public OAList createList() {
-        OAList lst = new OAList(getHub(), OAString.cpp(Server.P_Name), 12, 20) {
+        OAList lst = new OAList(getHub(), OAString.cpp(Server.P_CalcName), 12, 20) {
             @Override
             public void customizeRenderer(JLabel label, JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 super.customizeRenderer(label, list, value, index, isSelected, cellHasFocus);
@@ -585,7 +586,7 @@ public class ServerJfcBase implements OAModelJfcInterface {
             }
         };
         lst.setMinimumColumns(6);
-        lst.setMaximumColumns(55);
+        lst.setMaximumColumns(45);
         lst.setAllowDnD(true);
         lst.setAllowRemove(true);
         lst.setAllowDelete(false);
@@ -888,27 +889,22 @@ public class ServerJfcBase implements OAModelJfcInterface {
     public void createTableColumns(OATable table) {
         OALabel lbl;
         OATableColumn tc;
-        tc = table.addColumn("Id", 6, createIdLabel());
+        tc = table.addColumn("Name", 20, createNameTextField());
         if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(Server.P_Id));
+            tc.setFilterComponent(new OATextFieldFilter(Server.P_Name));
         }
-        tableDtTxtCreated = createCreatedDateTimeTextField();
-        tc = table.addColumn("Created", 15, tableDtTxtCreated);
-        tc = table.addColumn("Host", 20, createHostTextField());
+        tc = table.addColumn("Host", 18, createHostTextField());
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(Server.P_Host));
         }
-        tc = table.addColumn("Ip Address", 20, createIpAddressTextField());
+        tc = table.addColumn("IP Address", 16, createIpAddressTextField());
+        tc.setToolTipText("Ip Address");
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(Server.P_IpAddress));
         }
-        if (getModel().getEnvironmentModel().getCreateUI()) {
-            OALabel olbl = createEnvironmentLabel();
-            olbl.setToolTipText("Environment");
-            tc = table.addColumn("Environment", 15, olbl);
-            if (getModel().getAllowTableFilter()) {
-                tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(Server.P_Environment, Environment.P_Name)));
-            }
+        if (getModel().getServerApplicationsModel().getCreateUI()) {
+            lbl = new OALabel(getHub(), OAString.cpp(Server.P_ServerApplications, ServerApplication.P_CalcName));
+            tc = table.addColumn("Applicaitons", 25, lbl);
         }
     }
     
@@ -956,35 +952,24 @@ public class ServerJfcBase implements OAModelJfcInterface {
     protected void createReadOnlyTableColumns(OATable table) {
         OALabel lbl;
         OATableColumn tc;
-        lbl = new OALabel(getHub(), Server.P_Id, 6);
-        tc = table.addColumn("Id", 6, lbl);
+        lbl = new OALabel(getHub(), Server.P_Name, 20);
+        tc = table.addColumn("Name", 20, lbl);
         if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(Server.P_Id));
+            tc.setFilterComponent(new OATextFieldFilter(Server.P_Name));
         }
-        lbl = new OALabel(getHub(), Server.P_Created, 15);
-        tc = table.addColumn("Created", 15, lbl);
         lbl = new OALabel(getHub(), Server.P_Host, 20);
-        tc = table.addColumn("Host", 20, lbl);
+        tc = table.addColumn("Host", 18, lbl);
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(Server.P_Host));
         }
         lbl = new OALabel(getHub(), Server.P_IpAddress, 20);
-        tc = table.addColumn("Ip Address", 20, lbl);
+        lbl.setToolTipText("Ip Address");
+        tc = table.addColumn("IP Address", 16, lbl);
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(Server.P_IpAddress));
         }
-        lbl = new OALabel(getHub(), OAString.cpp(Server.P_Environment, Environment.P_Name));
-        lbl.setToolTipText("Environment");
-        if (EnvironmentJfc.PP_IconColor != null) {
-            lbl.setIconColorProperty(OAString.cpp(Server.P_Environment) + "." + EnvironmentJfc.PP_IconColor);
-        }
-        if (EnvironmentJfc.PP_Icon != null) {
-            lbl.setImageProperty(OAString.cpp(Server.P_Environment) + "." + EnvironmentJfc.PP_Icon);
-        }
-        tc = table.addColumn("Environment", 15, lbl);
-        if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(Server.P_Environment, Environment.P_Name)));
-        }
+        lbl = new OALabel(getHub(), OAString.cpp(Server.P_ServerApplications, ServerApplication.P_CalcName));
+        tc = table.addColumn("Applicaitons", 25, lbl);
     }
     
     public OAButton createGotoEditButton() {
@@ -1134,8 +1119,8 @@ public class ServerJfcBase implements OAModelJfcInterface {
             toolBar.add(Box.createHorizontalStrut(10));
         }
         if (tbo.bLabel) {
-            OALabel lbl = new OALabel(getHub(), OAString.cpp(Server.P_Name));
-            lbl.setToolTipTextPropertyPath(OAString.cpp(Server.P_Name));
+            OALabel lbl = new OALabel(getHub(), OAString.cpp(Server.P_CalcName));
+            lbl.setToolTipTextPropertyPath(OAString.cpp(Server.P_CalcName));
             lbl.setMaxCols(20);
             lbl.setFont(lbl.getFont().deriveFont(Font.ITALIC));
             lbl.setBorder(new CustomLineBorder(0,0,0,1,Color.gray));
@@ -1192,7 +1177,7 @@ public class ServerJfcBase implements OAModelJfcInterface {
                 toolBar.add(Box.createHorizontalStrut(6));
                 JLabel lbl = new JLabel(Resource.getJarIcon("find16.png"));
                 lbl.setText("Find:");
-                lbl.setToolTipText("Search using Name");
+                lbl.setToolTipText("enter name, host, ip, or server app name");
                 OAJfcControllerFactory.createOnlyHubNotEmpty(getHub(), lbl);
                 toolBar.add(lbl);
                 toolBar.add(Box.createHorizontalStrut(5));
@@ -1305,12 +1290,10 @@ public class ServerJfcBase implements OAModelJfcInterface {
     }
     protected void addDownloadProperties(DownloadDialog dd) {
         dd.addProperty("Id", Server.P_Id);
-        dd.addProperty("id", Server.P_Id);
-        dd.addProperty("created", Server.P_Created);
+        dd.addProperty("name", Server.P_Name);
         dd.addProperty("host", Server.P_Host);
         dd.addProperty("ipAddress", Server.P_IpAddress);
-        dd.addProperty("environment.id", ServerPP.environment().id());
-        dd.addProperty("environment.name", ServerPP.environment().name());
+        dd.addProperty("serverApplications.calcName", ServerPP.serverApplications().calcName());
     }
     // Card Panel
     public JPanel getCardPanel() {
@@ -1699,13 +1682,27 @@ public class ServerJfcBase implements OAModelJfcInterface {
         return txt;
     }
     
+    public OATextField createCalcNameTextField() {
+        OATextField txt = new OATextField(getHub(), Server.P_CalcName, 20);
+        txt.getController().getEnabledChangeListener().addAlwaysFalse();
+        OAJfcUtil.initializeCalcTextField(txt);
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(45);
+        return txt;
+    }
+    
     public OAComboBox createAppUserComboBox() {
         OAComboBox cbo = getAppUserJfc().createComboBox();
         return cbo;
     }
     public JButton createAppUserCommand() {
         JButton cmd = null;
-        return null;
+        cmd = getAppUserJfc().createSearchButton();
+        if (cmd != null) {
+            ((OAButton)cmd).getController().setViewOnly(getModel().getViewOnly());
+            cmd.setText("Search ...");
+        }
+        return cmd;
     }
     
     public OALabel createEnvironmentLabel() {
@@ -1737,8 +1734,10 @@ public class ServerJfcBase implements OAModelJfcInterface {
     }
     public OAAutoCompleteTextField createAutoCompleteTextField(String propertyPath) {
         OAAutoCompleteTextField txt = new OAAutoCompleteTextField(getHub(), propertyPath, 20);
-        txt.setMaximumColumns(55);
-        txt.setToolTipText("Search using Name");
+        txt.setMaximumColumns(35);
+        txt.setToolTipText("enter name, host, ip, or server app name");
+        txt.setSearchTemplate("<%=name%>, <%=host%>, <%=ipAddress%>, <%=serverApplications.calcName%>");
+        txt.setDisplayTemplate("<%=name%>, <%=host%>, <%=ipAddress%>");
         return txt;
     }
     
@@ -1746,6 +1745,13 @@ public class ServerJfcBase implements OAModelJfcInterface {
     public AppUserJfc getAppUserJfc() {
         if (jfcAppUser != null) return jfcAppUser;
         jfcAppUser = new AppUserJfc(getModel().getAppUserSelectFromModel()) {
+            @Override
+            protected AppUserSearchJfc getSearchJfc() {
+                if (jfcSearch != null) return jfcSearch;
+                ServerJfcBase.this.getModel().getAppUserSearchModel().getAppUserSearch().setMaxResults(1000);
+                jfcSearch = new AppUserSearchJfc(ServerJfcBase.this.getModel().getAppUserSearchModel());
+                return jfcSearch;
+            }
         };
         jfcAppUser.setLevel(getLevel()+1);
         OAModelJfcUtil.setParent(jfcAppUser, this);

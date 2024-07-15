@@ -24,7 +24,7 @@ public class TestClientController {
         String s = String.format("Server=%s, port=%d, userId=%s", serverName, port, userId);
         LOG.config("client connection starting, "+s);
         
-        RemoteClientController controlRemote = new RemoteClientController(null) {
+        RemoteClientController controlRemote = new RemoteClientController() {
             protected @Override void onDisconnect(Exception e) {
             }
             protected JFrame getFrame() {

@@ -60,7 +60,9 @@ public class AppUserModel extends OAObjectModel {
     // SearchModels used for references
     protected ServerSearchModel modelServerSearch;
     protected ApplicationTypeSearchModel modelApplicationTypesSearch;
+    protected ClientAppSearchModel modelClientAppsSearch;
     protected ServerApplicationSearchModel modelMergeServerApplicationsSearch;
+    protected SingleAppSearchModel modelSingleAppsSearch;
     
     public AppUserModel() {
         setDisplayName("App User");
@@ -254,7 +256,7 @@ public class AppUserModel extends OAObjectModel {
         modelClientApps.setAllowDelete(true);
         modelClientApps.setAllowRefresh(false);
         modelClientApps.setAllowSearch(false);
-        modelClientApps.setAllowHubSearch(false);
+        modelClientApps.setAllowHubSearch(true);
         modelClientApps.setAllowDownload(true);
         modelClientApps.setAllowGotoEdit(true);
         modelClientApps.setViewOnly(getViewOnly());
@@ -318,7 +320,7 @@ public class AppUserModel extends OAObjectModel {
         modelSingleApps.setAllowDelete(true);
         modelSingleApps.setAllowRefresh(false);
         modelSingleApps.setAllowSearch(false);
-        modelSingleApps.setAllowHubSearch(false);
+        modelSingleApps.setAllowHubSearch(true);
         modelSingleApps.setAllowDownload(true);
         modelSingleApps.setAllowGotoEdit(true);
         modelSingleApps.setViewOnly(getViewOnly());
@@ -438,10 +440,20 @@ public class AppUserModel extends OAObjectModel {
         modelApplicationTypesSearch = new ApplicationTypeSearchModel();
         return modelApplicationTypesSearch;
     }
+    public ClientAppSearchModel getClientAppsSearchModel() {
+        if (modelClientAppsSearch != null) return modelClientAppsSearch;
+        modelClientAppsSearch = new ClientAppSearchModel();
+        return modelClientAppsSearch;
+    }
     public ServerApplicationSearchModel getMergeServerApplicationsSearchModel() {
         if (modelMergeServerApplicationsSearch != null) return modelMergeServerApplicationsSearch;
         modelMergeServerApplicationsSearch = new ServerApplicationSearchModel();
         return modelMergeServerApplicationsSearch;
+    }
+    public SingleAppSearchModel getSingleAppsSearchModel() {
+        if (modelSingleAppsSearch != null) return modelSingleAppsSearch;
+        modelSingleAppsSearch = new SingleAppSearchModel();
+        return modelSingleAppsSearch;
     }
     
     public HubCopy<AppUser> createHubCopy() {

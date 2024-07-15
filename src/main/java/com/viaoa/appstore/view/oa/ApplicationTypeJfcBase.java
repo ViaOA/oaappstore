@@ -77,12 +77,10 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
     protected static final String CARD_AppUsers = "AppUsers";
     protected static final String CARD_PropertyValues = "PropertyValues";
     protected static final String CARD_ServerApplications = "ServerApplications";
-    protected static final String CARD_SingleApps = "SingleApps";
     protected int TAB_ApplicationVersions = -1;
-    protected int TAB_ServerApplications = -1;
     protected int TAB_AppUsers = -1;
-    protected int TAB_SingleApps = -1;
     protected int TAB_PropertyValues = -1;
+    protected int TAB_ServerApplications = -1;
     protected JPanel cardPanel;
     protected CardLayout cardLayout;
     protected JTabbedPane tabbedPane;
@@ -104,7 +102,6 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
     protected AppUserJfc jfcAppUsers;
     protected PropertyValueJfc jfcPropertyValues;
     protected ServerApplicationJfc jfcServerApplications;
-    protected SingleAppJfc jfcSingleApps;
     protected ApplicationTypeWizardJfc jfcApplicationTypeWizard;
     
     public ApplicationTypeJfcBase() {
@@ -327,6 +324,7 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
             @Override
             public void objectSelected(Object obj) {
                 super.objectSelected(obj);
+                ApplicationTypeJfcBase.this.getCardPanel();
                 ApplicationTypeJfcBase.this.onShowEditPanel();
             }
             @Override
@@ -391,17 +389,9 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
         if (miSearch != null || miNew != null) menu.addSeparator();
     
         OAMenuItem mi;
-        mi = getApplicationVersionsJfc().createNewMenuItem();
-        if (mi != null) menu.add(mi);
-        mi = getApplicationVersionsJfc().createAddMenuItem();
-        if (mi != null) menu.add(mi);
         mi = getPropertyValuesJfc().createNewMenuItem();
         if (mi != null) menu.add(mi);
         mi = getPropertyValuesJfc().createAddMenuItem();
-        if (mi != null) menu.add(mi);
-        mi = getServerApplicationsJfc().createNewMenuItem();
-        if (mi != null) menu.add(mi);
-        mi = getServerApplicationsJfc().createAddMenuItem();
         if (mi != null) menu.add(mi);
     
         menu.addSeparator();
@@ -589,7 +579,7 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
         table.setAllowSorting(false);
         table.addCounterColumn();
         getSearchJfc().createTableColumns(table);
-        table.setPreferredSize(15, 7, true);
+        table.setPreferredSize(15, 6, true);
         table.resizeColumnsToFitHeading();
         
         OATableComboBox cboTable = new OATableComboBox(table, getHub(), PP_Display) {
@@ -925,29 +915,25 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
     public void createTableColumns(OATable table) {
         OALabel lbl;
         OATableColumn tc;
-        tc = table.addColumn("Id", 6, createIdLabel());
+        tc = table.addColumn("Name", 14, createNameTextField());
         if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(ApplicationType.P_Id));
+            tc.setFilterComponent(new OATextFieldFilter(ApplicationType.P_Name));
         }
         tc = table.addColumn("Abbrev", 6, createAbbrevNameTextField());
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(ApplicationType.P_AbbrevName));
-        }
-        tc = table.addColumn("Name", 12, createNameTextField());
-        if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(ApplicationType.P_Name));
         }
         tc = table.addColumn("Port", 4, createClientPortTextField());
         tc.setToolTipText("Client Port");
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(ApplicationType.P_ClientPort));
         }
-        tc = table.addColumn("HTTP", 4, createHttpPortTextField());
+        tc = table.addColumn("Http", 4, createHttpPortTextField());
         tc.setToolTipText("Http Port");
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(ApplicationType.P_HttpPort));
         }
-        tc = table.addColumn("HTTPS", 5, createHttpsPortTextField());
+        tc = table.addColumn("Https", 5, createHttpsPortTextField());
         tc.setToolTipText("Https Port");
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(ApplicationType.P_HttpsPort));
@@ -998,20 +984,15 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
     protected void createReadOnlyTableColumns(OATable table) {
         OALabel lbl;
         OATableColumn tc;
-        lbl = new OALabel(getHub(), ApplicationType.P_Id, 6);
-        tc = table.addColumn("Id", 6, lbl);
+        lbl = new OALabel(getHub(), ApplicationType.P_Name, 14);
+        tc = table.addColumn("Name", 14, lbl);
         if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(ApplicationType.P_Id));
+            tc.setFilterComponent(new OATextFieldFilter(ApplicationType.P_Name));
         }
         lbl = new OALabel(getHub(), ApplicationType.P_AbbrevName, 8);
         tc = table.addColumn("Abbrev", 6, lbl);
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(ApplicationType.P_AbbrevName));
-        }
-        lbl = new OALabel(getHub(), ApplicationType.P_Name, 14);
-        tc = table.addColumn("Name", 12, lbl);
-        if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(ApplicationType.P_Name));
         }
         lbl = new OALabel(getHub(), ApplicationType.P_ClientPort, 4);
         lbl.setFormat("#");
@@ -1023,14 +1004,14 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
         lbl = new OALabel(getHub(), ApplicationType.P_HttpPort, 6);
         lbl.setFormat("#");
         lbl.setToolTipText("Http Port");
-        tc = table.addColumn("HTTP", 4, lbl);
+        tc = table.addColumn("Http", 4, lbl);
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(ApplicationType.P_HttpPort));
         }
         lbl = new OALabel(getHub(), ApplicationType.P_HttpsPort, 4);
         lbl.setFormat("#");
         lbl.setToolTipText("Https Port");
-        tc = table.addColumn("HTTPS", 5, lbl);
+        tc = table.addColumn("Https", 5, lbl);
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(ApplicationType.P_HttpsPort));
         }
@@ -1381,9 +1362,8 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
     }
     protected void addDownloadProperties(DownloadDialog dd) {
         dd.addProperty("Id", ApplicationType.P_Id);
-        dd.addProperty("id", ApplicationType.P_Id);
-        dd.addProperty("abbrevName", ApplicationType.P_AbbrevName);
         dd.addProperty("name", ApplicationType.P_Name);
+        dd.addProperty("abbrevName", ApplicationType.P_AbbrevName);
         dd.addProperty("clientPort", ApplicationType.P_ClientPort);
         dd.addProperty("httpPort", ApplicationType.P_HttpPort);
         dd.addProperty("httpsPort", ApplicationType.P_HttpsPort);
@@ -1437,7 +1417,6 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
         // cardPanel.add(getAppUsersJfc().getCardPanel(), CARD_AppUsers); // this will be created when needed by showCardPanel(..)
         // cardPanel.add(getPropertyValuesJfc().getCardPanel(), CARD_PropertyValues); // this will be created when needed by showCardPanel(..)
         // cardPanel.add(getServerApplicationsJfc().getCardPanel(), CARD_ServerApplications); // this will be created when needed by showCardPanel(..)
-        // cardPanel.add(getSingleAppsJfc().getCardPanel(), CARD_SingleApps); // this will be created when needed by showCardPanel(..)
         return pan;
     }
     
@@ -1457,7 +1436,6 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
         // cardPanel.add(getAppUsersJfc().getCardPanel(), CARD_AppUsers); // this will be created when needed by showCardPanel(..)
         // cardPanel.add(getPropertyValuesJfc().getCardPanel(), CARD_PropertyValues); // this will be created when needed by showCardPanel(..)
         // cardPanel.add(getServerApplicationsJfc().getCardPanel(), CARD_ServerApplications); // this will be created when needed by showCardPanel(..)
-        // cardPanel.add(getSingleAppsJfc().getCardPanel(), CARD_SingleApps); // this will be created when needed by showCardPanel(..)
         return pan;
     }
     public CardLayout getCardLayout() {
@@ -1764,109 +1742,12 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
                 tabbedPane.addTab("Versions", icon, new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), "Application Versions");
             }
         }
-        icon = Resource.getJarIcon("serverApplication.gif");
-        icon = new ScaledImageIcon(icon, 32, 20);
-        tabbedPane.addChangeListener(new ChangeListener() {
-            volatile JPanel panThis;
-            volatile Exception ex;
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if (panThis != null) return;
-                if (ApplicationTypeJfcBase.this.TAB_ServerApplications == 0) return;
-                final JTabbedPane tp = (JTabbedPane) e.getSource();
-                if (tp.getSelectedIndex() != ApplicationTypeJfcBase.this.TAB_ServerApplications) return;
-                SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
-                    @Override
-                    protected Void doInBackground() throws Exception {
-                        try {
-                            if (bUseCombinedDetail) panThis = getServerApplicationsJfc().createCombinedPanel();
-                            else panThis = getServerApplicationsJfc().createTablePanel();
-                        }
-                        catch (Exception e) {
-                            ex = e;
-                        }
-                        return null;
-                    }
-                    @Override
-                    protected void done() {
-                        if (ex != null) {
-                            LOG.log(Level.WARNING, "UI exception creating UI for ApplicationType", ex);
-                            JOptionPane.showMessageDialog(null, "Exception while creating UI, message sent to tech support", "UI Exception", JOptionPane.ERROR_MESSAGE);
-                        }
-                        if (panThis == null) panThis = new JPanel();
-                        tp.setComponentAt(ApplicationTypeJfcBase.this.TAB_ServerApplications, panThis);
-                    }
-                };
-                sw.execute();
-            }
-        });
-        if (getModel().getServerApplicationsModel().getCreateUI()) {
-            if ((this.TAB_ServerApplications = tabbedPane.getTabCount()) == 0) {
-                JPanel panThis;
-                if (bUseCombinedDetail) panThis = getServerApplicationsJfc().createCombinedPanel();
-                else panThis = getServerApplicationsJfc().createTablePanel();
-                tabbedPane.setComponentAt(ApplicationTypeJfcBase.this.TAB_ServerApplications, panThis);
-            }
-            else {
-                tabbedPane.addTab("Server Applications", icon, new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), "Server Applications");
-            }
-        }
         icon = Resource.getJarIcon("appUser.gif");
         icon = new ScaledImageIcon(icon, 32, 20);
         pan = getAppUsersJfc().createReadOnlyTablePanel();
         if (getModel().getAppUsersModel().getCreateUI()) {
             this.TAB_AppUsers = tabbedPane.getTabCount();
             tabbedPane.addTab("Users", icon, pan, null);
-        }
-        icon = Resource.getJarIcon("image.jpg");
-        icon = new ScaledImageIcon(icon, 32, 20);
-        tabbedPane.addTab("Icon Image", icon, createIconImagePanel(), null);
-        icon = Resource.getJarIcon("singleApp.gif");
-        icon = new ScaledImageIcon(icon, 32, 20);
-        tabbedPane.addChangeListener(new ChangeListener() {
-            volatile JPanel panThis;
-            volatile Exception ex;
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if (panThis != null) return;
-                if (ApplicationTypeJfcBase.this.TAB_SingleApps == 0) return;
-                final JTabbedPane tp = (JTabbedPane) e.getSource();
-                if (tp.getSelectedIndex() != ApplicationTypeJfcBase.this.TAB_SingleApps) return;
-                SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
-                    @Override
-                    protected Void doInBackground() throws Exception {
-                        try {
-                            if (bUseCombinedDetail) panThis = getSingleAppsJfc().createCombinedPanel();
-                            else panThis = getSingleAppsJfc().createTablePanel();
-                        }
-                        catch (Exception e) {
-                            ex = e;
-                        }
-                        return null;
-                    }
-                    @Override
-                    protected void done() {
-                        if (ex != null) {
-                            LOG.log(Level.WARNING, "UI exception creating UI for ApplicationType", ex);
-                            JOptionPane.showMessageDialog(null, "Exception while creating UI, message sent to tech support", "UI Exception", JOptionPane.ERROR_MESSAGE);
-                        }
-                        if (panThis == null) panThis = new JPanel();
-                        tp.setComponentAt(ApplicationTypeJfcBase.this.TAB_SingleApps, panThis);
-                    }
-                };
-                sw.execute();
-            }
-        });
-        if (getModel().getSingleAppsModel().getCreateUI()) {
-            if ((this.TAB_SingleApps = tabbedPane.getTabCount()) == 0) {
-                JPanel panThis;
-                if (bUseCombinedDetail) panThis = getSingleAppsJfc().createCombinedPanel();
-                else panThis = getSingleAppsJfc().createTablePanel();
-                tabbedPane.setComponentAt(ApplicationTypeJfcBase.this.TAB_SingleApps, panThis);
-            }
-            else {
-                tabbedPane.addTab("Single Apps", icon, new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), "Single Apps");
-            }
         }
         icon = Resource.getJarIcon("propertyValue.gif");
         icon = new ScaledImageIcon(icon, 32, 20);
@@ -1913,6 +1794,53 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
             }
             else {
                 tabbedPane.addTab("Property Values", icon, new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), "Property Values");
+            }
+        }
+        icon = Resource.getJarIcon("serverApplication.gif");
+        icon = new ScaledImageIcon(icon, 32, 20);
+        tabbedPane.addChangeListener(new ChangeListener() {
+            volatile JPanel panThis;
+            volatile Exception ex;
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (panThis != null) return;
+                if (ApplicationTypeJfcBase.this.TAB_ServerApplications == 0) return;
+                final JTabbedPane tp = (JTabbedPane) e.getSource();
+                if (tp.getSelectedIndex() != ApplicationTypeJfcBase.this.TAB_ServerApplications) return;
+                SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        try {
+                            if (bUseCombinedDetail) panThis = getServerApplicationsJfc().createCombinedPanel();
+                            else panThis = getServerApplicationsJfc().createTablePanel();
+                        }
+                        catch (Exception e) {
+                            ex = e;
+                        }
+                        return null;
+                    }
+                    @Override
+                    protected void done() {
+                        if (ex != null) {
+                            LOG.log(Level.WARNING, "UI exception creating UI for ApplicationType", ex);
+                            JOptionPane.showMessageDialog(null, "Exception while creating UI, message sent to tech support", "UI Exception", JOptionPane.ERROR_MESSAGE);
+                        }
+                        if (panThis == null) panThis = new JPanel();
+                        tp.setComponentAt(ApplicationTypeJfcBase.this.TAB_ServerApplications, panThis);
+                    }
+                };
+                sw.execute();
+            }
+        });
+        if (getModel().getServerApplicationsModel().getCreateUI()) {
+            if ((this.TAB_ServerApplications = tabbedPane.getTabCount()) == 0) {
+                JPanel panThis;
+                if (bUseCombinedDetail) panThis = getServerApplicationsJfc().createCombinedPanel();
+                else panThis = getServerApplicationsJfc().createTablePanel();
+                tabbedPane.setComponentAt(ApplicationTypeJfcBase.this.TAB_ServerApplications, panThis);
+            }
+            else {
+                tabbedPane.addTab("Servers", icon, new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), "Server Applications");
             }
         }
         panel = panMain;
@@ -2169,8 +2097,9 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
     }
     public OAAutoCompleteTextField createAutoCompleteTextField(String propertyPath) {
         OAAutoCompleteTextField txt = new OAAutoCompleteTextField(getHub(), propertyPath, 14);
-        txt.setMaximumColumns(40);
+        txt.setMaximumColumns(21);
         txt.setToolTipText("Search using Name");
+        txt.setSearchTemplate("<%=name%> (<%=abbrevName%>)");
         return txt;
     }
     
@@ -2468,13 +2397,6 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
     public ServerApplicationJfc createServerApplicationsJfc(final boolean bIsEmbedded) {
         jfcServerApplications = new ServerApplicationJfc(getModel().getServerApplicationsModel()) {
             @Override
-            protected ServerApplicationSearchJfc getSearchJfc() {
-                if (jfcSearch != null) return jfcSearch;
-                ServerApplicationSearchModel model = ApplicationTypeJfcBase.this.getModel().getServerApplicationsSearchModel();
-                jfcSearch = new ServerApplicationSearchJfc(model, true, false);
-                return jfcSearch;
-            }
-            @Override
             public JPanel getCardPanel() {
                 if (cardPanel != null) return cardPanel;
                 if (!bIsEmbedded) return super.getCardPanel();
@@ -2529,72 +2451,6 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
         OAModelJfcUtil.setParent(jfcServerApplications, this);
         return jfcServerApplications;
     }
-    public SingleAppJfc getSingleAppsJfc() {
-        if (jfcSingleApps == null) {
-            jfcSingleApps = createSingleAppsJfc();
-        }
-        return jfcSingleApps;
-    }
-    public SingleAppJfc createSingleAppsJfc() {
-        return createSingleAppsJfc(true);
-    }
-    public SingleAppJfc createSingleAppsJfc(final boolean bIsEmbedded) {
-        jfcSingleApps = new SingleAppJfc(getModel().getSingleAppsModel()) {
-            @Override
-            public JPanel getCardPanel() {
-                if (cardPanel != null) return cardPanel;
-                if (!bIsEmbedded) return super.getCardPanel();
-                cardPanel = new JPanel(getCardLayout());
-                JPanel pan = new JPanel(new BorderLayout());
-                pan.add(createToolBar(ToolBarOptions.createEditPanelToolBar()), BorderLayout.NORTH);
-                pan.add(createEditPanel(), BorderLayout.CENTER);
-                cardPanel.add(pan, CARD_Edit);
-                return cardPanel;
-            }
-    
-            @Override
-            public void showCardPanel(String name) {
-                if (!bIsEmbedded) {
-                    super.showCardPanel(name);
-                    ApplicationTypeJfcBase.this.showCardPanel(name);
-                    return;
-                }
-                if (name.equals(SingleAppJfc.CARD_List)) {
-                    ApplicationTypeJfcBase.this.showCardPanel(CARD_Edit);
-                    if (ApplicationTypeJfcBase.this.TAB_SingleApps >= 0) {
-                        ApplicationTypeJfcBase.this.getTabbedPane().setSelectedIndex(ApplicationTypeJfcBase.this.TAB_SingleApps);
-                    }
-                }
-                else if (name.equals(SingleAppJfcBase.CARD_Edit)) {
-                    ApplicationTypeJfcBase.this.showCardPanel(CARD_Edit);
-                    if (ApplicationTypeJfcBase.this.TAB_SingleApps >= 0) {
-                        ApplicationTypeJfcBase.this.getTabbedPane().setSelectedIndex(ApplicationTypeJfcBase.this.TAB_SingleApps);
-                    }
-                }
-                else {
-                    ApplicationTypeJfcBase.this.showCardPanel(CARD_SingleApps);
-                    super.showCardPanel(name);
-                }
-            }
-            public JButton createGoBackButton() {
-                JButton cmd = new JButton();
-                cmd.setIcon(Resource.getJarIcon(Resource.getValue(Resource.IMG_GoBack)));
-                cmd.setToolTipText("Go to " + ApplicationTypeJfcBase.this.getModel().getDisplayName());
-                cmd.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        ApplicationTypeJfcBase.this.showCardPanel(ApplicationTypeJfcBase.this.CARD_Edit);
-                        ApplicationTypeJfcBase.this.getHub().resetAO(); // this will set selected treeNode
-                    }
-                });
-                OAButton.setup(cmd);
-                return cmd;
-            }
-        };
-        jfcSingleApps.setLevel(getLevel()+1);
-        OAModelJfcUtil.setParent(jfcSingleApps, this);
-        return jfcSingleApps;
-    }
     // OnShowCommands
     public void showCardPanel(String name) {
         if (name == null) return;
@@ -2617,11 +2473,6 @@ public class ApplicationTypeJfcBase implements OAModelJfcInterface {
         else if (name.equalsIgnoreCase(CARD_ServerApplications)) {
             if ( !OAArray.contains(cardPanel.getComponents(), getServerApplicationsJfc().getCardPanel()) ) {
                 cardPanel.add(getServerApplicationsJfc().getCardPanel(), CARD_ServerApplications);
-            }
-        }
-        else if (name.equalsIgnoreCase(CARD_SingleApps)) {
-            if ( !OAArray.contains(cardPanel.getComponents(), getSingleAppsJfc().getCardPanel()) ) {
-                cardPanel.add(getSingleAppsJfc().getCardPanel(), CARD_SingleApps);
             }
         }
         getCardLayout().show(getCardPanel(), name);

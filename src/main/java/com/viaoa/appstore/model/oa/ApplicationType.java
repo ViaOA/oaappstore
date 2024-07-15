@@ -76,7 +76,6 @@ public class ApplicationType extends OAObject {
     protected transient Hub<AppUser> hubAppUsers;
     protected transient Hub<PropertyValue> hubPropertyValues;
     protected transient Hub<ServerApplication> hubServerApplications;
-    protected transient Hub<SingleApp> hubSingleApps;
      
     public ApplicationType() {
         if (!isLoading()) setObjectDefaults();
@@ -85,7 +84,7 @@ public class ApplicationType extends OAObject {
     public void setObjectDefaults() {
         setCreated(new OADateTime());
         setDownloadUrl("https://github.com/ViaOA/oaappstore-run/raw/master");
-        setAppDirectory("com/[project]/[appname]");
+        setAppDirectory("com/[company]/[appname]");
         setMainClass("com.[project].[appname].control.StartupController");
         setJvmOptions("-Xmx1000m");
     }
@@ -234,7 +233,7 @@ public class ApplicationType extends OAObject {
         firePropertyChange(P_DownloadUrl, old, this.downloadUrl);
     }
 
-    @OAProperty(displayName = "App Directory", defaultValue = "com/[project]/[appname]", maxLength = 45, displayLength = 14, uiColumnName = "Directory")
+    @OAProperty(displayName = "App Directory", defaultValue = "com/[company]/[appname]", maxLength = 45, displayLength = 14, uiColumnName = "Directory")
     @OAColumn(name = "AppDirectory", maxLength = 45)
     public String getAppDirectory() {
         return appDirectory;
@@ -313,6 +312,7 @@ public class ApplicationType extends OAObject {
         toClass = ApplicationVersion.class, 
         owner = true, 
         reverseName = ApplicationVersion.P_ApplicationType, 
+        isProcessed = true, 
         cascadeSave = true, 
         cascadeDelete = true
     )
@@ -360,17 +360,22 @@ public class ApplicationType extends OAObject {
         }
         return hubServerApplications;
     }
+    @OAObjCallback(enabledProperty = ApplicationType.P_SingleTypeOnly, enabledValue = false)
+    public void serverApplicationsCallback(OAObjectCallback cb) {
+        if (cb == null) return;
+        switch (cb.getType()) {
+        }
+    }
 
     @OAMany(
         displayName = "Single Apps", 
         toClass = SingleApp.class, 
-        reverseName = SingleApp.P_ApplicationType
+        reverseName = SingleApp.P_ApplicationType, 
+        createMethod = false
     )
-    public Hub<SingleApp> getSingleApps() {
-        if (hubSingleApps == null) {
-            hubSingleApps = (Hub<SingleApp>) getHub(P_SingleApps);
-        }
-        return hubSingleApps;
+    private Hub<SingleApp> getSingleApps() {
+        // oamodel has createMethod set to false, this method exists only for annotations.
+        return null;
     }
     @OAMethod(displayName = "Check For New Version")
     public void checkForNewVersion() throws Exception {

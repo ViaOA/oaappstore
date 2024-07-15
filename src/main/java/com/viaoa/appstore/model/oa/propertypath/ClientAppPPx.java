@@ -57,6 +57,14 @@ public class ClientAppPPx implements PPxInterface, Serializable {
         return pp + "." + ClientApp.P_Name;
     }
 
+    public String autoLogin() {
+        return pp + "." + ClientApp.P_AutoLogin;
+    }
+
+    public String calcName() {
+        return pp + "." + ClientApp.P_CalcName;
+    }
+
     public String run() {
         return pp + ".run";
     }

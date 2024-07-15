@@ -22,24 +22,22 @@
                             <td>
                                 <table class="list" width="100%">
                                     <tr>
-                                        <th colspan="6">Servers</th>
+                                        <th colspan="5">Servers</th>
                                     </tr>
                                     <tr>
                                         <th style="width: 20px; text-align: right">#</th>
-                                        <th style="width: 30px; text-align: right"><nobr>Id</nobr></th>
-                                        <th style="width: 75px; text-align: left"><nobr>Created</nobr></th>
-                                        <th width="55%" style="text-align: left"><nobr>Host</nobr></th>
-                                        <th style="width: 100px; text-align: left"><nobr>Ip Address</nobr></th>
-                                        <th width="44%" style="text-align: left"><nobr>Environment</nobr></th>
+                                        <th width="28%" style="text-align: left"><nobr>Name</nobr></th>
+                                        <th width="20%" style="text-align: left"><nobr>Host</nobr></th>
+                                        <th style="width: 100px; text-align: left"><nobr>IP Address</nobr></th>
+                                        <th width="52%" style="text-align: left"><nobr>Applicaitons</nobr></th>
                                     </tr>
                                     <%=foreach servers%>
                                     <tr>
                                         <td style="text-align: right"><%=#counter servers, '4R,'%></td>
-                                        <td style="text-align: right"><nobr><%=id, '6R,'%></nobr></td>
-                                        <td style="text-align: left"><nobr><%=created, '15L.'%></nobr></td>
+                                        <td style="text-align: left"><nobr><%=name, '55L.'%></nobr></td>
                                         <td style="text-align: left"><nobr><%=host, '35L.'%></nobr></td>
                                         <td style="text-align: left"><nobr><%=ipAddress, '20L.'%></nobr></td>
-                                        <td style="text-align: left"><nobr><%=environment.name, '35L.'%></nobr></td>
+                                        <td style="text-align: left"><nobr><%=serverApplications.calcName, '80L.'%></nobr></td>
                                     </tr>
                                     <%=end%>
                                 </table>
@@ -50,24 +48,32 @@
                             <td>
                                 <table class="list" width="100%">
                                     <tr>
-                                        <th colspan="6">MergeServerApplications</th>
+                                        <th colspan="10">MergeServerApplications</th>
                                     </tr>
                                     <tr>
                                         <th style="width: 20px; text-align: right">#</th>
-                                        <th width="16%" style="text-align: left"><nobr>Environment</nobr></th>
-                                        <th width="31%" style="text-align: left"><nobr>Name</nobr></th>
-                                        <th width="29%" style="text-align: left"><nobr>Server</nobr></th>
-                                        <th width="22%" style="text-align: left"><nobr>Application Type Name</nobr></th>
+                                        <th width="18%" style="text-align: left"><nobr>Environment</nobr></th>
+                                        <th width="23%" style="text-align: left"><nobr>Server</nobr></th>
+                                        <th width="34%" style="text-align: left"><nobr>Name</nobr></th>
+                                        <th width="24%" style="text-align: left"><nobr>App Type</nobr></th>
+                                        <th style="width: 30px; text-align: left"><nobr>Version</nobr></th>
+                                        <th style="width: 30px; text-align: right"><nobr>Release</nobr></th>
+                                        <th style="width: 30px; text-align: right"><nobr>Port</nobr></th>
                                         <th style="width: 30px; text-align: right"><nobr>Http</nobr></th>
+                                        <th style="width: 30px; text-align: right"><nobr>Https</nobr></th>
                                     </tr>
                                     <%=foreach mergeServerApplications%>
                                     <tr>
                                         <td style="text-align: right"><%=#counter mergeServerApplications, '4R,'%></td>
                                         <td style="text-align: left"><nobr><%=server.environment.name, '35L.'%></nobr></td>
+                                        <td style="text-align: left"><nobr><%=server.calcName, '45L.'%></nobr></td>
                                         <td style="text-align: left"><nobr><%=name, '55L.'%></nobr></td>
-                                        <td style="text-align: left"><nobr><%=server.name, '55L.'%></nobr></td>
                                         <td style="text-align: left"><nobr><%=applicationType.name, '40L.'%></nobr></td>
-                                        <td style="text-align: right"><nobr><%=httpPort, '#'%></nobr></td>
+                                        <td style="text-align: left"><nobr><%=applicationVersion.version, '6L.'%></nobr></td>
+                                        <td style="text-align: right"><nobr><%=applicationVersion.release, '#'%></nobr></td>
+                                        <td style="text-align: right"><nobr><%=calcClientPort, '###'%></nobr></td>
+                                        <td style="text-align: right"><nobr><%=calcHttpPort, '###'%></nobr></td>
+                                        <td style="text-align: right"><nobr><%=calcHttpsPort, '###'%></nobr></td>
                                     </tr>
                                     <%=end%>
                                 </table>

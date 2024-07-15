@@ -17,6 +17,7 @@ import com.viaoa.appstore.model.oa.RunningApp;
 import com.viaoa.appstore.model.oa.ServerApplication;
 import com.viaoa.appstore.model.oa.SingleApp;
 import com.viaoa.appstore.model.oa.VersionFile;
+import com.viaoa.appstore.resource.Resource;
 import com.viaoa.concurrent.OAThread;
 import com.viaoa.util.OADateTime;
 import com.viaoa.util.OAFile;
@@ -116,10 +117,15 @@ public class RunningAppDelegate {
         txt = OAStr.convert(txt, "$RUNTYPE", "client");
         txt = OAStr.convert(txt, "$ID", ""+clientApp.getId());
         
-        
-        int x = serverApplication.getClientPort();
-        if (x == 0) x = applicationType.getClientPort();
+        int x = serverApplication.getCalcClientPort();
         if (x > 0) txt += String.format("arguments=ServerPort=%d\n", x);
+        
+        txt += String.format("arguments=" + Resource.INI_StoreLogin + "=true\n");
+        
+        if (clientApp.getAutoLogin()) {
+            txt += String.format("arguments=" + Resource.INI_AutoLogin + "=true\n");
+            // txt += String.format("arguments=" + Resource.INI_AutoLogout + "=true\n");
+        }
         
         final RunningApp runningApp = new RunningApp();
         runningApp.setConfigText(txt);

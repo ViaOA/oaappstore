@@ -10,8 +10,7 @@ import java.net.URLConnection;
 import java.util.logging.Logger;
 
 import com.viaoa.appstore.resource.Resource;
-import com.viaoa.util.OAProperties;
-import com.viaoa.util.OAStr;
+import com.viaoa.util.*;
 
 /**
  * Check for new update for OAAppStore from GitHub oaappstore-run project.
@@ -125,14 +124,32 @@ public class ReleaseController {
                 continue;
             }
 
-            s = urlDownload + "/appstore/" + fn;
+//qqqqqqqqqqqqqqqqqqq            
+//qqqqqqqqqqqqqqqqqqqqqqqqq this check needs to be removed after current users get new update qqqqqqq            
+            if (fn.contains("/oaappstore/")) {
+                s = urlDownload + "/" + fn;
+            }
+            else {
+                s = urlDownload + "/appstore/com/viaoa/oaappstore/" + fn;
+            }
+            
+            
             LOG.fine("getting file from URL="+s);
             url = new URL(s);
             conn = url.openConnection();
             dis = new DataInputStream(new BufferedInputStream(conn.getInputStream()));
             
-            s = fn.replace('/', '\\');
-            s = "app\\appstore\\" + s;
+            
+  //qqqqqqqqqqqqqqqqqqq            
+  //qqqqqqqqqqqqqqqqqqqqqqqqq this check needs to be removed after current users get new update qqqqqqq            
+            if (fn.contains("/oaappstore/")) {
+                s = "app/" + fn;
+            }
+            else {
+                s = "app/appstore/com/viaoa/oaappstore/" + fn;
+            }
+            s = OAFile.convertFileName(s);
+            
             LOG.fine("saving file to=" + s);
             file = new File(s);
             file.createNewFile();

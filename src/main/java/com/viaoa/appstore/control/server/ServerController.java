@@ -336,7 +336,7 @@ public abstract class ServerController {
         }
 
         // Custom
-        LOG.config("Starting ServerJarStoreController that create server side socket for clients to send App Jar file updates");
+        LOG.config("Starting ServerJarStoreController, that creates a server side socket for clients to send App Jar file updates");
         getServerJarStoreController().start();
 
         // Custom

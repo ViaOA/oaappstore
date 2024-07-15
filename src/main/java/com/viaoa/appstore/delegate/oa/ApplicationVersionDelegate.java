@@ -51,6 +51,22 @@ public class ApplicationVersionDelegate {
             fos.close();
             setConsole(applicationVersion, "saved " + fn);
         }
+        
+        // get release
+        for (VersionFile vf : applicationVersion.getVersionFiles()) {
+            if (vf.getType() != VersionFile.TYPE_IniFile) continue;
+            if (!"version.ini".equalsIgnoreCase(vf.getFilePath())) continue;
+            
+            OAProperties gitProps = new OAProperties(vf.getCalcFilePath());
+
+            String version = gitProps.getProperty("Version");
+            if (OAStr.isEmpty(version)) continue;
+            if (!version.equals(applicationVersion.getVersion())) continue;
+            
+            int release = OAConv.toInt(gitProps.getProperty("Release"));
+            if (release > 0) applicationVersion.setRelease(release);
+        }
+        
         setConsole(applicationVersion, "finished successfully");
         
         applicationVersion.setCompleted(new OADateTime());

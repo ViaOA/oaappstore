@@ -241,7 +241,9 @@ public class VersionFile extends OAObject {
         displayName = "Application Version", 
         reverseName = ApplicationVersion.P_VersionFiles, 
         required = true, 
+        isProcessed = true, 
         allowCreateNew = false, 
+        allowAddExisting = false, 
         fkeys = {@OAFkey(fromProperty = P_ApplicationVersionId, toProperty = ApplicationVersion.P_Id)}
     )
     public ApplicationVersion getApplicationVersion() {

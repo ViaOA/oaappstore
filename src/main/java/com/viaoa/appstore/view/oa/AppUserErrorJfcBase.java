@@ -283,6 +283,7 @@ public class AppUserErrorJfcBase implements OAModelJfcInterface {
             @Override
             public void objectSelected(Object obj) {
                 super.objectSelected(obj);
+                AppUserErrorJfcBase.this.getCardPanel();
                 AppUserErrorJfcBase.this.onShowEditPanel();
             }
             @Override

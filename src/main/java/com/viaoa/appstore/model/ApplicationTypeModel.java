@@ -32,7 +32,6 @@ public class ApplicationTypeModel extends OAObjectModel {
     protected Hub<AppUser> hubAppUsers;
     protected Hub<PropertyValue> hubPropertyValues;
     protected Hub<ServerApplication> hubServerApplications;
-    protected Hub<SingleApp> hubSingleApps;
     
     // selectFrom
     protected Hub<AppUser> hubAppUsersSelectFrom;
@@ -42,7 +41,6 @@ public class ApplicationTypeModel extends OAObjectModel {
     protected AppUserModel modelAppUsers;
     protected PropertyValueModel modelPropertyValues;
     protected ServerApplicationModel modelServerApplications;
-    protected SingleAppModel modelSingleApps;
     
     // selectFrom
     protected AppUserModel modelAppUsersSelectFrom;
@@ -97,12 +95,6 @@ public class ApplicationTypeModel extends OAObjectModel {
         }
         return hubServerApplications;
     }
-    public Hub<SingleApp> getSingleApps() {
-        if (hubSingleApps == null) {
-            hubSingleApps = getHub().getDetailHub(ApplicationType.P_SingleApps);
-        }
-        return hubSingleApps;
-    }
     public Hub<AppUser> getAppUsersSelectFromHub() {
         if (hubAppUsersSelectFrom != null) return hubAppUsersSelectFrom;
         hubAppUsersSelectFrom = ModelDelegate.getAppUsers().createSharedHub();
@@ -144,7 +136,7 @@ public class ApplicationTypeModel extends OAObjectModel {
             modelApplicationVersions.setCreateUI(false);
         }
         modelApplicationVersions.setForJfc(getForJfc());
-        modelApplicationVersions.setAllowNew(true);
+        modelApplicationVersions.setAllowNew(false);
         modelApplicationVersions.setAllowSave(true);
         modelApplicationVersions.setAllowAdd(false);
         modelApplicationVersions.setAllowMove(false);
@@ -184,7 +176,7 @@ public class ApplicationTypeModel extends OAObjectModel {
         modelAppUsers.setAllowDelete(false);
         modelAppUsers.setAllowRefresh(false);
         modelAppUsers.setAllowSearch(false);
-        modelAppUsers.setAllowHubSearch(false);
+        modelAppUsers.setAllowHubSearch(true);
         modelAppUsers.setAllowDownload(true);
         modelAppUsers.setAllowGotoEdit(false);
         modelAppUsers.setViewOnly(getViewOnly());
@@ -240,12 +232,12 @@ public class ApplicationTypeModel extends OAObjectModel {
             modelServerApplications.setCreateUI(false);
         }
         modelServerApplications.setForJfc(getForJfc());
-        modelServerApplications.setAllowNew(true);
+        modelServerApplications.setAllowNew(false);
         modelServerApplications.setAllowSave(true);
-        modelServerApplications.setAllowAdd(true);
+        modelServerApplications.setAllowAdd(false);
         modelServerApplications.setAllowMove(false);
-        modelServerApplications.setAllowRemove(true);
-        modelServerApplications.setAllowDelete(false);
+        modelServerApplications.setAllowRemove(false);
+        modelServerApplications.setAllowDelete(true);
         modelServerApplications.setAllowRefresh(false);
         modelServerApplications.setAllowSearch(false);
         modelServerApplications.setAllowHubSearch(true);
@@ -262,38 +254,6 @@ public class ApplicationTypeModel extends OAObjectModel {
         OAObjectCallbackDelegate.onObjectCallbackModel(ApplicationType.class, ApplicationType.P_ServerApplications, modelServerApplications);
     
         return modelServerApplications;
-    }
-    public SingleAppModel getSingleAppsModel() {
-        if (modelSingleApps != null) return modelSingleApps;
-        modelSingleApps = new SingleAppModel(getSingleApps());
-        modelSingleApps.setDisplayName("Single App");
-        modelSingleApps.setPluralDisplayName("Single Apps");
-        if (HubDetailDelegate.getIsFromSameMasterHub(getOriginalHub(), getSingleApps())) {
-            modelSingleApps.setCreateUI(false);
-        }
-        modelSingleApps.setForJfc(getForJfc());
-        modelSingleApps.setAllowNew(false);
-        modelSingleApps.setAllowSave(true);
-        modelSingleApps.setAllowAdd(false);
-        modelSingleApps.setAllowMove(false);
-        modelSingleApps.setAllowRemove(false);
-        modelSingleApps.setAllowDelete(true);
-        modelSingleApps.setAllowRefresh(false);
-        modelSingleApps.setAllowSearch(false);
-        modelSingleApps.setAllowHubSearch(false);
-        modelSingleApps.setAllowDownload(true);
-        modelSingleApps.setAllowGotoEdit(true);
-        modelSingleApps.setViewOnly(getViewOnly());
-        modelSingleApps.setAllowTableFilter(true);
-        modelSingleApps.setAllowTableSorting(true);
-        modelSingleApps.setAllowMultiSelect(false);
-        modelSingleApps.setAllowCopy(false);
-        modelSingleApps.setAllowCut(false);
-        modelSingleApps.setAllowPaste(false);
-        // call ApplicationType.singleAppsModelCallback(SingleAppModel) to be able to customize this model
-        OAObjectCallbackDelegate.onObjectCallbackModel(ApplicationType.class, ApplicationType.P_SingleApps, modelSingleApps);
-    
-        return modelSingleApps;
     }
     
     public AppUserModel getAppUsersSelectFromModel() {

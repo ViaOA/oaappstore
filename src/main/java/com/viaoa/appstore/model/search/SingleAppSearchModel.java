@@ -25,9 +25,17 @@ public class SingleAppSearchModel {
     protected Hub<SingleApp> hubMultiSelect;
     protected Hub<SingleApp> hubSearchFrom;  // hub (optional) to search from
     protected Hub<SingleAppSearch> hubSingleAppSearch;  // search data, size=1, AO
+    // references used in search
+    protected Hub<ApplicationType> hubApplicationType;
     
     // finder used to find objects in a path
     protected OAFinder<?, SingleApp> finder;
+    
+    // ObjectModels
+    protected ApplicationTypeModel modelApplicationType;
+    
+    // SearchModels
+    protected ApplicationTypeSearchModel modelApplicationTypeSearch;
     
     // object used for search data
     protected SingleAppSearch singleAppSearch;
@@ -103,8 +111,39 @@ public class SingleAppSearchModel {
         }
         return hubSingleAppSearch;
     }
+    public Hub<ApplicationType> getApplicationTypeHub() {
+        if (hubApplicationType != null) return hubApplicationType;
+        hubApplicationType = new Hub<>(ApplicationType.class);
+        Hub<ApplicationType> hub = ModelDelegate.getApplicationTypes();
+        HubCopy<ApplicationType> hc = new HubCopy<>(hub, hubApplicationType, false);
+        hubApplicationType.setLinkHub(getSingleAppSearchHub(), SingleAppSearch.P_ApplicationType); 
+        return hubApplicationType;
+    }
     
+    public ApplicationTypeModel getApplicationTypeModel() {
+        if (modelApplicationType != null) return modelApplicationType;
+        modelApplicationType = new ApplicationTypeModel(getApplicationTypeHub());
+        modelApplicationType.setDisplayName("Application Type");
+        modelApplicationType.setPluralDisplayName("Application Types");
+        modelApplicationType.setAllowNew(false);
+        modelApplicationType.setAllowSave(true);
+        modelApplicationType.setAllowAdd(false);
+        modelApplicationType.setAllowRemove(false);
+        modelApplicationType.setAllowClear(true);
+        modelApplicationType.setAllowDelete(false);
+        modelApplicationType.setAllowSearch(true);
+        modelApplicationType.setAllowHubSearch(false);
+        modelApplicationType.setAllowGotoEdit(true);
+        return modelApplicationType;
+    }
     
+    public ApplicationTypeSearchModel getApplicationTypeSearchModel() {
+        if (modelApplicationTypeSearch == null) {
+            modelApplicationTypeSearch = new ApplicationTypeSearchModel();
+            getSingleAppSearch().setApplicationTypeSearch(modelApplicationTypeSearch.getApplicationTypeSearch());
+        }
+        return modelApplicationTypeSearch;
+    }
     
     public void beforeInput() {
         // hook that is called before search input starts

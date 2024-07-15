@@ -292,6 +292,7 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
             @Override
             public void objectSelected(Object obj) {
                 super.objectSelected(obj);
+                SingleAppJfcBase.this.getCardPanel();
                 SingleAppJfcBase.this.onShowEditPanel();
             }
             @Override
@@ -546,7 +547,7 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         table.setAllowSorting(false);
         table.addCounterColumn();
         getSearchJfc().createTableColumns(table);
-        table.setPreferredSize(15, 6, true);
+        table.setPreferredSize(15, 4, true);
         table.resizeColumnsToFitHeading();
         
         OATableComboBox cboTable = new OATableComboBox(table, getHub(), PP_Display) {
@@ -882,34 +883,24 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
     public void createTableColumns(OATable table) {
         OALabel lbl;
         OATableColumn tc;
-        tableDtTxtCreated = createCreatedDateTimeTextField();
-        tc = table.addColumn("Created", 15, tableDtTxtCreated);
-        tc = table.addColumn("Name", 18, createNameTextField());
-        if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(SingleApp.P_Name));
-        }
         if (getModel().getApplicationTypeModel().getCreateUI()) {
             OALabel olbl = createApplicationTypeLabel();
             olbl.setToolTipText("Application Type");
-            tc = table.addColumn("Application Type", 12, olbl);
+            tc = table.addColumn("App Type", 16, olbl);
             if (getModel().getAllowTableFilter()) {
                 tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(SingleApp.P_ApplicationType, ApplicationType.P_Name)));
             }
         }
+        tc = table.addColumn("Name", 18, createNameTextField());
+        if (getModel().getAllowTableFilter()) {
+            tc.setFilterComponent(new OATextFieldFilter(SingleApp.P_Name));
+        }
         if (getModel().getApplicationVersionModel().getCreateUI()) {
             OATableComboBox cboTable = createApplicationVersionTableComboBox();
             cboTable.setToolTipText("Application Version");
-            tc = table.addColumn("Application Version", 6, cboTable);
+            tc = table.addColumn("Version", 6, cboTable);
             if (getModel().getAllowTableFilter()) {
                 tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(SingleApp.P_ApplicationVersion, ApplicationVersion.P_Version)));
-            }
-        }
-        if (getModel().getRunningAppModel().getCreateUI()) {
-            OALabel olbl = createRunningAppLabel();
-            olbl.setToolTipText("Running App");
-            tc = table.addColumn("Running App", 6, olbl);
-            if (getModel().getAllowTableFilter()) {
-                tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(SingleApp.P_RunningApp, RunningApp.P_Pid)));
             }
         }
     }
@@ -958,13 +949,6 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
     protected void createReadOnlyTableColumns(OATable table) {
         OALabel lbl;
         OATableColumn tc;
-        lbl = new OALabel(getHub(), SingleApp.P_Created, 15);
-        tc = table.addColumn("Created", 15, lbl);
-        lbl = new OALabel(getHub(), SingleApp.P_Name, 18);
-        tc = table.addColumn("Name", 18, lbl);
-        if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(SingleApp.P_Name));
-        }
         lbl = new OALabel(getHub(), OAString.cpp(SingleApp.P_ApplicationType, ApplicationType.P_Name));
         lbl.setToolTipText("Application Type");
         if (ApplicationTypeJfc.PP_IconColor != null) {
@@ -973,9 +957,14 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         if (ApplicationTypeJfc.PP_Icon != null) {
             lbl.setImageProperty(OAString.cpp(SingleApp.P_ApplicationType) + "." + ApplicationTypeJfc.PP_Icon);
         }
-        tc = table.addColumn("Application Type", 12, lbl);
+        tc = table.addColumn("App Type", 16, lbl);
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(SingleApp.P_ApplicationType, ApplicationType.P_Name)));
+        }
+        lbl = new OALabel(getHub(), SingleApp.P_Name, 18);
+        tc = table.addColumn("Name", 18, lbl);
+        if (getModel().getAllowTableFilter()) {
+            tc.setFilterComponent(new OATextFieldFilter(SingleApp.P_Name));
         }
         lbl = new OALabel(getHub(), OAString.cpp(SingleApp.P_ApplicationVersion, ApplicationVersion.P_Version));
         lbl.setToolTipText("Application Version");
@@ -985,21 +974,9 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         if (ApplicationVersionJfc.PP_Icon != null) {
             lbl.setImageProperty(OAString.cpp(SingleApp.P_ApplicationVersion) + "." + ApplicationVersionJfc.PP_Icon);
         }
-        tc = table.addColumn("Application Version", 6, lbl);
+        tc = table.addColumn("Version", 6, lbl);
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(SingleApp.P_ApplicationVersion, ApplicationVersion.P_Version)));
-        }
-        lbl = new OALabel(getHub(), OAString.cpp(SingleApp.P_RunningApp, RunningApp.P_Pid));
-        lbl.setToolTipText("Running App");
-        if (RunningAppJfc.PP_IconColor != null) {
-            lbl.setIconColorProperty(OAString.cpp(SingleApp.P_RunningApp) + "." + RunningAppJfc.PP_IconColor);
-        }
-        if (RunningAppJfc.PP_Icon != null) {
-            lbl.setImageProperty(OAString.cpp(SingleApp.P_RunningApp) + "." + RunningAppJfc.PP_Icon);
-        }
-        tc = table.addColumn("Running App", 6, lbl);
-        if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(SingleApp.P_RunningApp, RunningApp.P_Pid)));
         }
     }
     
@@ -1208,7 +1185,7 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
                 toolBar.add(Box.createHorizontalStrut(6));
                 JLabel lbl = new JLabel(Resource.getJarIcon("find16.png"));
                 lbl.setText("Find:");
-                lbl.setToolTipText("Search using Application Type Name");
+                lbl.setToolTipText("enter single app name or app type");
                 OAJfcControllerFactory.createOnlyHubNotEmpty(getHub(), lbl);
                 toolBar.add(lbl);
                 toolBar.add(Box.createHorizontalStrut(5));
@@ -1325,14 +1302,11 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
     }
     protected void addDownloadProperties(DownloadDialog dd) {
         dd.addProperty("Id", SingleApp.P_Id);
-        dd.addProperty("created", SingleApp.P_Created);
-        dd.addProperty("name", SingleApp.P_Name);
         dd.addProperty("applicationType.id", SingleAppPP.applicationType().id());
         dd.addProperty("applicationType.name", SingleAppPP.applicationType().name());
+        dd.addProperty("name", SingleApp.P_Name);
         dd.addProperty("applicationVersion.id", SingleAppPP.applicationVersion().id());
         dd.addProperty("applicationVersion.version", SingleAppPP.applicationVersion().version());
-        dd.addProperty("runningApp.id", SingleAppPP.runningApp().id());
-        dd.addProperty("runningApp.pid", SingleAppPP.runningApp().pid());
     }
     // Card Panel
     public JPanel getCardPanel() {
@@ -1810,7 +1784,12 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
     }
     public JButton createAppUserCommand() {
         JButton cmd = null;
-        return null;
+        cmd = getAppUserJfc().createSearchButton();
+        if (cmd != null) {
+            ((OAButton)cmd).getController().setViewOnly(getModel().getViewOnly());
+            cmd.setText("Search ...");
+        }
+        return cmd;
     }
     
     public OALabel createRunningAppLabel() {
@@ -1819,8 +1798,25 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
     }
     public JButton createRunningAppCommand() {
         JButton cmd = null;
+        OAMultiButtonSplitButton mscmd = new OAMultiButtonSplitButton();
+        mscmd.setShowTextInSelectedButton(true);
+        mscmd.setAllowChangeMasterButton(false);
+        mscmd.setRequestFocusEnabled(false);
+        mscmd.setFocusPainted(false);
+        OAButton.setup(mscmd);
         cmd = getRunningAppJfc().createGotoEditButton();
-        return cmd;
+        if (cmd != null) {
+            ((OAButton)cmd).getController().setViewOnly(getModel().getViewOnly());
+            mscmd.addButton(cmd);
+        }
+        ((OAButton)cmd).getController().setViewOnly(getModel().getViewOnly());
+        cmd = getRunningAppJfc().createSearchButton(true);
+        if (cmd != null) {
+            ((OAButton)cmd).getController().setViewOnly(getModel().getViewOnly());
+            cmd.setText("Search ...");
+            mscmd.addButton(cmd);
+        }
+        return mscmd;
     }
     
     protected void setup(JTextComponent txt) {
@@ -1837,9 +1833,11 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
         return createAutoCompleteTextField(PP_Display);
     }
     public OAAutoCompleteTextField createAutoCompleteTextField(String propertyPath) {
-        OAAutoCompleteTextField txt = new OAAutoCompleteTextField(getHub(), propertyPath, 14);
-        txt.setMaximumColumns(40);
-        txt.setToolTipText("Search using Application Type Name");
+        OAAutoCompleteTextField txt = new OAAutoCompleteTextField(getHub(), propertyPath, 15);
+        txt.setMaximumColumns(45);
+        txt.setToolTipText("enter single app name or app type");
+        txt.setSearchTemplate("<%=name%>, <%=applicationType.name%>");
+        txt.setDisplayTemplate("<%=name%>, <%=applicationType.name%>, <%=applicationVersion.version%>");
         return txt;
     }
     
@@ -1877,6 +1875,13 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
     public AppUserJfc getAppUserJfc() {
         if (jfcAppUser != null) return jfcAppUser;
         jfcAppUser = new AppUserJfc(getModel().getAppUserSelectFromModel()) {
+            @Override
+            protected AppUserSearchJfc getSearchJfc() {
+                if (jfcSearch != null) return jfcSearch;
+                SingleAppJfcBase.this.getModel().getAppUserSearchModel().getAppUserSearch().setMaxResults(1000);
+                jfcSearch = new AppUserSearchJfc(SingleAppJfcBase.this.getModel().getAppUserSearchModel());
+                return jfcSearch;
+            }
         };
         jfcAppUser.setLevel(getLevel()+1);
         OAModelJfcUtil.setParent(jfcAppUser, this);
@@ -1885,6 +1890,13 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
     public RunningAppJfc getRunningAppJfc() {
         if (jfcRunningApp != null) return jfcRunningApp;
         jfcRunningApp = new RunningAppJfc(getModel().getRunningAppModel()) {
+            @Override
+            protected RunningAppSearchJfc getSearchJfc() {
+                if (jfcSearch != null) return jfcSearch;
+                SingleAppJfcBase.this.getModel().getRunningAppSearchModel().getRunningAppSearch().setMaxResults(1000);
+                jfcSearch = new RunningAppSearchJfc(SingleAppJfcBase.this.getModel().getRunningAppSearchModel());
+                return jfcSearch;
+            }
         };
         jfcRunningApp.setLevel(getLevel()+1);
         OAModelJfcUtil.setParent(jfcRunningApp, this);
@@ -1901,13 +1913,6 @@ public class SingleAppJfcBase implements OAModelJfcInterface {
     }
     public PropertyValueJfc createPropertyValuesJfc(final boolean bIsEmbedded) {
         jfcPropertyValues = new PropertyValueJfc(getModel().getPropertyValuesModel()) {
-            @Override
-            protected PropertyValueSearchJfc getSearchJfc() {
-                if (jfcSearch != null) return jfcSearch;
-                PropertyValueSearchModel model = SingleAppJfcBase.this.getModel().getPropertyValuesSearchModel();
-                jfcSearch = new PropertyValueSearchJfc(model, true, false);
-                return jfcSearch;
-            }
             @Override
             public JPanel getCardPanel() {
                 if (cardPanel != null) return cardPanel;

@@ -282,6 +282,7 @@ public class PropertyValueJfcBase implements OAModelJfcInterface {
             @Override
             public void objectSelected(Object obj) {
                 super.objectSelected(obj);
+                PropertyValueJfcBase.this.getCardPanel();
                 PropertyValueJfcBase.this.onShowEditPanel();
             }
             @Override

@@ -44,6 +44,7 @@ public class AppUserLoginModel extends OAObjectModel {
     protected AppUserModel modelAppUserSelectFrom;
     
     // SearchModels used for references
+    protected AppUserSearchModel modelAppUserSearch;
     protected RunningAppSearchModel modelRunningAppSearch;
     protected AppServerSearchModel modelAppServersSearch;
     
@@ -131,7 +132,7 @@ public class AppUserLoginModel extends OAObjectModel {
         modelAppUser.setAllowClear(false);
         modelAppUser.setAllowDelete(false);
         modelAppUser.setAllowSearch(false);
-        modelAppUser.setAllowHubSearch(false);
+        modelAppUser.setAllowHubSearch(true);
         modelAppUser.setAllowGotoEdit(false);
         OALinkInfo li = HubDetailDelegate.getLinkInfoFromDetailToMaster(getOriginalHub());
         modelAppUser.setCreateUI(li == null || !AppUserLogin.P_AppUser.equalsIgnoreCase(li.getName()) );
@@ -154,7 +155,7 @@ public class AppUserLoginModel extends OAObjectModel {
         modelRunningApp.setAllowClear(true);
         modelRunningApp.setAllowDelete(false);
         modelRunningApp.setAllowSearch(true);
-        modelRunningApp.setAllowHubSearch(false);
+        modelRunningApp.setAllowHubSearch(true);
         modelRunningApp.setAllowGotoEdit(true);
         modelRunningApp.setViewOnly(getViewOnly());
         // call AppUserLogin.runningAppModelCallback(RunningAppModel) to be able to customize this model
@@ -248,6 +249,12 @@ public class AppUserLoginModel extends OAObjectModel {
         modelAppUserSelectFrom.setAllowPaste(false);
         modelAppUserSelectFrom.setAllowMultiSelect(false);
         return modelAppUserSelectFrom;
+    }
+    public AppUserSearchModel getAppUserSearchModel() {
+        if (modelAppUserSearch != null) return modelAppUserSearch;
+        modelAppUserSearch = new AppUserSearchModel();
+        HubSelectDelegate.adoptWhereHub(modelAppUserSearch.getHub(), AppUserLogin.P_AppUser, getHub());
+        return modelAppUserSearch;
     }
     public RunningAppSearchModel getRunningAppSearchModel() {
         if (modelRunningAppSearch != null) return modelRunningAppSearch;

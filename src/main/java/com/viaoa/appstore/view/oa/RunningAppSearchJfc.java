@@ -268,8 +268,6 @@ public class RunningAppSearchJfc {
     }
     
     protected JPanel createSearchPanel() {
-        // no search properties defined in model, for "+objectDef.getName()
-        if (getModel().getSearchFromHub() != null) return null;
         final JPanel panTop = new JPanel(new BorderLayout(0,0));
         panTop.add(new JScrollPane(createSearchInputPanel()), BorderLayout.CENTER);
         panTop.setBorder(new EmptyBorder(5,5,5,5));
@@ -308,6 +306,60 @@ public class RunningAppSearchJfc {
         JLabel lbl;
         JButton cmd;
         OATextField txt;
+        OADateComboBox dcbo;
+        OACheckBox chk;
+    
+        lbl = new JLabel("Pid:");
+        txt = createPidTextField();
+        txt.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("Created:");
+        dcbo = createCreatedDateComboBox();
+        dcbo.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(new JLabel("From: "));
+        panx.add(dcbo);
+        panx.add(new JLabel("To: "));
+        dcbo = createCreated2DateComboBox();
+        panx.add(dcbo);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("Stopped:");
+        dcbo = createStoppedDateComboBox();
+        dcbo.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(new JLabel("From: "));
+        panx.add(dcbo);
+        panx.add(new JLabel("To: "));
+        dcbo = createStopped2DateComboBox();
+        panx.add(dcbo);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("Id:");
+        txt = createIdTextField();
+        txt.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
         
         lbl = new JLabel("Max Results:");
         txt = createMaxResultsTextField();
@@ -369,6 +421,53 @@ public class RunningAppSearchJfc {
         return panel;
     }
     
+    
+    public OATextField createPidTextField() {
+        OATextField txt = new OATextField(getModel().getRunningAppSearchHub(), RunningAppSearch.P_Pid, 6);
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(8);
+        // setup(txt);
+        return txt;
+    }
+    
+    public OADateComboBox createCreatedDateComboBox() {
+        OADateComboBox dcbo = new OADateComboBox(getModel().getRunningAppSearchHub(), RunningAppSearch.P_Created, 15);
+        dcbo.setMaximumColumns(22);
+        OATextField txt = new OATextField(getModel().getRunningAppSearchHub(), RunningAppSearch.P_Created, 10);
+        dcbo.setEditor(txt);
+        return dcbo;
+    }
+    public OADateComboBox createCreated2DateComboBox() {
+        OADateComboBox dcbo = new OADateComboBox(getModel().getRunningAppSearchHub(), RunningAppSearch.P_Created2, 15);
+        dcbo.setMaximumColumns(22);
+        OATextField txt = new OATextField(getModel().getRunningAppSearchHub(), RunningAppSearch.P_Created2, 10);
+        dcbo.setEditor(txt);
+        return dcbo;
+    }
+    
+    public OADateComboBox createStoppedDateComboBox() {
+        OADateComboBox dcbo = new OADateComboBox(getModel().getRunningAppSearchHub(), RunningAppSearch.P_Stopped, 15);
+        dcbo.setMaximumColumns(22);
+        OATextField txt = new OATextField(getModel().getRunningAppSearchHub(), RunningAppSearch.P_Stopped, 10);
+        dcbo.setEditor(txt);
+        return dcbo;
+    }
+    public OADateComboBox createStopped2DateComboBox() {
+        OADateComboBox dcbo = new OADateComboBox(getModel().getRunningAppSearchHub(), RunningAppSearch.P_Stopped2, 15);
+        dcbo.setMaximumColumns(22);
+        OATextField txt = new OATextField(getModel().getRunningAppSearchHub(), RunningAppSearch.P_Stopped2, 10);
+        dcbo.setEditor(txt);
+        return dcbo;
+    }
+    
+    public OATextField createIdTextField() {
+        OATextField txt = new OATextField(getModel().getRunningAppSearchHub(), RunningAppSearch.P_Id, 6);
+        txt.addEnabledOnlyIfNew();
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(8);
+        // setup(txt);
+        return txt;
+    }
     
     public OATextField createMaxResultsTextField() {
         OATextField txt = new OATextField(getModel().getRunningAppSearchHub(), RunningAppSearch.P_MaxResults, 5);

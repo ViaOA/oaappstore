@@ -27,7 +27,7 @@ public class ClientJarStoreController {
     private static final String CMDGet = "get";
     public static final String JarStoreDirectory = "jarStore";
     
-    // connection to this server that has the JarStore
+    // connection to the server that has the JarStore
     private final OAMultiplexerClient multiplexerClient;
     
     public ClientJarStoreController(OAMultiplexerClient client) {

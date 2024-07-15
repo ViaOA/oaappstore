@@ -17,8 +17,11 @@ import com.viaoa.util.OADateTime;
 import com.viaoa.util.OAFile;
 import com.viaoa.util.OAString;
 
-//qqqqqqqqqqqqqqqqq this should be removed ??
+//qqqqqqqqqqqqqqqqq 
 
+
+// qqqqqqqqqqqqqqq this was originally created to be able to have another OAAppStore be 
+//       able to run/start a new App from another computer
 
 /**
  * This is used by the ServerApplication.runClient command, 
@@ -26,6 +29,9 @@ import com.viaoa.util.OAString;
  * This will use the OAAppStore installer, and have the
  * jar file that matches version on ServerApplication,
  * and make temp changes to OAAppStore.cfg to then run the client app.
+ * 
+ * 
+ * 
  */
 public abstract class ClientProcessController {
     private static Logger LOG = Logger.getLogger(ClientProcessController.class.getName());

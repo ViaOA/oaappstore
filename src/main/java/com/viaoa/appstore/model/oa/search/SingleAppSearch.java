@@ -9,6 +9,7 @@ import com.viaoa.annotation.*;
 import com.viaoa.object.*;
 import com.viaoa.hub.*;
 import com.viaoa.util.*;
+import com.viaoa.util.OADateTime;
 import com.viaoa.datasource.*;
 import com.viaoa.filter.*;
 import com.viaoa.appstore.delegate.ModelDelegate;
@@ -19,10 +20,59 @@ public class SingleAppSearch extends OAObject {
 
     private static Logger LOG = Logger.getLogger(SingleAppSearch.class.getName());
 
+    public static final String P_Id = "Id";
+    public static final String P_Created = "Created";
+    public static final String P_Created2 = "Created2";
+    public static final String P_ApplicationType = "ApplicationType";
+    public static final String P_UseApplicationTypeSearch = "UseApplicationTypeSearch";
     public static final String P_MaxResults = "MaxResults";
 
+    protected int id;
+    protected OADateTime created;
+    protected OADateTime created2;
+    protected ApplicationType applicationType;
+    protected boolean useApplicationTypeSearch;
+    protected ApplicationTypeSearch searchApplicationType;
     protected int maxResults;
 
+    @OAProperty(displayLength = 6)
+    public int getId() {
+        return id;
+    }
+    public void setId(int newValue) {
+        int old = id;
+        fireBeforePropertyChange(P_Id, old, newValue);
+        this.id = newValue;
+        firePropertyChange(P_Id, old, this.id);
+    }
+      
+    @OAProperty(defaultValue = "new OADateTime()", displayLength = 15)
+    public OADateTime getCreated() {
+        return created;
+    }
+    public void setCreated(OADateTime newValue) {
+        OADateTime old = created;
+        fireBeforePropertyChange(P_Created, old, newValue);
+        this.created = newValue;
+        firePropertyChange(P_Created, old, this.created);
+        if (isLoading()) return;
+        if (created != null) {
+            if (created2 == null) setCreated2(this.created.addDays(1));
+            else if (created.compareTo(created2) > 0) setCreated2(this.created.addDays(1));
+        }
+    } 
+    public OADateTime getCreated2() {
+        return created2;
+    }
+    public void setCreated2(OADateTime newValue) {
+        OADateTime old = created2;
+        fireBeforePropertyChange(P_Created2, old, newValue);
+        this.created2 = newValue;
+        firePropertyChange(P_Created2, old, this.created2);
+        if (created != null && created2 != null) {
+            if (created.compareTo(created2) > 0) setCreated(this.created2);
+        }
+    }
 
     public int getMaxResults() {
         return maxResults;
@@ -34,10 +84,47 @@ public class SingleAppSearch extends OAObject {
         firePropertyChange(P_MaxResults, old, this.maxResults);
     }
 
+    @OAOne
+    public ApplicationType getApplicationType() {
+        if (applicationType == null) {
+            applicationType = (ApplicationType) getObject(P_ApplicationType);
+        }
+        return applicationType;
+    }
+    public void setApplicationType(ApplicationType newValue) {
+        ApplicationType old = this.applicationType;
+        this.applicationType = newValue;
+        firePropertyChange(P_ApplicationType, old, this.applicationType);
+    }
+    public boolean getUseApplicationTypeSearch() {
+        return useApplicationTypeSearch;
+    }
+    public void setUseApplicationTypeSearch(boolean newValue) {
+        boolean old = this.useApplicationTypeSearch;
+        this.useApplicationTypeSearch = newValue;
+        firePropertyChange(P_UseApplicationTypeSearch, old, this.useApplicationTypeSearch);
+    }
+    public ApplicationTypeSearch getApplicationTypeSearch() {
+        return this.searchApplicationType;
+    }
+    public void setApplicationTypeSearch(ApplicationTypeSearch newValue) {
+        this.searchApplicationType = newValue;
+    }
+
     public void reset() {
+        setId(0);
+        setNull(P_Id);
+        setCreated(null);
+        setCreated2(null);
+        setApplicationType(null);
+        setUseApplicationTypeSearch(false);
     }
 
     public boolean isDataEntered() {
+        if (!isNull(P_Id)) return true;
+        if (getCreated() != null) return true;
+        if (getApplicationType() != null) return true;
+        if (getUseApplicationTypeSearch()) return true;
         return false;
     }
 
@@ -65,6 +152,29 @@ public class SingleAppSearch extends OAObject {
         String sql = "";
         String sortOrder = null;
         Object[] args = new Object[0];
+        if (!isNull(P_Id)) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += SingleApp.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
+        if (created != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (created2 != null && !created.equals(created2)) {
+                sql += SingleApp.P_Created + " >= ?";
+                args = OAArray.add(Object.class, args, this.created);
+                sql += " AND " + SingleApp.P_Created + " <= ?";
+                args = OAArray.add(Object.class, args, this.created2);
+            }
+            else {
+                sql += SingleApp.P_Created + " = ?";
+                args = OAArray.add(Object.class, args, this.created);
+            }
+        }
+        if (!useApplicationTypeSearch && getApplicationType() != null) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += SingleAppPP.applicationType().pp + " = ?";
+            args = OAArray.add(Object.class, args, getApplicationType());
+        }
 
         if (OAString.isNotEmpty(extraWhere)) {
             if (sql.length() > 0) sql = "(" + sql + ") AND ";
@@ -79,6 +189,9 @@ public class SingleAppSearch extends OAObject {
         else select.setFilter(this.getCustomFilter());
         select.setDataSourceFilter(this.getDataSourceFilter());
         if (getMaxResults() > 0) select.setMax(getMaxResults());
+        if (useApplicationTypeSearch && getApplicationTypeSearch() != null) {
+            getApplicationTypeSearch().appendSelect(SingleAppPP.applicationType().pp, select);
+        }
         return select;
     }
 
@@ -86,6 +199,32 @@ public class SingleAppSearch extends OAObject {
         final String prefix = fromName + ".";
         String sql = "";
         Object[] args = new Object[0];
+        if (!isNull(P_Id)) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += prefix + SingleApp.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
+        if (created != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (created2 != null && !created.equals(created2)) {
+                sql += prefix + SingleApp.P_Created + " >= ?";
+                args = OAArray.add(Object.class, args, this.created);
+                sql += " AND " + prefix + SingleApp.P_Created + " <= ?";
+                args = OAArray.add(Object.class, args, this.created2);
+            }
+            else {
+                sql += prefix + SingleApp.P_Created + " = ?";
+                args = OAArray.add(Object.class, args, this.created);
+            }
+        }
+        if (!useApplicationTypeSearch && getApplicationType() != null) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += prefix + SingleAppPP.applicationType().pp + " = ?";
+            args = OAArray.add(Object.class, args, getApplicationType());
+        }
+        if (useApplicationTypeSearch && getApplicationTypeSearch() != null) {
+            getApplicationTypeSearch().appendSelect(prefix + SingleAppPP.applicationType().pp, select);
+        }
         select.add(sql, args);
     }
 

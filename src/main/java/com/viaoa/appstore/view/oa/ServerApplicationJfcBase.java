@@ -45,7 +45,7 @@ import com.viaoa.appstore.view.*;
 public class ServerApplicationJfcBase implements OAModelJfcInterface {
     protected static Logger LOG = Logger.getLogger(ServerApplicationJfc.class.getName());
     
-    public static final String PP_Display    = OAString.cpp(ServerApplication.P_DisplayName);
+    public static final String PP_Display    = OAString.cpp(ServerApplication.P_CalcName);
     public static final String PP_Icon       = null;
     public static final String PP_Image      = null;
     public static final String PP_ForeColor  = null;
@@ -75,7 +75,6 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
     public static final String CARD_Edit = "edit";
     protected static final String CARD_ClientApps = "ClientApps";
     protected static final String CARD_PropertyValues = "PropertyValues";
-    protected int TAB_ClientApps = -1;
     protected int TAB_PropertyValues = -1;
     protected JPanel cardPanel;
     protected CardLayout cardLayout;
@@ -303,10 +302,11 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
         if (hubRoot == null && OAString.isEmpty(leadingPropertyPath)) {
             hubRoot = getModel().getHub();
         }
-        OATreeNode node = new OATreeNode(OAString.cpp(leadingPropertyPath, ServerApplication.P_DisplayName), hubRoot, getHub()) {
+        OATreeNode node = new OATreeNode(OAString.cpp(leadingPropertyPath, ServerApplication.P_CalcName), hubRoot, getHub()) {
             @Override
             public void objectSelected(Object obj) {
                 super.objectSelected(obj);
+                ServerApplicationJfcBase.this.getCardPanel();
                 ServerApplicationJfcBase.this.onShowEditPanel();
             }
             @Override
@@ -489,7 +489,7 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
     
     // Label
     public OALabel createLabel() {
-        OALabel lbl = new OALabel(getHub(), OAString.cpp(ServerApplication.P_DisplayName), 15) {
+        OALabel lbl = new OALabel(getHub(), OAString.cpp(ServerApplication.P_CalcName), 15) {
             @Override
             public void customizeRenderer(JLabel lbl, Object object, Object value, boolean isSelected, boolean hasFocus, int row, boolean wasChanged, boolean wasMouseOver) {
                 ServerApplicationJfcBase.this.customizeRenderer(lbl, ServerApplicationJfcBase.this.getHub().getAt(row), isSelected, hasFocus, row, wasChanged, wasMouseOver);
@@ -499,7 +499,7 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
                 return ServerApplicationJfcBase.this.getToolTipText(ServerApplicationJfcBase.this.getHub().getAt(row), row, defaultValue);
             }
         };
-        lbl.setMaximumColumns(40);
+        lbl.setMaximumColumns(80);
         lbl.setMinimumColumns(7);
         lbl.setIconColorProperty(PP_IconColor);
         lbl.setImageProperty(PP_Icon);
@@ -525,7 +525,7 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
     }
     
     public OAComboBox createComboBox() {
-        OAComboBox cbo = new OAComboBox(getHub(), OAString.cpp(ServerApplication.P_DisplayName), 15) {
+        OAComboBox cbo = new OAComboBox(getHub(), OAString.cpp(ServerApplication.P_CalcName), 15) {
             @Override
             public void customizeRenderer(JLabel lbl, Object object, Object value, boolean isSelected, boolean hasFocus, int row, boolean wasChanged, boolean wasMouseOver) {
                 ServerApplicationJfcBase.this.customizeRenderer(lbl, ServerApplicationJfcBase.this.getHub().getAt(row), isSelected, hasFocus, row, wasChanged, wasMouseOver);
@@ -536,9 +536,9 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
             }
         };
     
-        cbo.setPopupColumns(27);
+        cbo.setPopupColumns(30);
         cbo.setMaximumRowCount(15);
-        cbo.setMaximumColumns(40);
+        cbo.setMaximumColumns(80);
         cbo.setMinimumColumns(7);
         cbo.setIconColorProperty(PP_IconColor);
         cbo.setImageProperty(PP_Icon);
@@ -561,7 +561,7 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
         table.setAllowSorting(false);
         table.addCounterColumn();
         getSearchJfc().createTableColumns(table);
-        table.setPreferredSize(15, 6, true);
+        table.setPreferredSize(15, 10, true);
         table.resizeColumnsToFitHeading();
         
         OATableComboBox cboTable = new OATableComboBox(table, getHub(), PP_Display) {
@@ -573,7 +573,7 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
         cboTable.allowClearButton(true);
         cboTable.setIconColorProperty(PP_IconColor);
         cboTable.setColumns(15);
-        cboTable.setMaximumColumns(40);
+        cboTable.setMaximumColumns(80);
         return cboTable;
     }
     
@@ -586,7 +586,7 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
         return lst;
     }
     public OAList createList() {
-        OAList lst = new OAList(getHub(), OAString.cpp(ServerApplication.P_DisplayName), 12, 15) {
+        OAList lst = new OAList(getHub(), OAString.cpp(ServerApplication.P_CalcName), 12, 15) {
             @Override
             public void customizeRenderer(JLabel label, JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 super.customizeRenderer(label, list, value, index, isSelected, cellHasFocus);
@@ -594,7 +594,7 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
             }
         };
         lst.setMinimumColumns(5);
-        lst.setMaximumColumns(40);
+        lst.setMaximumColumns(80);
         lst.setAllowDnD(true);
         lst.setAllowRemove(true);
         lst.setAllowDelete(false);
@@ -1122,29 +1122,56 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
             }
             tc = table.addColumn("Environment", 12, lbl);
         }
-        tc = table.addColumn("Name", 18, createNameTextField());
-        if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(ServerApplication.P_Name));
-        }
         if (getModel().getServerModel().getCreateUI()) {
             OALabel olbl = createServerLabel();
             olbl.setToolTipText("Server");
             tc = table.addColumn("Server", 14, olbl);
             if (getModel().getAllowTableFilter()) {
-                tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(ServerApplication.P_Server, Server.P_Name)));
+                tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(ServerApplication.P_Server, Server.P_CalcName)));
             }
+        }
+        tc = table.addColumn("Name", 18, createNameTextField());
+        if (getModel().getAllowTableFilter()) {
+            tc.setFilterComponent(new OATextFieldFilter(ServerApplication.P_Name));
         }
         if (getModel().getApplicationTypeModel().getCreateUI()) {
-            lbl = new OALabel(getHub(), ServerApplicationPP.applicationType().name(), 14);
-            tc = table.addColumn("Application Type Name", 14, lbl);
+            OALabel olbl = createApplicationTypeLabel();
+            olbl.setToolTipText("Application Type");
+            tc = table.addColumn("App Type", 12, olbl);
             if (getModel().getAllowTableFilter()) {
-                tc.setFilterComponent(new OATextFieldFilter(ServerApplicationPP.applicationType().name()));
+                tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(ServerApplication.P_ApplicationType, ApplicationType.P_Name)));
             }
         }
-        tc = table.addColumn("Http", 5, createHttpPortTextField());
-        tc.setToolTipText("Http Port");
+        if (getModel().getApplicationVersionModel().getCreateUI()) {
+            OATableComboBox cboTable = createApplicationVersionTableComboBox();
+            cboTable.setToolTipText("Application Version");
+            tc = table.addColumn("Version", 6, cboTable);
+            if (getModel().getAllowTableFilter()) {
+                tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(ServerApplication.P_ApplicationVersion, ApplicationVersion.P_Version)));
+            }
+        }
+        if (getModel().getApplicationVersionModel().getCreateUI()) {
+            lbl = new OALabel(getHub(), ServerApplicationPP.applicationVersion().release(), 6);
+            lbl.setFormat("#");
+            tc = table.addColumn("Release", 9, lbl);
+            if (getModel().getAllowTableFilter()) {
+                tc.setFilterComponent(new OATextFieldFilter(ServerApplicationPP.applicationVersion().release()));
+            }
+        }
+        tc = table.addColumn("Port", 5, createCalcClientPortLabel());
+        tc.setToolTipText("Calc Client Port");
         if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(ServerApplication.P_HttpPort));
+            tc.setFilterComponent(new OATextFieldFilter(ServerApplication.P_CalcClientPort));
+        }
+        tc = table.addColumn("Http", 5, createCalcHttpPortLabel());
+        tc.setToolTipText("Calc Http Port");
+        if (getModel().getAllowTableFilter()) {
+            tc.setFilterComponent(new OATextFieldFilter(ServerApplication.P_CalcHttpPort));
+        }
+        tc = table.addColumn("Https", 5, createCalcHttpsPortLabel());
+        tc.setToolTipText("Calc Https Port");
+        if (getModel().getAllowTableFilter()) {
+            tc.setFilterComponent(new OATextFieldFilter(ServerApplication.P_CalcHttpsPort));
         }
     }
     
@@ -1203,12 +1230,7 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(Server.P_Environment, Environment.P_Name)));
         }
-        lbl = new OALabel(getHub(), ServerApplication.P_Name, 18);
-        tc = table.addColumn("Name", 18, lbl);
-        if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(ServerApplication.P_Name));
-        }
-        lbl = new OALabel(getHub(), OAString.cpp(ServerApplication.P_Server, Server.P_Name));
+        lbl = new OALabel(getHub(), OAString.cpp(ServerApplication.P_Server, Server.P_CalcName));
         lbl.setToolTipText("Server");
         if (ServerJfc.PP_IconColor != null) {
             lbl.setIconColorProperty(OAString.cpp(ServerApplication.P_Server) + "." + ServerJfc.PP_IconColor);
@@ -1218,19 +1240,63 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
         }
         tc = table.addColumn("Server", 14, lbl);
         if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(ServerApplication.P_Server, Server.P_Name)));
+            tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(ServerApplication.P_Server, Server.P_CalcName)));
         }
-        lbl = new OALabel(getHub(), ServerApplicationPP.applicationType().name(), 14);
-        tc = table.addColumn("Application Type Name", 14, lbl);
+        lbl = new OALabel(getHub(), ServerApplication.P_Name, 18);
+        tc = table.addColumn("Name", 18, lbl);
         if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(ServerApplicationPP.applicationType().name()));
+            tc.setFilterComponent(new OATextFieldFilter(ServerApplication.P_Name));
         }
-        lbl = new OALabel(getHub(), ServerApplication.P_HttpPort, 6);
+        lbl = new OALabel(getHub(), OAString.cpp(ServerApplication.P_ApplicationType, ApplicationType.P_Name));
+        lbl.setToolTipText("Application Type");
+        if (ApplicationTypeJfc.PP_IconColor != null) {
+            lbl.setIconColorProperty(OAString.cpp(ServerApplication.P_ApplicationType) + "." + ApplicationTypeJfc.PP_IconColor);
+        }
+        if (ApplicationTypeJfc.PP_Icon != null) {
+            lbl.setImageProperty(OAString.cpp(ServerApplication.P_ApplicationType) + "." + ApplicationTypeJfc.PP_Icon);
+        }
+        tc = table.addColumn("App Type", 12, lbl);
+        if (getModel().getAllowTableFilter()) {
+            tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(ServerApplication.P_ApplicationType, ApplicationType.P_Name)));
+        }
+        lbl = new OALabel(getHub(), OAString.cpp(ServerApplication.P_ApplicationVersion, ApplicationVersion.P_Version));
+        lbl.setToolTipText("Application Version");
+        if (ApplicationVersionJfc.PP_IconColor != null) {
+            lbl.setIconColorProperty(OAString.cpp(ServerApplication.P_ApplicationVersion) + "." + ApplicationVersionJfc.PP_IconColor);
+        }
+        if (ApplicationVersionJfc.PP_Icon != null) {
+            lbl.setImageProperty(OAString.cpp(ServerApplication.P_ApplicationVersion) + "." + ApplicationVersionJfc.PP_Icon);
+        }
+        tc = table.addColumn("Version", 6, lbl);
+        if (getModel().getAllowTableFilter()) {
+            tc.setFilterComponent(new OATextFieldFilter(OAString.cpp(ServerApplication.P_ApplicationVersion, ApplicationVersion.P_Version)));
+        }
+        lbl = new OALabel(getHub(), ServerApplicationPP.applicationVersion().release(), 6);
         lbl.setFormat("#");
-        lbl.setToolTipText("Http Port");
+        tc = table.addColumn("Release", 9, lbl);
+        if (getModel().getAllowTableFilter()) {
+            tc.setFilterComponent(new OATextFieldFilter(ServerApplicationPP.applicationVersion().release()));
+        }
+        lbl = new OALabel(getHub(), ServerApplication.P_CalcClientPort, 6);
+        lbl.setFormat("###");
+        lbl.setToolTipText("Calc Client Port");
+        tc = table.addColumn("Port", 5, lbl);
+        if (getModel().getAllowTableFilter()) {
+            tc.setFilterComponent(new OATextFieldFilter(ServerApplication.P_CalcClientPort));
+        }
+        lbl = new OALabel(getHub(), ServerApplication.P_CalcHttpPort, 6);
+        lbl.setFormat("###");
+        lbl.setToolTipText("Calc Http Port");
         tc = table.addColumn("Http", 5, lbl);
         if (getModel().getAllowTableFilter()) {
-            tc.setFilterComponent(new OATextFieldFilter(ServerApplication.P_HttpPort));
+            tc.setFilterComponent(new OATextFieldFilter(ServerApplication.P_CalcHttpPort));
+        }
+        lbl = new OALabel(getHub(), ServerApplication.P_CalcHttpsPort, 6);
+        lbl.setFormat("###");
+        lbl.setToolTipText("Calc Https Port");
+        tc = table.addColumn("Https", 5, lbl);
+        if (getModel().getAllowTableFilter()) {
+            tc.setFilterComponent(new OATextFieldFilter(ServerApplication.P_CalcHttpsPort));
         }
     }
     
@@ -1381,8 +1447,8 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
             toolBar.add(Box.createHorizontalStrut(10));
         }
         if (tbo.bLabel) {
-            OALabel lbl = new OALabel(getHub(), OAString.cpp(ServerApplication.P_DisplayName));
-            lbl.setToolTipTextPropertyPath(OAString.cpp(ServerApplication.P_DisplayName));
+            OALabel lbl = new OALabel(getHub(), OAString.cpp(ServerApplication.P_CalcName));
+            lbl.setToolTipTextPropertyPath(OAString.cpp(ServerApplication.P_CalcName));
             lbl.setMaxCols(20);
             lbl.setFont(lbl.getFont().deriveFont(Font.ITALIC));
             lbl.setBorder(new CustomLineBorder(0,0,0,1,Color.gray));
@@ -1439,7 +1505,7 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
                 toolBar.add(Box.createHorizontalStrut(6));
                 JLabel lbl = new JLabel(Resource.getJarIcon("find16.png"));
                 lbl.setText("Find:");
-                lbl.setToolTipText("Search using Display Name");
+                lbl.setToolTipText("Enter app name or app type");
                 OAJfcControllerFactory.createOnlyHubNotEmpty(getHub(), lbl);
                 toolBar.add(lbl);
                 toolBar.add(Box.createHorizontalStrut(5));
@@ -1571,11 +1637,17 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
         dd.addProperty("Id", ServerApplication.P_Id);
         dd.addProperty("server.environment.id", ServerApplicationPP.server().environment().id());
         dd.addProperty("server.environment.name", ServerApplicationPP.server().environment().name());
-        dd.addProperty("name", ServerApplication.P_Name);
         dd.addProperty("server.id", ServerApplicationPP.server().id());
-        dd.addProperty("server.name", ServerApplicationPP.server().name());
+        dd.addProperty("server.calcName", ServerApplicationPP.server().calcName());
+        dd.addProperty("name", ServerApplication.P_Name);
+        dd.addProperty("applicationType.id", ServerApplicationPP.applicationType().id());
         dd.addProperty("applicationType.name", ServerApplicationPP.applicationType().name());
-        dd.addProperty("httpPort", ServerApplication.P_HttpPort);
+        dd.addProperty("applicationVersion.id", ServerApplicationPP.applicationVersion().id());
+        dd.addProperty("applicationVersion.version", ServerApplicationPP.applicationVersion().version());
+        dd.addProperty("applicationVersion.release", ServerApplicationPP.applicationVersion().release());
+        dd.addProperty("calcClientPort", ServerApplication.P_CalcClientPort);
+        dd.addProperty("calcHttpPort", ServerApplication.P_CalcHttpPort);
+        dd.addProperty("calcHttpsPort", ServerApplication.P_CalcHttpsPort);
     }
     // Card Panel
     public JPanel getCardPanel() {
@@ -1713,6 +1785,40 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
         panel.add(comp, gc);
         gc.fill = gc.NONE;
         gc.gridwidth = 1;
+        if (getModel().getServerModel().getCreateUI()) {
+            lbl = new JLabel("Server:");
+            gc.anchor = gc.WEST;
+            panel.add(lbl, gc);
+            gc.anchor = gc.NORTHWEST;
+            gc.gridwidth = gc.REMAINDER;
+            gc.fill = gc.HORIZONTAL;
+            olbl = createServerLabel();
+            if (getModel().getViewOnly()) olbl.getController().setViewOnly(true);
+            OAJfcControllerFactory.createOnlyAoNotNull(getHub(), lbl);
+            cmd = createServerCommand();
+            comp = olbl;
+            comp = new OAResizePanel(comp, cmd);
+            panel.add(comp, gc);
+            gc.gridwidth = 1;
+            gc.fill = gc.NONE;
+        }
+        if (getModel().getApplicationTypeModel().getCreateUI()) {
+            lbl = new JLabel("Application Type:");
+            gc.anchor = gc.WEST;
+            panel.add(lbl, gc);
+            gc.anchor = gc.NORTHWEST;
+            gc.gridwidth = gc.REMAINDER;
+            gc.fill = gc.HORIZONTAL;
+            olbl = createApplicationTypeLabel();
+            if (getModel().getViewOnly()) olbl.getController().setViewOnly(true);
+            OAJfcControllerFactory.createOnlyAoNotNull(getHub(), lbl);
+            cmd = createApplicationTypeCommand();
+            comp = olbl;
+            comp = new OAResizePanel(comp, cmd);
+            panel.add(comp, gc);
+            gc.gridwidth = 1;
+            gc.fill = gc.NONE;
+        }
     
         lbl = new JLabel("Name:");
         gc.anchor = gc.WEST;
@@ -1769,54 +1875,48 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
         panel.add(comp, gc);
         gc.fill = gc.NONE;
         gc.gridwidth = 1;
-        if (getModel().getApplicationTypeModel().getCreateUI()) {
-            lbl = new JLabel("Application Type:");
-            gc.anchor = gc.WEST;
-            panel.add(lbl, gc);
-            gc.anchor = gc.NORTHWEST;
-            gc.gridwidth = gc.REMAINDER;
-            gc.fill = gc.HORIZONTAL;
-            olbl = createApplicationTypeLabel();
-            if (getModel().getViewOnly()) olbl.getController().setViewOnly(true);
-            OAJfcControllerFactory.createOnlyAoNotNull(getHub(), lbl);
-            cmd = createApplicationTypeCommand();
-            comp = olbl;
-            comp = new OAResizePanel(comp, cmd);
-            panel.add(comp, gc);
-            gc.gridwidth = 1;
-            gc.fill = gc.NONE;
-        }
     
-        lbl = new JLabel("Display Name:");
+        lbl = new JLabel("Calc Client Port:");
         gc.anchor = gc.WEST;
         panel.add(lbl, gc);
         gc.anchor = gc.NORTHWEST;
-        txt = createDisplayNameTextField();
-        if (getModel().getViewOnly()) txt.getController().setViewOnly(true);
-        txt.setLabel(lbl);
+        olbl = createCalcClientPortLabel();
+        if (getModel().getViewOnly()) olbl.getController().setViewOnly(true);
+        olbl.setLabel(lbl);
         gc.gridwidth = gc.REMAINDER;
         gc.fill = gc.HORIZONTAL;
-        comp = new OAResizePanel(txt, 95);
+        comp = new OAResizePanel(olbl, 95);
         panel.add(comp, gc);
         gc.fill = gc.NONE;
         gc.gridwidth = 1;
-        if (getModel().getServerModel().getCreateUI()) {
-            lbl = new JLabel("Server:");
-            gc.anchor = gc.WEST;
-            panel.add(lbl, gc);
-            gc.anchor = gc.NORTHWEST;
-            gc.gridwidth = gc.REMAINDER;
-            gc.fill = gc.HORIZONTAL;
-            olbl = createServerLabel();
-            if (getModel().getViewOnly()) olbl.getController().setViewOnly(true);
-            OAJfcControllerFactory.createOnlyAoNotNull(getHub(), lbl);
-            cmd = createServerCommand();
-            comp = olbl;
-            comp = new OAResizePanel(comp, cmd);
-            panel.add(comp, gc);
-            gc.gridwidth = 1;
-            gc.fill = gc.NONE;
-        }
+    
+        lbl = new JLabel("Calc Http Port:");
+        gc.anchor = gc.WEST;
+        panel.add(lbl, gc);
+        gc.anchor = gc.NORTHWEST;
+        olbl = createCalcHttpPortLabel();
+        if (getModel().getViewOnly()) olbl.getController().setViewOnly(true);
+        olbl.setLabel(lbl);
+        gc.gridwidth = gc.REMAINDER;
+        gc.fill = gc.HORIZONTAL;
+        comp = new OAResizePanel(olbl, 95);
+        panel.add(comp, gc);
+        gc.fill = gc.NONE;
+        gc.gridwidth = 1;
+    
+        lbl = new JLabel("Calc Https Port:");
+        gc.anchor = gc.WEST;
+        panel.add(lbl, gc);
+        gc.anchor = gc.NORTHWEST;
+        olbl = createCalcHttpsPortLabel();
+        if (getModel().getViewOnly()) olbl.getController().setViewOnly(true);
+        olbl.setLabel(lbl);
+        gc.gridwidth = gc.REMAINDER;
+        gc.fill = gc.HORIZONTAL;
+        comp = new OAResizePanel(olbl, 95);
+        panel.add(comp, gc);
+        gc.fill = gc.NONE;
+        gc.gridwidth = 1;
         if (getModel().getApplicationVersionModel().getCreateUI()) {
             lbl = new JLabel("Application Version:");
             gc.anchor = gc.WEST;
@@ -1881,53 +1981,6 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
         panMain.add(tabbedPane, BorderLayout.CENTER);
     
         Icon icon;
-        icon = Resource.getJarIcon("clientApp.gif");
-        icon = new ScaledImageIcon(icon, 32, 20);
-        tabbedPane.addChangeListener(new ChangeListener() {
-            volatile JPanel panThis;
-            volatile Exception ex;
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if (panThis != null) return;
-                if (ServerApplicationJfcBase.this.TAB_ClientApps == 0) return;
-                final JTabbedPane tp = (JTabbedPane) e.getSource();
-                if (tp.getSelectedIndex() != ServerApplicationJfcBase.this.TAB_ClientApps) return;
-                SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
-                    @Override
-                    protected Void doInBackground() throws Exception {
-                        try {
-                            if (bUseCombinedDetail) panThis = getClientAppsJfc().createCombinedPanel();
-                            else panThis = getClientAppsJfc().createTablePanel();
-                        }
-                        catch (Exception e) {
-                            ex = e;
-                        }
-                        return null;
-                    }
-                    @Override
-                    protected void done() {
-                        if (ex != null) {
-                            LOG.log(Level.WARNING, "UI exception creating UI for ServerApplication", ex);
-                            JOptionPane.showMessageDialog(null, "Exception while creating UI, message sent to tech support", "UI Exception", JOptionPane.ERROR_MESSAGE);
-                        }
-                        if (panThis == null) panThis = new JPanel();
-                        tp.setComponentAt(ServerApplicationJfcBase.this.TAB_ClientApps, panThis);
-                    }
-                };
-                sw.execute();
-            }
-        });
-        if (getModel().getClientAppsModel().getCreateUI()) {
-            if ((this.TAB_ClientApps = tabbedPane.getTabCount()) == 0) {
-                JPanel panThis;
-                if (bUseCombinedDetail) panThis = getClientAppsJfc().createCombinedPanel();
-                else panThis = getClientAppsJfc().createTablePanel();
-                tabbedPane.setComponentAt(ServerApplicationJfcBase.this.TAB_ClientApps, panThis);
-            }
-            else {
-                tabbedPane.addTab("Client Apps", icon, new JLabel("loading ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), "Client Apps");
-            }
-        }
         icon = Resource.getJarIcon("propertyValue.gif");
         icon = new ScaledImageIcon(icon, 32, 20);
         tabbedPane.addChangeListener(new ChangeListener() {
@@ -2084,7 +2137,7 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
         OATextField txt = new OATextField(getHub(), ServerApplication.P_ClientPort, 6);
         txt.setMinimumColumns(0);
         txt.setMaximumColumns(8);
-        txt.setFormat("#");
+        txt.setFormat("###");
         // setup(txt);
         return txt;
     }
@@ -2093,7 +2146,7 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
         OATextField txt = new OATextField(getHub(), ServerApplication.P_HttpPort, 6);
         txt.setMinimumColumns(0);
         txt.setMaximumColumns(8);
-        txt.setFormat("#");
+        txt.setFormat("###");
         // setup(txt);
         return txt;
     }
@@ -2102,7 +2155,7 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
         OATextField txt = new OATextField(getHub(), ServerApplication.P_HttpsPort, 6);
         txt.setMinimumColumns(0);
         txt.setMaximumColumns(8);
-        txt.setFormat("#");
+        txt.setFormat("###");
         // setup(txt);
         return txt;
     }
@@ -2115,12 +2168,39 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
         return dttxt;
     }
     
-    public OATextField createDisplayNameTextField() {
-        OATextField txt = new OATextField(getHub(), ServerApplication.P_DisplayName, 15);
+    public OATextField createCalcFullNameTextField() {
+        OATextField txt = new OATextField(getHub(), ServerApplication.P_CalcFullName, 15);
         txt.getController().getEnabledChangeListener().addAlwaysFalse();
         OAJfcUtil.initializeCalcTextField(txt);
         txt.setMinimumColumns(0);
         txt.setMaximumColumns(40);
+        return txt;
+    }
+    
+    public OALabel createCalcClientPortLabel() {
+        OALabel lbl = new OALabel(getHub(), ServerApplication.P_CalcClientPort, 6);
+        lbl.setMaximumColumns(8);
+        return lbl;
+    }
+    
+    public OALabel createCalcHttpPortLabel() {
+        OALabel lbl = new OALabel(getHub(), ServerApplication.P_CalcHttpPort, 6);
+        lbl.setMaximumColumns(8);
+        return lbl;
+    }
+    
+    public OALabel createCalcHttpsPortLabel() {
+        OALabel lbl = new OALabel(getHub(), ServerApplication.P_CalcHttpsPort, 6);
+        lbl.setMaximumColumns(8);
+        return lbl;
+    }
+    
+    public OATextField createCalcNameTextField() {
+        OATextField txt = new OATextField(getHub(), ServerApplication.P_CalcName, 15);
+        txt.getController().getEnabledChangeListener().addAlwaysFalse();
+        OAJfcUtil.initializeCalcTextField(txt);
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(80);
         return txt;
     }
     
@@ -2299,9 +2379,10 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
     }
     public OAAutoCompleteTextField createAutoCompleteTextField(String propertyPath) {
         OAAutoCompleteTextField txt = new OAAutoCompleteTextField(getHub(), propertyPath, 20);
-        txt.setMaximumColumns(50);
-        txt.setToolTipText("Search using Display Name");
-        txt.setSearchTemplate("<%=applicationType.name%> (<%=subName%>)");
+        txt.setMaximumColumns(35);
+        txt.setToolTipText("Enter app name or app type");
+        txt.setSearchTemplate("<%=name%> <%=applicationType.name%>");
+        txt.setDisplayTemplate("<%=name%> (<%=applicationType.name%> v<%=applicationVersion.version%>)");
         return txt;
     }
     
@@ -2410,15 +2491,9 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
                 }
                 if (name.equals(ClientAppJfc.CARD_List)) {
                     ServerApplicationJfcBase.this.showCardPanel(CARD_Edit);
-                    if (ServerApplicationJfcBase.this.TAB_ClientApps >= 0) {
-                        ServerApplicationJfcBase.this.getTabbedPane().setSelectedIndex(ServerApplicationJfcBase.this.TAB_ClientApps);
-                    }
                 }
                 else if (name.equals(ClientAppJfcBase.CARD_Edit)) {
                     ServerApplicationJfcBase.this.showCardPanel(CARD_Edit);
-                    if (ServerApplicationJfcBase.this.TAB_ClientApps >= 0) {
-                        ServerApplicationJfcBase.this.getTabbedPane().setSelectedIndex(ServerApplicationJfcBase.this.TAB_ClientApps);
-                    }
                 }
                 else {
                     ServerApplicationJfcBase.this.showCardPanel(CARD_ClientApps);
@@ -2455,13 +2530,6 @@ public class ServerApplicationJfcBase implements OAModelJfcInterface {
     }
     public PropertyValueJfc createPropertyValuesJfc(final boolean bIsEmbedded) {
         jfcPropertyValues = new PropertyValueJfc(getModel().getPropertyValuesModel()) {
-            @Override
-            protected PropertyValueSearchJfc getSearchJfc() {
-                if (jfcSearch != null) return jfcSearch;
-                PropertyValueSearchModel model = ServerApplicationJfcBase.this.getModel().getPropertyValuesSearchModel();
-                jfcSearch = new PropertyValueSearchJfc(model, true, false);
-                return jfcSearch;
-            }
             @Override
             public JPanel getCardPanel() {
                 if (cardPanel != null) return cardPanel;

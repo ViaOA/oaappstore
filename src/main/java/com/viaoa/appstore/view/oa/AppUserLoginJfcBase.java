@@ -291,6 +291,7 @@ public class AppUserLoginJfcBase implements OAModelJfcInterface {
             @Override
             public void objectSelected(Object obj) {
                 super.objectSelected(obj);
+                AppUserLoginJfcBase.this.getCardPanel();
                 AppUserLoginJfcBase.this.onShowEditPanel();
             }
             @Override
@@ -2011,7 +2012,12 @@ public class AppUserLoginJfcBase implements OAModelJfcInterface {
     }
     public JButton createAppUserCommand() {
         JButton cmd = null;
-        return null;
+        cmd = getAppUserJfc().createSearchButton();
+        if (cmd != null) {
+            ((OAButton)cmd).getController().setViewOnly(getModel().getViewOnly());
+            cmd.setText("Search ...");
+        }
+        return cmd;
     }
     
     public OALabel createRunningAppLabel() {
@@ -2078,6 +2084,13 @@ public class AppUserLoginJfcBase implements OAModelJfcInterface {
     public AppUserJfc getAppUserJfc() {
         if (jfcAppUser != null) return jfcAppUser;
         jfcAppUser = new AppUserJfc(getModel().getAppUserSelectFromModel()) {
+            @Override
+            protected AppUserSearchJfc getSearchJfc() {
+                if (jfcSearch != null) return jfcSearch;
+                AppUserLoginJfcBase.this.getModel().getAppUserSearchModel().getAppUserSearch().setMaxResults(1000);
+                jfcSearch = new AppUserSearchJfc(AppUserLoginJfcBase.this.getModel().getAppUserSearchModel());
+                return jfcSearch;
+            }
         };
         jfcAppUser.setLevel(getLevel()+1);
         OAModelJfcUtil.setParent(jfcAppUser, this);

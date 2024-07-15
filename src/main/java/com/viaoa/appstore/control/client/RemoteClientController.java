@@ -54,16 +54,17 @@ public abstract class RemoteClientController {
     private OASyncClient syncClient;
     private final ArrayList<OASiblingHelper> alSiblingHelperAWTThreadCache = new ArrayList<>();
     // Custom
-    private final RemoteClientJarStoreInterface remoteClientJarStore;
+    // private final RemoteClientJarStoreInterface remoteClientJarStore;
 
     // Custom
     /**
      * @param remoteClientJarStore will be sent to server when start is called.
      */
+/*qqqqqqq    
     public RemoteClientController(RemoteClientJarStoreInterface remoteClientJarStore) {
         this.remoteClientJarStore = remoteClientJarStore;
     }
-    
+*/    
     
     public OASyncClient getSyncClient() {
         return syncClient;

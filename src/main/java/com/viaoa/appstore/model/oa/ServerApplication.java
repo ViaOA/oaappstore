@@ -19,7 +19,7 @@ import com.viaoa.appstore.model.oa.propertypath.*;
     pluralName = "ServerApplications",
     shortName = "sra",
     displayName = "Server Application",
-    displayProperty = "displayName",
+    displayProperty = "calcName",
     noPojo = true,
     rootTreePropertyPaths = {
         "[ApplicationType]."+ApplicationType.P_ServerApplications, 
@@ -47,7 +47,11 @@ public class ServerApplication extends OAObject {
     public static final String P_HttpsPort = "httpsPort";
     public static final String P_LastConnect = "lastConnect";
      
-    public static final String P_DisplayName = "displayName";
+    public static final String P_CalcFullName = "calcFullName";
+    public static final String P_CalcClientPort = "calcClientPort";
+    public static final String P_CalcHttpPort = "calcHttpPort";
+    public static final String P_CalcHttpsPort = "calcHttpsPort";
+    public static final String P_CalcName = "calcName";
      
     public static final String P_ApplicationType = "applicationType";
     public static final String P_ApplicationTypeId = "applicationTypeId"; // fkey
@@ -130,7 +134,7 @@ public class ServerApplication extends OAObject {
         firePropertyChange(P_Name, old, this.name);
     }
 
-    @OAProperty(displayName = "Client Port", displayLength = 6, uiColumnLength = 11, format = "#")
+    @OAProperty(displayName = "Client Port", displayLength = 6, uiColumnLength = 11, format = "###")
     @OAColumn(name = "ClientPort", sqlType = java.sql.Types.INTEGER)
     public int getClientPort() {
         return clientPort;
@@ -142,7 +146,7 @@ public class ServerApplication extends OAObject {
         firePropertyChange(P_ClientPort, old, this.clientPort);
     }
 
-    @OAProperty(displayName = "Http Port", displayLength = 6, uiColumnLength = 9, format = "#")
+    @OAProperty(displayName = "Http Port", displayLength = 6, uiColumnLength = 9, format = "###")
     @OAColumn(name = "HttpPort", sqlType = java.sql.Types.INTEGER)
     public int getHttpPort() {
         return httpPort;
@@ -154,7 +158,7 @@ public class ServerApplication extends OAObject {
         firePropertyChange(P_HttpPort, old, this.httpPort);
     }
 
-    @OAProperty(displayName = "Https Port", displayLength = 6, uiColumnLength = 10, format = "#")
+    @OAProperty(displayName = "Https Port", displayLength = 6, uiColumnLength = 10, format = "###")
     @OAColumn(name = "HttpsPort", sqlType = java.sql.Types.INTEGER)
     public int getHttpsPort() {
         return httpsPort;
@@ -177,7 +181,7 @@ public class ServerApplication extends OAObject {
         this.lastConnect = newValue;
         firePropertyChange(P_LastConnect, old, this.lastConnect);
     }
-    @OACalculatedProperty(displayName = "Display Name", displayLength = 15, properties = {P_ApplicationType+"."+ApplicationType.P_Name, P_Server+"."+Server.P_Name, P_Server+"."+Server.P_Environment+"."+Environment.P_Name})
+    @OACalculatedProperty(displayName = "Full Name", displayLength = 15, properties = {P_ApplicationType+"."+ApplicationType.P_Name, P_Server+"."+Server.P_Name, P_Server+"."+Server.P_Environment+"."+Environment.P_Name})
     public String getDisplayName() {
         String name = "";
         ApplicationType applicationType = this.getApplicationType();
@@ -190,6 +194,53 @@ public class ServerApplication extends OAObject {
             Environment env = server.getEnvironment();
             if (env != null) name += env.getAbbrevName() + " ";
             name += server.getName() + ")";
+        }
+        return name;
+    }
+    @OACalculatedProperty(displayName = "Calc Client Port", displayLength = 6, columnLength = 16, outputFormat = "###", properties = {P_ClientPort, P_ApplicationType+"."+ApplicationType.P_ClientPort})
+    public int getCalcClientPort() {
+        int calcClientPort = this.getClientPort();
+        if (calcClientPort <= 0) { 
+            ApplicationType applicationType = this.getApplicationType();
+            if (applicationType != null) {
+                calcClientPort = applicationType.getClientPort();
+                if (calcClientPort <= 0) calcClientPort = 1099;
+            }
+        }    
+        return calcClientPort;
+    }
+    @OACalculatedProperty(displayName = "Calc Http Port", displayLength = 6, columnLength = 14, outputFormat = "###", properties = {P_HttpPort, P_ApplicationType+"."+ApplicationType.P_HttpPort})
+    public int getCalcHttpPort() {
+        int calcHttpPort = this.getHttpPort();
+        if (calcHttpPort <= 0) {
+            ApplicationType applicationType = this.getApplicationType();
+            if (applicationType != null) {
+                calcHttpPort = applicationType.getHttpPort();
+                if (calcHttpPort <= 0) calcHttpPort = 80;
+            }
+        }
+        return calcHttpPort;
+    }
+    @OACalculatedProperty(displayName = "Calc Https Port", displayLength = 6, columnLength = 15, outputFormat = "###", properties = {P_HttpsPort, P_ApplicationType+"."+ApplicationType.P_HttpsPort})
+    public int getCalcHttpsPort() {
+        int calcHttpsPort = this.getHttpsPort();
+        if (calcHttpsPort <= 0) {
+            ApplicationType applicationType = this.getApplicationType();
+            if (applicationType != null) {
+                calcHttpsPort = applicationType.getHttpsPort();
+                if (calcHttpsPort <= 0) calcHttpsPort = 80;
+            }
+        }
+        return calcHttpsPort;
+    }
+    @OACalculatedProperty(displayName = "Calc Name", displayLength = 15, properties = {P_Name, P_ApplicationType+"."+ApplicationType.P_Name})
+    public String getCalcName() {
+        String name = this.getName();
+        if (OAStr.isEmpty(name)) {
+            ApplicationType applicationType = this.getApplicationType();
+            if (applicationType != null) {
+                name = applicationType.getName();
+            }        
         }
         return name;
     }
@@ -359,6 +410,10 @@ public class ServerApplication extends OAObject {
     public void run() throws Exception {
         // custom code
         ServerApplicationDelegate.run(this);
+    }
+    @OAObjCallback(enabledProperty = ServerApplication.P_ApplicationVersion+"."+ApplicationVersion.P_Completed
+    )
+    public void runCallback(OAObjectCallback cb) {
     }
 
     public void load(ResultSet rs, int id) throws SQLException {

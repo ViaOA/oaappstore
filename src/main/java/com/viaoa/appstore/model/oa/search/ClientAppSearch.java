@@ -9,6 +9,7 @@ import com.viaoa.annotation.*;
 import com.viaoa.object.*;
 import com.viaoa.hub.*;
 import com.viaoa.util.*;
+import com.viaoa.util.OADateTime;
 import com.viaoa.datasource.*;
 import com.viaoa.filter.*;
 import com.viaoa.appstore.delegate.ModelDelegate;
@@ -19,10 +20,77 @@ public class ClientAppSearch extends OAObject {
 
     private static Logger LOG = Logger.getLogger(ClientAppSearch.class.getName());
 
+    public static final String P_Name = "Name";
+    public static final String P_Id = "Id";
+    public static final String P_Created = "Created";
+    public static final String P_Created2 = "Created2";
+    public static final String P_ServerApplicationApplicationType = "ServerApplicationApplicationType";
+    public static final String P_UseServerApplicationApplicationTypeSearch = "UseServerApplicationApplicationTypeSearch";
+    public static final String P_ServerApplicationServer = "ServerApplicationServer";
+    public static final String P_UseServerApplicationServerSearch = "UseServerApplicationServerSearch";
     public static final String P_MaxResults = "MaxResults";
 
+    protected String name;
+    protected int id;
+    protected OADateTime created;
+    protected OADateTime created2;
+    protected ApplicationType serverApplicationApplicationType;
+    protected boolean useServerApplicationApplicationTypeSearch;
+    protected ApplicationTypeSearch searchServerApplicationApplicationType;
+    protected Server serverApplicationServer;
+    protected boolean useServerApplicationServerSearch;
+    protected ServerSearch searchServerApplicationServer;
     protected int maxResults;
 
+    @OAProperty(maxLength = 55, displayLength = 18)
+    public String getName() {
+        return name;
+    }
+    public void setName(String newValue) {
+        String old = name;
+        fireBeforePropertyChange(P_Name, old, newValue);
+        this.name = newValue;
+        firePropertyChange(P_Name, old, this.name);
+    }
+      
+    @OAProperty(displayLength = 6)
+    public int getId() {
+        return id;
+    }
+    public void setId(int newValue) {
+        int old = id;
+        fireBeforePropertyChange(P_Id, old, newValue);
+        this.id = newValue;
+        firePropertyChange(P_Id, old, this.id);
+    }
+      
+    @OAProperty(defaultValue = "new OADateTime()", displayLength = 15)
+    public OADateTime getCreated() {
+        return created;
+    }
+    public void setCreated(OADateTime newValue) {
+        OADateTime old = created;
+        fireBeforePropertyChange(P_Created, old, newValue);
+        this.created = newValue;
+        firePropertyChange(P_Created, old, this.created);
+        if (isLoading()) return;
+        if (created != null) {
+            if (created2 == null) setCreated2(this.created.addDays(1));
+            else if (created.compareTo(created2) > 0) setCreated2(this.created.addDays(1));
+        }
+    } 
+    public OADateTime getCreated2() {
+        return created2;
+    }
+    public void setCreated2(OADateTime newValue) {
+        OADateTime old = created2;
+        fireBeforePropertyChange(P_Created2, old, newValue);
+        this.created2 = newValue;
+        firePropertyChange(P_Created2, old, this.created2);
+        if (created != null && created2 != null) {
+            if (created.compareTo(created2) > 0) setCreated(this.created2);
+        }
+    }
 
     public int getMaxResults() {
         return maxResults;
@@ -34,10 +102,80 @@ public class ClientAppSearch extends OAObject {
         firePropertyChange(P_MaxResults, old, this.maxResults);
     }
 
+    @OAOne
+    public ApplicationType getServerApplicationApplicationType() {
+        if (serverApplicationApplicationType == null) {
+            serverApplicationApplicationType = (ApplicationType) getObject(P_ServerApplicationApplicationType);
+        }
+        return serverApplicationApplicationType;
+    }
+    public void setServerApplicationApplicationType(ApplicationType newValue) {
+        ApplicationType old = this.serverApplicationApplicationType;
+        this.serverApplicationApplicationType = newValue;
+        firePropertyChange(P_ServerApplicationApplicationType, old, this.serverApplicationApplicationType);
+    }
+    public boolean getUseServerApplicationApplicationTypeSearch() {
+        return useServerApplicationApplicationTypeSearch;
+    }
+    public void setUseServerApplicationApplicationTypeSearch(boolean newValue) {
+        boolean old = this.useServerApplicationApplicationTypeSearch;
+        this.useServerApplicationApplicationTypeSearch = newValue;
+        firePropertyChange(P_UseServerApplicationApplicationTypeSearch, old, this.useServerApplicationApplicationTypeSearch);
+    }
+    public ApplicationTypeSearch getServerApplicationApplicationTypeSearch() {
+        return this.searchServerApplicationApplicationType;
+    }
+    public void setServerApplicationApplicationTypeSearch(ApplicationTypeSearch newValue) {
+        this.searchServerApplicationApplicationType = newValue;
+    }
+
+    @OAOne
+    public Server getServerApplicationServer() {
+        if (serverApplicationServer == null) {
+            serverApplicationServer = (Server) getObject(P_ServerApplicationServer);
+        }
+        return serverApplicationServer;
+    }
+    public void setServerApplicationServer(Server newValue) {
+        Server old = this.serverApplicationServer;
+        this.serverApplicationServer = newValue;
+        firePropertyChange(P_ServerApplicationServer, old, this.serverApplicationServer);
+    }
+    public boolean getUseServerApplicationServerSearch() {
+        return useServerApplicationServerSearch;
+    }
+    public void setUseServerApplicationServerSearch(boolean newValue) {
+        boolean old = this.useServerApplicationServerSearch;
+        this.useServerApplicationServerSearch = newValue;
+        firePropertyChange(P_UseServerApplicationServerSearch, old, this.useServerApplicationServerSearch);
+    }
+    public ServerSearch getServerApplicationServerSearch() {
+        return this.searchServerApplicationServer;
+    }
+    public void setServerApplicationServerSearch(ServerSearch newValue) {
+        this.searchServerApplicationServer = newValue;
+    }
+
     public void reset() {
+        setName(null);
+        setId(0);
+        setNull(P_Id);
+        setCreated(null);
+        setCreated2(null);
+        setServerApplicationApplicationType(null);
+        setUseServerApplicationApplicationTypeSearch(false);
+        setServerApplicationServer(null);
+        setUseServerApplicationServerSearch(false);
     }
 
     public boolean isDataEntered() {
+        if (getName() != null) return true;
+        if (!isNull(P_Id)) return true;
+        if (getCreated() != null) return true;
+        if (getServerApplicationApplicationType() != null) return true;
+        if (getUseServerApplicationApplicationTypeSearch()) return true;
+        if (getServerApplicationServer() != null) return true;
+        if (getUseServerApplicationServerSearch()) return true;
         return false;
     }
 
@@ -65,6 +203,50 @@ public class ClientAppSearch extends OAObject {
         String sql = "";
         String sortOrder = null;
         Object[] args = new Object[0];
+        OAFinder finder = null;
+        if (OAString.isNotEmpty(this.name)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(name);
+            if (val.indexOf("%") >= 0) {
+                sql += ClientApp.P_Name + " LIKE ?";
+            }
+            else {
+                sql += ClientApp.P_Name + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (!isNull(P_Id)) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += ClientApp.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
+        if (created != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (created2 != null && !created.equals(created2)) {
+                sql += ClientApp.P_Created + " >= ?";
+                args = OAArray.add(Object.class, args, this.created);
+                sql += " AND " + ClientApp.P_Created + " <= ?";
+                args = OAArray.add(Object.class, args, this.created2);
+            }
+            else {
+                sql += ClientApp.P_Created + " = ?";
+                args = OAArray.add(Object.class, args, this.created);
+            }
+        }
+        if (!useServerApplicationApplicationTypeSearch && getServerApplicationApplicationType() != null) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += ClientAppPP.serverApplication().applicationType().pp + " = ?";
+            args = OAArray.add(Object.class, args, getServerApplicationApplicationType());
+            String pp = ApplicationTypePP.serverApplications().clientApps().pp;
+            finder = new OAFinder<ApplicationType, ClientApp>(getServerApplicationApplicationType(), pp);
+        }
+        if (!useServerApplicationServerSearch && getServerApplicationServer() != null) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += ClientAppPP.serverApplication().server().pp + " = ?";
+            args = OAArray.add(Object.class, args, getServerApplicationServer());
+            String pp = ServerPP.serverApplications().clientApps().pp;
+            finder = new OAFinder<Server, ClientApp>(getServerApplicationServer(), pp);
+        }
 
         if (OAString.isNotEmpty(extraWhere)) {
             if (sql.length() > 0) sql = "(" + sql + ") AND ";
@@ -78,7 +260,14 @@ public class ClientAppSearch extends OAObject {
         }
         else select.setFilter(this.getCustomFilter());
         select.setDataSourceFilter(this.getDataSourceFilter());
+        select.setFinder(finder);
         if (getMaxResults() > 0) select.setMax(getMaxResults());
+        if (useServerApplicationApplicationTypeSearch && getServerApplicationApplicationTypeSearch() != null) {
+            getServerApplicationApplicationTypeSearch().appendSelect(ClientAppPP.serverApplication().applicationType().pp, select);
+        }
+        if (useServerApplicationServerSearch && getServerApplicationServerSearch() != null) {
+            getServerApplicationServerSearch().appendSelect(ClientAppPP.serverApplication().server().pp, select);
+        }
         return select;
     }
 
@@ -86,6 +275,51 @@ public class ClientAppSearch extends OAObject {
         final String prefix = fromName + ".";
         String sql = "";
         Object[] args = new Object[0];
+        if (OAString.isNotEmpty(this.name)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(name);
+            if (val.indexOf("%") >= 0) {
+                sql += prefix + ClientApp.P_Name + " LIKE ?";
+            }
+            else {
+                sql += prefix + ClientApp.P_Name + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (!isNull(P_Id)) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += prefix + ClientApp.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
+        if (created != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (created2 != null && !created.equals(created2)) {
+                sql += prefix + ClientApp.P_Created + " >= ?";
+                args = OAArray.add(Object.class, args, this.created);
+                sql += " AND " + prefix + ClientApp.P_Created + " <= ?";
+                args = OAArray.add(Object.class, args, this.created2);
+            }
+            else {
+                sql += prefix + ClientApp.P_Created + " = ?";
+                args = OAArray.add(Object.class, args, this.created);
+            }
+        }
+        if (!useServerApplicationApplicationTypeSearch && getServerApplicationApplicationType() != null) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += prefix + ClientAppPP.serverApplication().applicationType().pp + " = ?";
+            args = OAArray.add(Object.class, args, getServerApplicationApplicationType());
+        }
+        if (useServerApplicationApplicationTypeSearch && getServerApplicationApplicationTypeSearch() != null) {
+            getServerApplicationApplicationTypeSearch().appendSelect(prefix + ClientAppPP.serverApplication().applicationType().pp, select);
+        }
+        if (!useServerApplicationServerSearch && getServerApplicationServer() != null) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += prefix + ClientAppPP.serverApplication().server().pp + " = ?";
+            args = OAArray.add(Object.class, args, getServerApplicationServer());
+        }
+        if (useServerApplicationServerSearch && getServerApplicationServerSearch() != null) {
+            getServerApplicationServerSearch().appendSelect(prefix + ClientAppPP.serverApplication().server().pp, select);
+        }
         select.add(sql, args);
     }
 

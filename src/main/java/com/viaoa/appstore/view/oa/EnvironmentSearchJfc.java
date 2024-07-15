@@ -307,6 +307,7 @@ public class EnvironmentSearchJfc {
         JButton cmd;
         OATextField txt;
         OAComboBox cbo;
+        OADateComboBox dcbo;
         OACheckBox chk;
     
         lbl = new JLabel("Name:");
@@ -336,10 +337,6 @@ public class EnvironmentSearchJfc {
         cbo.setLabel(lbl);
         panel.add(lbl, gc);
         panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
-        panx.add(new JLabel("From: "));
-        panx.add(cbo);
-        panx.add(new JLabel("To: "));
-        cbo = createType2ComboBox();
         panx.add(cbo);
         gc.gridwidth = gc.REMAINDER;
         panel.add(panx, gc);
@@ -351,11 +348,22 @@ public class EnvironmentSearchJfc {
         txt.setLabel(lbl);
         panel.add(lbl, gc);
         panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("Created:");
+        dcbo = createCreatedDateComboBox();
+        dcbo.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
         panx.add(new JLabel("From: "));
-        panx.add(txt);
+        panx.add(dcbo);
         panx.add(new JLabel("To: "));
-        txt = createId2TextField();
-        panx.add(txt);
+        dcbo = createCreated2DateComboBox();
+        panx.add(dcbo);
         gc.gridwidth = gc.REMAINDER;
         panel.add(panx, gc);
         gc.gridwidth = 1;
@@ -446,14 +454,6 @@ public class EnvironmentSearchJfc {
         cbo.setPopupColumns(20);
         return cbo;
     }
-    public OAComboBox createType2ComboBox() {
-        Hub<String> hub = OAObjectEnumDelegate.getDisplayNameValues(EnvironmentSearch.class, EnvironmentSearch.P_Type2).createSharedHub();
-        hub.setLinkHubOnPos(getModel().getEnvironmentSearchHub(), EnvironmentSearch.P_Type2);
-        OAComboBox cbo = new OAComboBox(hub, "", 16);
-        cbo.setMaximumColumns(20);
-        cbo.setPopupColumns(20);
-        return cbo;
-    }
     
     public OATextField createIdTextField() {
         OATextField txt = new OATextField(getModel().getEnvironmentSearchHub(), EnvironmentSearch.P_Id, 6);
@@ -463,13 +463,20 @@ public class EnvironmentSearchJfc {
         // setup(txt);
         return txt;
     }
-    public OATextField createId2TextField() {
-        OATextField txt = new OATextField(getModel().getEnvironmentSearchHub(), EnvironmentSearch.P_Id2, 6);
-        txt.addEnabledOnlyIfNew();
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(8);
-        // setup(txt);
-        return txt;
+    
+    public OADateComboBox createCreatedDateComboBox() {
+        OADateComboBox dcbo = new OADateComboBox(getModel().getEnvironmentSearchHub(), EnvironmentSearch.P_Created, 15);
+        dcbo.setMaximumColumns(22);
+        OATextField txt = new OATextField(getModel().getEnvironmentSearchHub(), EnvironmentSearch.P_Created, 10);
+        dcbo.setEditor(txt);
+        return dcbo;
+    }
+    public OADateComboBox createCreated2DateComboBox() {
+        OADateComboBox dcbo = new OADateComboBox(getModel().getEnvironmentSearchHub(), EnvironmentSearch.P_Created2, 15);
+        dcbo.setMaximumColumns(22);
+        OATextField txt = new OATextField(getModel().getEnvironmentSearchHub(), EnvironmentSearch.P_Created2, 10);
+        dcbo.setEditor(txt);
+        return dcbo;
     }
     
     public OATextField createMaxResultsTextField() {

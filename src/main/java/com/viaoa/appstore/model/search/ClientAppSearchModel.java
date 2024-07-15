@@ -25,9 +25,20 @@ public class ClientAppSearchModel {
     protected Hub<ClientApp> hubMultiSelect;
     protected Hub<ClientApp> hubSearchFrom;  // hub (optional) to search from
     protected Hub<ClientAppSearch> hubClientAppSearch;  // search data, size=1, AO
+    // references used in search
+    protected Hub<ApplicationType> hubServerApplicationApplicationType;
+    protected Hub<Server> hubServerApplicationServer;
     
     // finder used to find objects in a path
     protected OAFinder<?, ClientApp> finder;
+    
+    // ObjectModels
+    protected ApplicationTypeModel modelServerApplicationApplicationType;
+    protected ServerModel modelServerApplicationServer;
+    
+    // SearchModels
+    protected ApplicationTypeSearchModel modelServerApplicationApplicationTypeSearch;
+    protected ServerSearchModel modelServerApplicationServerSearch;
     
     // object used for search data
     protected ClientAppSearch clientAppSearch;
@@ -103,8 +114,67 @@ public class ClientAppSearchModel {
         }
         return hubClientAppSearch;
     }
+    public Hub<ApplicationType> getServerApplicationApplicationTypeHub() {
+        if (hubServerApplicationApplicationType != null) return hubServerApplicationApplicationType;
+        hubServerApplicationApplicationType = new Hub<>(ApplicationType.class);
+        Hub<ApplicationType> hub = ModelDelegate.getApplicationTypes();
+        HubCopy<ApplicationType> hc = new HubCopy<>(hub, hubServerApplicationApplicationType, false);
+        hubServerApplicationApplicationType.setLinkHub(getClientAppSearchHub(), ClientAppSearch.P_ServerApplicationApplicationType); 
+        return hubServerApplicationApplicationType;
+    }
+    public Hub<Server> getServerApplicationServerHub() {
+        if (hubServerApplicationServer != null) return hubServerApplicationServer;
+        hubServerApplicationServer = getClientAppSearchHub().getDetailHub(ClientAppSearch.P_ServerApplicationServer);
+        return hubServerApplicationServer;
+    }
     
+    public ApplicationTypeModel getServerApplicationApplicationTypeModel() {
+        if (modelServerApplicationApplicationType != null) return modelServerApplicationApplicationType;
+        modelServerApplicationApplicationType = new ApplicationTypeModel(getServerApplicationApplicationTypeHub());
+        modelServerApplicationApplicationType.setDisplayName("Application Type");
+        modelServerApplicationApplicationType.setPluralDisplayName("Application Types");
+        modelServerApplicationApplicationType.setAllowNew(false);
+        modelServerApplicationApplicationType.setAllowSave(true);
+        modelServerApplicationApplicationType.setAllowAdd(false);
+        modelServerApplicationApplicationType.setAllowRemove(false);
+        modelServerApplicationApplicationType.setAllowClear(true);
+        modelServerApplicationApplicationType.setAllowDelete(false);
+        modelServerApplicationApplicationType.setAllowSearch(true);
+        modelServerApplicationApplicationType.setAllowHubSearch(false);
+        modelServerApplicationApplicationType.setAllowGotoEdit(true);
+        return modelServerApplicationApplicationType;
+    }
+    public ServerModel getServerApplicationServerModel() {
+        if (modelServerApplicationServer != null) return modelServerApplicationServer;
+        modelServerApplicationServer = new ServerModel(getServerApplicationServerHub());
+        modelServerApplicationServer.setDisplayName("Server");
+        modelServerApplicationServer.setPluralDisplayName("Servers");
+        modelServerApplicationServer.setAllowNew(false);
+        modelServerApplicationServer.setAllowSave(true);
+        modelServerApplicationServer.setAllowAdd(false);
+        modelServerApplicationServer.setAllowRemove(false);
+        modelServerApplicationServer.setAllowClear(true);
+        modelServerApplicationServer.setAllowDelete(false);
+        modelServerApplicationServer.setAllowSearch(true);
+        modelServerApplicationServer.setAllowHubSearch(false);
+        modelServerApplicationServer.setAllowGotoEdit(true);
+        return modelServerApplicationServer;
+    }
     
+    public ApplicationTypeSearchModel getServerApplicationApplicationTypeSearchModel() {
+        if (modelServerApplicationApplicationTypeSearch == null) {
+            modelServerApplicationApplicationTypeSearch = new ApplicationTypeSearchModel();
+            getClientAppSearch().setServerApplicationApplicationTypeSearch(modelServerApplicationApplicationTypeSearch.getApplicationTypeSearch());
+        }
+        return modelServerApplicationApplicationTypeSearch;
+    }
+    public ServerSearchModel getServerApplicationServerSearchModel() {
+        if (modelServerApplicationServerSearch == null) {
+            modelServerApplicationServerSearch = new ServerSearchModel();
+            getClientAppSearch().setServerApplicationServerSearch(modelServerApplicationServerSearch.getServerSearch());
+        }
+        return modelServerApplicationServerSearch;
+    }
     
     public void beforeInput() {
         // hook that is called before search input starts

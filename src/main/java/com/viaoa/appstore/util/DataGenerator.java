@@ -385,9 +385,6 @@ public class DataGenerator {
             tot -= obj.getApplicationVersions().size();
             for (int cnt=0; cnt<tot; cnt++) {
                 ApplicationVersion applicationVersion = null;
-                applicationVersion = createApplicationVersion();
-                obj.getApplicationVersions().add(applicationVersion);
-                populate(applicationVersion);
             }
             done(obj, ApplicationType.P_ApplicationVersions);
         }
@@ -427,11 +424,6 @@ public class DataGenerator {
             //   will be created by Server
             done(obj, ApplicationType.P_ServerApplications);
         }
-        if (add(obj, ApplicationType.P_SingleApps)) {
-            // singleApps
-            //   will be created by AppUser
-            done(obj, ApplicationType.P_SingleApps);
-        }
     }
     
     public void populate(ApplicationVersion obj) {
@@ -446,44 +438,12 @@ public class DataGenerator {
         obj.setRelease((int) (Math.random() * 900));
         obj.setCompleted((new OADateTime()).addDays((int) (Math.random() * 1000)));
         obj.setVerified((new OADateTime()).addDays((int) (Math.random() * 1000)));
-        if (add(obj, ApplicationVersion.P_ServerApplications)) {
-            // serverApplications
-            tot = ((int) (Math.random()*4));
-            tot -= obj.getServerApplications().size();
-            for (int cnt=0; cnt<tot; cnt++) {
-                ServerApplication serverApplication = null;
-                serverApplication = (ServerApplication) OAObjectCacheDelegate.getRandom(ServerApplication.class, 500);
-                if (serverApplication != null) obj.getServerApplications().add(serverApplication);
-            }
-            done(obj, ApplicationVersion.P_ServerApplications);
-        }
-        if (add(obj, ApplicationVersion.P_SingleApps)) {
-            // singleApps
-            tot = ((int) (Math.random()*4));
-            tot -= obj.getSingleApps().size();
-            for (int cnt=0; cnt<tot; cnt++) {
-                SingleApp singleApp = null;
-                if (Math.random() < .75) {
-                    singleApp = (SingleApp) OAObjectCacheDelegate.getRandom(SingleApp.class, 500);
-                    if (singleApp != null) obj.getSingleApps().add(singleApp);
-                }
-                if (singleApp == null) {
-                    singleApp = createSingleApp();
-                    obj.getSingleApps().add(singleApp);
-                    populate(singleApp);
-                }
-            }
-            done(obj, ApplicationVersion.P_SingleApps);
-        }
         if (add(obj, ApplicationVersion.P_VersionFiles)) {
             // versionFiles
             tot = ((int) (Math.random()*4));
             tot -= obj.getVersionFiles().size();
             for (int cnt=0; cnt<tot; cnt++) {
                 VersionFile versionFile = null;
-                versionFile = createVersionFile();
-                obj.getVersionFiles().add(versionFile);
-                populate(versionFile);
             }
             done(obj, ApplicationVersion.P_VersionFiles);
         }
@@ -652,6 +612,7 @@ public class DataGenerator {
         // id is auto assigned
         // created has a default value
         obj.setName(OAString.getDummyText(18, 0, 55));
+        obj.setAutoLogin(Math.random() < .5 ? true : false);
         if (obj.getAppUser() == null) {
             hub = ModelDelegate.getAppUsers();
             x = (int) (Math.random()*hub.getSize());
@@ -663,15 +624,9 @@ public class DataGenerator {
             tot -= obj.getPropertyValues().size();
             for (int cnt=0; cnt<tot; cnt++) {
                 PropertyValue propertyValue = null;
-                if (Math.random() < .75) {
-                    propertyValue = (PropertyValue) OAObjectCacheDelegate.getRandom(PropertyValue.class, 500);
-                    if (propertyValue != null) obj.getPropertyValues().add(propertyValue);
-                }
-                if (propertyValue == null) {
-                    propertyValue = createPropertyValue();
-                    obj.getPropertyValues().add(propertyValue);
-                    populate(propertyValue);
-                }
+                propertyValue = createPropertyValue();
+                obj.getPropertyValues().add(propertyValue);
+                populate(propertyValue);
             }
             done(obj, ClientApp.P_PropertyValues);
         }
@@ -797,15 +752,9 @@ public class DataGenerator {
             tot -= obj.getPropertyValues().size();
             for (int cnt=0; cnt<tot; cnt++) {
                 PropertyValue propertyValue = null;
-                if (Math.random() < .75) {
-                    propertyValue = (PropertyValue) OAObjectCacheDelegate.getRandom(PropertyValue.class, 500);
-                    if (propertyValue != null) obj.getPropertyValues().add(propertyValue);
-                }
-                if (propertyValue == null) {
-                    propertyValue = createPropertyValue();
-                    obj.getPropertyValues().add(propertyValue);
-                    populate(propertyValue);
-                }
+                propertyValue = createPropertyValue();
+                obj.getPropertyValues().add(propertyValue);
+                populate(propertyValue);
             }
             done(obj, ServerApplication.P_PropertyValues);
         }
@@ -844,15 +793,9 @@ public class DataGenerator {
             tot -= obj.getPropertyValues().size();
             for (int cnt=0; cnt<tot; cnt++) {
                 PropertyValue propertyValue = null;
-                if (Math.random() < .75) {
-                    propertyValue = (PropertyValue) OAObjectCacheDelegate.getRandom(PropertyValue.class, 500);
-                    if (propertyValue != null) obj.getPropertyValues().add(propertyValue);
-                }
-                if (propertyValue == null) {
-                    propertyValue = createPropertyValue();
-                    obj.getPropertyValues().add(propertyValue);
-                    populate(propertyValue);
-                }
+                propertyValue = createPropertyValue();
+                obj.getPropertyValues().add(propertyValue);
+                populate(propertyValue);
             }
             done(obj, SingleApp.P_PropertyValues);
         }

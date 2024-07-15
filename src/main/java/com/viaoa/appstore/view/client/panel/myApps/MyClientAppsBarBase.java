@@ -47,7 +47,7 @@ public class MyClientAppsBarBase {
         getTree();
         OATreeTitleNode ttNode;
     
-        // AppUserClientApps - My Client Applications - 
+        // AppUserClientApps - Client Apps - 
         AppUserModel modelAppUser = new AppUserModel(ModelDelegate.getLocalAppUserHub());
         AppUserJfc jfcAppUser = new AppUserJfc(modelAppUser) {
             JPanel panx;
@@ -86,7 +86,7 @@ public class MyClientAppsBarBase {
         ttNode = jfcClientApps.getTreeTitleNode();
         tree.add(ttNode);
         ttNode.add(jfcClientApps.getTreeNode());
-        cardPanel.add(new JLabel("loading My Client Applications ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), CARD_AppUserClientApps);
+        cardPanel.add(new JLabel("loading Client Apps ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), CARD_AppUserClientApps);
     }
     protected OATree getTree() {
         if (tree != null) return tree;

@@ -47,7 +47,7 @@ public class MyServerAppsBarBase {
         getTree();
         OATreeTitleNode ttNode;
     
-        // AppUserServerServerApplications - My Server Applications - 
+        // AppUserServerServerApplications - Server Apps - 
         Hub<ServerApplication> hubServerApplication = new Hub<ServerApplication>(ServerApplication.class);
         new HubMerger(ModelDelegate.getLocalAppUserHub(), hubServerApplication, AppUserPP.server().serverApplications().pp, false);
         ServerApplicationJfc jfcServerApplication = new ServerApplicationJfc(hubServerApplication) {
@@ -85,7 +85,7 @@ public class MyServerAppsBarBase {
                 sw.execute();
             }
         };
-        jfcServerApplication.getModel().setPluralDisplayName("My Server Applications");
+        jfcServerApplication.getModel().setPluralDisplayName("Server Apps");
         jfcServerApplication.getModel().setAllowAdd(false);
         jfcServerApplication.getModel().setAllowDownload(true);
         jfcServerApplication.getModel().setAllowRemove(false);
@@ -100,7 +100,7 @@ public class MyServerAppsBarBase {
         ttNode = jfcServerApplication.getTreeTitleNode();
         tree.add(ttNode);
         ttNode.add(jfcServerApplication.getTreeNode());
-        cardPanel.add(new JLabel("loading My Server Applications ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), CARD_AppUserServerServerApplications);
+        cardPanel.add(new JLabel("loading Server Apps ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), CARD_AppUserServerServerApplications);
     }
     protected OATree getTree() {
         if (tree != null) return tree;

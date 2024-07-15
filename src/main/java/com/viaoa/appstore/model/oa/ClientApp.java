@@ -38,6 +38,9 @@ public class ClientApp extends OAObject {
     public static final String P_Id = "id";
     public static final String P_Created = "created";
     public static final String P_Name = "name";
+    public static final String P_AutoLogin = "autoLogin";
+     
+    public static final String P_CalcName = "calcName";
      
     public static final String P_AppUser = "appUser";
     public static final String P_AppUserId = "appUserId"; // fkey
@@ -52,6 +55,7 @@ public class ClientApp extends OAObject {
     protected volatile int id;
     protected volatile OADateTime created;
     protected volatile String name;
+    protected volatile boolean autoLogin;
      
     // Links to other objects.
     protected volatile transient AppUser appUser;
@@ -107,6 +111,31 @@ public class ClientApp extends OAObject {
         fireBeforePropertyChange(P_Name, old, newValue);
         this.name = newValue;
         firePropertyChange(P_Name, old, this.name);
+    }
+
+    @OAProperty(displayName = "Auto Login", displayLength = 5, uiColumnLength = 10)
+    @OAColumn(name = "AutoLogin", sqlType = java.sql.Types.BOOLEAN)
+    public boolean getAutoLogin() {
+        return autoLogin;
+    }
+    public boolean isAutoLogin() {
+        return getAutoLogin();
+    }
+    public void setAutoLogin(boolean newValue) {
+        boolean old = autoLogin;
+        fireBeforePropertyChange(P_AutoLogin, old, newValue);
+        this.autoLogin = newValue;
+        firePropertyChange(P_AutoLogin, old, this.autoLogin);
+    }
+    @OACalculatedProperty(displayName = "Calc Name", displayLength = 15, properties = {P_Name, P_ServerApplication+"."+ServerApplication.P_CalcName})
+    public String getCalcName() {
+        String name = this.getName();
+        if (OAStr.isNotEmpty(name)) return name;
+        ServerApplication serverApplication = this.getServerApplication();
+        if (serverApplication != null) {
+            return serverApplication.getCalcName();
+        }
+        return null;
     }
 
     @OAOne(
@@ -184,6 +213,7 @@ public class ClientApp extends OAObject {
     @OAOne(
         displayName = "Server Application", 
         reverseName = ServerApplication.P_ClientApps, 
+        required = true, 
         allowCreateNew = false, 
         selectFromPropertyPath = P_AppUser + "." + AppUser.P_MergeServerApplications, 
         fkeys = {@OAFkey(fromProperty = P_ServerApplicationId, toProperty = ServerApplication.P_Id)}
@@ -221,11 +251,13 @@ public class ClientApp extends OAObject {
         timestamp = rs.getTimestamp(2);
         if (timestamp != null) this.created = new OADateTime(timestamp);
         this.name = rs.getString(3);
-        int appUserFkey = rs.getInt(4);
+        this.autoLogin = rs.getBoolean(4);
+        OAObjectInfoDelegate.setPrimitiveNull(this, P_AutoLogin, rs.wasNull());
+        int appUserFkey = rs.getInt(5);
         setFkeyProperty(P_AppUser, rs.wasNull() ? null : appUserFkey);
-        int runningAppFkey = rs.getInt(5);
+        int runningAppFkey = rs.getInt(6);
         setFkeyProperty(P_RunningApp, rs.wasNull() ? null : runningAppFkey);
-        int serverApplicationFkey = rs.getInt(6);
+        int serverApplicationFkey = rs.getInt(7);
         setFkeyProperty(P_ServerApplication, rs.wasNull() ? null : serverApplicationFkey);
 
         this.changedFlag = false;

@@ -22,13 +22,28 @@ public class ApplicationTypeDelegate {
         String s = applicationType.getAppDirectory();
         s = OAStr.convert(s, "\\", "/");
         
-        URL url = new URL(urlDownload + "/appstore/" + s +  "/version.ini");
+        
+        URI uri = new URI(urlDownload + "/appstore/" + s +  "/version.ini");
+        URL url = uri.toURL();
+        // was: URL url = new URL(urlDownload + "/appstore/" + s +  "/version.ini");
         URLConnection conn = url.openConnection();
 
         OAProperties gitProps = new OAProperties(conn.getInputStream());
         
-        final int release = OAConv.toInt(gitProps.getProperty("Release"));
-        final String version = gitProps.getProperty("Version");
+        final int release = OAConv.toInt(gitProps.getProperty("release"));
+        final String version = gitProps.getProperty("version");
+        
+        if (OAStr.isEmpty(applicationType.getName())) {
+            applicationType.setName(gitProps.getProperty("name"));
+        }
+        if (OAStr.isEmpty(applicationType.getMainClass()) || applicationType.getMainClass().indexOf("[") >= 0) {
+            applicationType.setMainClass(gitProps.getProperty("mainClass"));
+        }
+        if (OAStr.isEmpty(applicationType.getJarFileName())) {
+            applicationType.setJarFileName(gitProps.getProperty("jarFileName"));
+        }
+        applicationType.setSingleTypeOnly(gitProps.getBoolean("singleTypeOnly", false));
+        
 
         applicationType.setConsole(String.format("version.ini read, version=%s, release=%d", version, release));
         if (release == 0) return;

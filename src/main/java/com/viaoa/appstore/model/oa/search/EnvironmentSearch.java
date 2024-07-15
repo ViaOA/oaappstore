@@ -9,6 +9,7 @@ import com.viaoa.annotation.*;
 import com.viaoa.object.*;
 import com.viaoa.hub.*;
 import com.viaoa.util.*;
+import com.viaoa.util.OADateTime;
 import com.viaoa.datasource.*;
 import com.viaoa.filter.*;
 
@@ -21,17 +22,17 @@ public class EnvironmentSearch extends OAObject {
     public static final String P_Name = "Name";
     public static final String P_AbbrevName = "AbbrevName";
     public static final String P_Type = "Type";
-    public static final String P_Type2 = "Type2";
     public static final String P_Id = "Id";
-    public static final String P_Id2 = "Id2";
+    public static final String P_Created = "Created";
+    public static final String P_Created2 = "Created2";
     public static final String P_MaxResults = "MaxResults";
 
     protected String name;
     protected String abbrevName;
     protected int type;
-    protected int type2;
     protected int id;
-    protected int id2;
+    protected OADateTime created;
+    protected OADateTime created2;
     protected int maxResults;
 
     @OAProperty(maxLength = 35, displayLength = 15)
@@ -65,20 +66,8 @@ public class EnvironmentSearch extends OAObject {
         fireBeforePropertyChange(P_Type, old, newValue);
         this.type = newValue;
         firePropertyChange(P_Type, old, this.type);
-        if (isLoading()) return;
-        if (type > type2) setType2(this.type);
-    } 
-    public int getType2() {
-        return type2;
     }
-    public void setType2(int newValue) {
-        int old = type2;
-        fireBeforePropertyChange(P_Type2, old, newValue);
-        this.type2 = newValue;
-        firePropertyChange(P_Type2, old, this.type2);
-        if (isLoading()) return;
-        if (type > type2) setType(this.type2);
-    }
+      
 
     public String getTypeString() {
         Environment.Type type = getTypeEnum();
@@ -119,19 +108,34 @@ public class EnvironmentSearch extends OAObject {
         fireBeforePropertyChange(P_Id, old, newValue);
         this.id = newValue;
         firePropertyChange(P_Id, old, this.id);
-        if (isLoading()) return;
-        if (id > id2) setId2(this.id);
-    } 
-    public int getId2() {
-        return id2;
     }
-    public void setId2(int newValue) {
-        int old = id2;
-        fireBeforePropertyChange(P_Id2, old, newValue);
-        this.id2 = newValue;
-        firePropertyChange(P_Id2, old, this.id2);
+      
+    @OAProperty(defaultValue = "new OADateTime()", displayLength = 15)
+    public OADateTime getCreated() {
+        return created;
+    }
+    public void setCreated(OADateTime newValue) {
+        OADateTime old = created;
+        fireBeforePropertyChange(P_Created, old, newValue);
+        this.created = newValue;
+        firePropertyChange(P_Created, old, this.created);
         if (isLoading()) return;
-        if (id > id2) setId(this.id2);
+        if (created != null) {
+            if (created2 == null) setCreated2(this.created.addDays(1));
+            else if (created.compareTo(created2) > 0) setCreated2(this.created.addDays(1));
+        }
+    } 
+    public OADateTime getCreated2() {
+        return created2;
+    }
+    public void setCreated2(OADateTime newValue) {
+        OADateTime old = created2;
+        fireBeforePropertyChange(P_Created2, old, newValue);
+        this.created2 = newValue;
+        firePropertyChange(P_Created2, old, this.created2);
+        if (created != null && created2 != null) {
+            if (created.compareTo(created2) > 0) setCreated(this.created2);
+        }
     }
 
     public int getMaxResults() {
@@ -149,12 +153,10 @@ public class EnvironmentSearch extends OAObject {
         setAbbrevName(null);
         setType(0);
         setNull(P_Type);
-        setType2(0);
-        setNull(P_Type2);
         setId(0);
         setNull(P_Id);
-        setId2(0);
-        setNull(P_Id2);
+        setCreated(null);
+        setCreated2(null);
     }
 
     public boolean isDataEntered() {
@@ -162,6 +164,7 @@ public class EnvironmentSearch extends OAObject {
         if (getAbbrevName() != null) return true;
         if (!isNull(P_Type)) return true;
         if (!isNull(P_Id)) return true;
+        if (getCreated() != null) return true;
         return false;
     }
 
@@ -213,28 +216,25 @@ public class EnvironmentSearch extends OAObject {
         }
         if (!isNull(P_Type)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_Type2) && type != type2) {
-                sql += Environment.P_Type + " >= ?";
-                args = OAArray.add(Object.class, args, getType());
-                sql += " AND " + Environment.P_Type + " <= ?";
-                args = OAArray.add(Object.class, args, getType2());
-            }
-            else {
-                sql += Environment.P_Type + " = ?";
-                args = OAArray.add(Object.class, args, getType());
-            }
+            sql += Environment.P_Type + " = ?";
+            args = OAArray.add(Object.class, args, this.type);
         }
         if (!isNull(P_Id)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_Id2) && id != id2) {
-                sql += Environment.P_Id + " >= ?";
-                args = OAArray.add(Object.class, args, getId());
-                sql += " AND " + Environment.P_Id + " <= ?";
-                args = OAArray.add(Object.class, args, getId2());
+            sql += Environment.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
+        if (created != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (created2 != null && !created.equals(created2)) {
+                sql += Environment.P_Created + " >= ?";
+                args = OAArray.add(Object.class, args, this.created);
+                sql += " AND " + Environment.P_Created + " <= ?";
+                args = OAArray.add(Object.class, args, this.created2);
             }
             else {
-                sql += Environment.P_Id + " = ?";
-                args = OAArray.add(Object.class, args, getId());
+                sql += Environment.P_Created + " = ?";
+                args = OAArray.add(Object.class, args, this.created);
             }
         }
 
@@ -282,28 +282,25 @@ public class EnvironmentSearch extends OAObject {
         }
         if (!isNull(P_Type)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_Type2) && type != type2) {
-                sql += prefix + Environment.P_Type + " >= ?";
-                args = OAArray.add(Object.class, args, getType());
-                sql += " AND " + prefix + Environment.P_Type + " <= ?";
-                args = OAArray.add(Object.class, args, getType2());
-            }
-            else {
-                sql += prefix + Environment.P_Type + " = ?";
-                args = OAArray.add(Object.class, args, getType());
-            }
+            sql += prefix + Environment.P_Type + " = ?";
+            args = OAArray.add(Object.class, args, this.type);
         }
         if (!isNull(P_Id)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_Id2) && id != id2) {
-                sql += prefix + Environment.P_Id + " >= ?";
-                args = OAArray.add(Object.class, args, getId());
-                sql += " AND " + prefix + Environment.P_Id + " <= ?";
-                args = OAArray.add(Object.class, args, getId2());
+            sql += prefix + Environment.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
+        if (created != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (created2 != null && !created.equals(created2)) {
+                sql += prefix + Environment.P_Created + " >= ?";
+                args = OAArray.add(Object.class, args, this.created);
+                sql += " AND " + prefix + Environment.P_Created + " <= ?";
+                args = OAArray.add(Object.class, args, this.created2);
             }
             else {
-                sql += prefix + Environment.P_Id + " = ?";
-                args = OAArray.add(Object.class, args, getId());
+                sql += prefix + Environment.P_Created + " = ?";
+                args = OAArray.add(Object.class, args, this.created);
             }
         }
         select.add(sql, args);

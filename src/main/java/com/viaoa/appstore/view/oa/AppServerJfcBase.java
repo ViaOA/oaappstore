@@ -283,6 +283,7 @@ public class AppServerJfcBase implements OAModelJfcInterface {
             @Override
             public void objectSelected(Object obj) {
                 super.objectSelected(obj);
+                AppServerJfcBase.this.getCardPanel();
                 AppServerJfcBase.this.onShowEditPanel();
             }
             @Override

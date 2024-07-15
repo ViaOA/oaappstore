@@ -285,6 +285,7 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
             @Override
             public void objectSelected(Object obj) {
                 super.objectSelected(obj);
+                RunningAppJfcBase.this.getCardPanel();
                 RunningAppJfcBase.this.onShowEditPanel();
             }
             @Override
@@ -533,7 +534,7 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         table.setAllowSorting(false);
         table.addCounterColumn();
         getSearchJfc().createTableColumns(table);
-        table.setPreferredSize(15, 3, true);
+        table.setPreferredSize(15, 4, true);
         table.resizeColumnsToFitHeading();
         
         OATableComboBox cboTable = new OATableComboBox(table, getHub(), PP_Display) {
@@ -875,6 +876,7 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(RunningApp.P_Pid));
         }
+        tc = table.addColumn("Stopped", 15, createStoppedDateTimeTextField());
     }
     
     public OATable createReadOnlyTable() {
@@ -928,6 +930,8 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         if (getModel().getAllowTableFilter()) {
             tc.setFilterComponent(new OATextFieldFilter(RunningApp.P_Pid));
         }
+        lbl = new OALabel(getHub(), RunningApp.P_Stopped, 15);
+        tc = table.addColumn("Stopped", 15, lbl);
     }
     
     public OAButton createGotoEditButton() {
@@ -1254,6 +1258,7 @@ public class RunningAppJfcBase implements OAModelJfcInterface {
         dd.addProperty("Id", RunningApp.P_Id);
         dd.addProperty("created", RunningApp.P_Created);
         dd.addProperty("pid", RunningApp.P_Pid);
+        dd.addProperty("stopped", RunningApp.P_Stopped);
     }
     // Card Panel
     public JPanel getCardPanel() {

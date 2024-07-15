@@ -9,6 +9,7 @@ import com.viaoa.annotation.*;
 import com.viaoa.object.*;
 import com.viaoa.hub.*;
 import com.viaoa.util.*;
+import com.viaoa.util.OADateTime;
 import com.viaoa.datasource.*;
 import com.viaoa.filter.*;
 import com.viaoa.appstore.delegate.ModelDelegate;
@@ -19,10 +20,98 @@ public class RunningAppSearch extends OAObject {
 
     private static Logger LOG = Logger.getLogger(RunningAppSearch.class.getName());
 
+    public static final String P_Pid = "Pid";
+    public static final String P_Created = "Created";
+    public static final String P_Created2 = "Created2";
+    public static final String P_Stopped = "Stopped";
+    public static final String P_Stopped2 = "Stopped2";
+    public static final String P_Id = "Id";
     public static final String P_MaxResults = "MaxResults";
 
+    protected long pid;
+    protected OADateTime created;
+    protected OADateTime created2;
+    protected OADateTime stopped;
+    protected OADateTime stopped2;
+    protected int id;
     protected int maxResults;
 
+    @OAProperty(displayLength = 6)
+    public long getPid() {
+        return pid;
+    }
+    public void setPid(long newValue) {
+        long old = pid;
+        fireBeforePropertyChange(P_Pid, old, newValue);
+        this.pid = newValue;
+        firePropertyChange(P_Pid, old, this.pid);
+    }
+      
+    @OAProperty(defaultValue = "new OADateTime()", displayLength = 15)
+    public OADateTime getCreated() {
+        return created;
+    }
+    public void setCreated(OADateTime newValue) {
+        OADateTime old = created;
+        fireBeforePropertyChange(P_Created, old, newValue);
+        this.created = newValue;
+        firePropertyChange(P_Created, old, this.created);
+        if (isLoading()) return;
+        if (created != null) {
+            if (created2 == null) setCreated2(this.created.addDays(1));
+            else if (created.compareTo(created2) > 0) setCreated2(this.created.addDays(1));
+        }
+    } 
+    public OADateTime getCreated2() {
+        return created2;
+    }
+    public void setCreated2(OADateTime newValue) {
+        OADateTime old = created2;
+        fireBeforePropertyChange(P_Created2, old, newValue);
+        this.created2 = newValue;
+        firePropertyChange(P_Created2, old, this.created2);
+        if (created != null && created2 != null) {
+            if (created.compareTo(created2) > 0) setCreated(this.created2);
+        }
+    }
+    @OAProperty(displayLength = 15)
+    public OADateTime getStopped() {
+        return stopped;
+    }
+    public void setStopped(OADateTime newValue) {
+        OADateTime old = stopped;
+        fireBeforePropertyChange(P_Stopped, old, newValue);
+        this.stopped = newValue;
+        firePropertyChange(P_Stopped, old, this.stopped);
+        if (isLoading()) return;
+        if (stopped != null) {
+            if (stopped2 == null) setStopped2(this.stopped.addDays(1));
+            else if (stopped.compareTo(stopped2) > 0) setStopped2(this.stopped.addDays(1));
+        }
+    } 
+    public OADateTime getStopped2() {
+        return stopped2;
+    }
+    public void setStopped2(OADateTime newValue) {
+        OADateTime old = stopped2;
+        fireBeforePropertyChange(P_Stopped2, old, newValue);
+        this.stopped2 = newValue;
+        firePropertyChange(P_Stopped2, old, this.stopped2);
+        if (stopped != null && stopped2 != null) {
+            if (stopped.compareTo(stopped2) > 0) setStopped(this.stopped2);
+        }
+    }
+    @OAProperty(displayLength = 6)
+    public int getId() {
+        return id;
+    }
+    public void setId(int newValue) {
+        int old = id;
+        fireBeforePropertyChange(P_Id, old, newValue);
+        this.id = newValue;
+        firePropertyChange(P_Id, old, this.id);
+    }
+      
 
     public int getMaxResults() {
         return maxResults;
@@ -35,9 +124,21 @@ public class RunningAppSearch extends OAObject {
     }
 
     public void reset() {
+        setPid(0);
+        setNull(P_Pid);
+        setCreated(null);
+        setCreated2(null);
+        setStopped(null);
+        setStopped2(null);
+        setId(0);
+        setNull(P_Id);
     }
 
     public boolean isDataEntered() {
+        if (!isNull(P_Pid)) return true;
+        if (getCreated() != null) return true;
+        if (getStopped() != null) return true;
+        if (!isNull(P_Id)) return true;
         return false;
     }
 
@@ -65,6 +166,42 @@ public class RunningAppSearch extends OAObject {
         String sql = "";
         String sortOrder = null;
         Object[] args = new Object[0];
+        if (!isNull(P_Pid)) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += RunningApp.P_Pid + " = ?";
+            args = OAArray.add(Object.class, args, this.pid);
+        }
+        if (created != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (created2 != null && !created.equals(created2)) {
+                sql += RunningApp.P_Created + " >= ?";
+                args = OAArray.add(Object.class, args, this.created);
+                sql += " AND " + RunningApp.P_Created + " <= ?";
+                args = OAArray.add(Object.class, args, this.created2);
+            }
+            else {
+                sql += RunningApp.P_Created + " = ?";
+                args = OAArray.add(Object.class, args, this.created);
+            }
+        }
+        if (stopped != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (stopped2 != null && !stopped.equals(stopped2)) {
+                sql += RunningApp.P_Stopped + " >= ?";
+                args = OAArray.add(Object.class, args, this.stopped);
+                sql += " AND " + RunningApp.P_Stopped + " <= ?";
+                args = OAArray.add(Object.class, args, this.stopped2);
+            }
+            else {
+                sql += RunningApp.P_Stopped + " = ?";
+                args = OAArray.add(Object.class, args, this.stopped);
+            }
+        }
+        if (!isNull(P_Id)) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += RunningApp.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
 
         if (OAString.isNotEmpty(extraWhere)) {
             if (sql.length() > 0) sql = "(" + sql + ") AND ";
@@ -86,6 +223,42 @@ public class RunningAppSearch extends OAObject {
         final String prefix = fromName + ".";
         String sql = "";
         Object[] args = new Object[0];
+        if (!isNull(P_Pid)) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += prefix + RunningApp.P_Pid + " = ?";
+            args = OAArray.add(Object.class, args, this.pid);
+        }
+        if (created != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (created2 != null && !created.equals(created2)) {
+                sql += prefix + RunningApp.P_Created + " >= ?";
+                args = OAArray.add(Object.class, args, this.created);
+                sql += " AND " + prefix + RunningApp.P_Created + " <= ?";
+                args = OAArray.add(Object.class, args, this.created2);
+            }
+            else {
+                sql += prefix + RunningApp.P_Created + " = ?";
+                args = OAArray.add(Object.class, args, this.created);
+            }
+        }
+        if (stopped != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (stopped2 != null && !stopped.equals(stopped2)) {
+                sql += prefix + RunningApp.P_Stopped + " >= ?";
+                args = OAArray.add(Object.class, args, this.stopped);
+                sql += " AND " + prefix + RunningApp.P_Stopped + " <= ?";
+                args = OAArray.add(Object.class, args, this.stopped2);
+            }
+            else {
+                sql += prefix + RunningApp.P_Stopped + " = ?";
+                args = OAArray.add(Object.class, args, this.stopped);
+            }
+        }
+        if (!isNull(P_Id)) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += prefix + RunningApp.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
         select.add(sql, args);
     }
 

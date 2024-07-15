@@ -93,8 +93,24 @@ public class ServerApplicationPPx implements PPxInterface, Serializable {
         return pp + "." + ServerApplication.P_LastConnect;
     }
 
-    public String displayName() {
-        return pp + "." + ServerApplication.P_DisplayName;
+    public String calcFullName() {
+        return pp + "." + ServerApplication.P_CalcFullName;
+    }
+
+    public String calcClientPort() {
+        return pp + "." + ServerApplication.P_CalcClientPort;
+    }
+
+    public String calcHttpPort() {
+        return pp + "." + ServerApplication.P_CalcHttpPort;
+    }
+
+    public String calcHttpsPort() {
+        return pp + "." + ServerApplication.P_CalcHttpsPort;
+    }
+
+    public String calcName() {
+        return pp + "." + ServerApplication.P_CalcName;
     }
 
     public String run() {

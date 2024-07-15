@@ -19,33 +19,60 @@ public class ServerApplicationSearch extends OAObject {
 
     private static Logger LOG = Logger.getLogger(ServerApplicationSearch.class.getName());
 
-    public static final String P_Id = "Id";
-    public static final String P_Id2 = "Id2";
-    public static final String P_Created = "Created";
     public static final String P_ClientPort = "ClientPort";
-    public static final String P_ClientPort2 = "ClientPort2";
     public static final String P_HttpPort = "HttpPort";
-    public static final String P_HttpPort2 = "HttpPort2";
     public static final String P_HttpsPort = "HttpsPort";
-    public static final String P_HttpsPort2 = "HttpsPort2";
+    public static final String P_Id = "Id";
+    public static final String P_Created = "Created";
+    public static final String P_Created2 = "Created2";
     public static final String P_ApplicationType = "ApplicationType";
     public static final String P_UseApplicationTypeSearch = "UseApplicationTypeSearch";
     public static final String P_MaxResults = "MaxResults";
 
-    protected int id;
-    protected int id2;
-    protected OADateTime created;
     protected int clientPort;
-    protected int clientPort2;
     protected int httpPort;
-    protected int httpPort2;
     protected int httpsPort;
-    protected int httpsPort2;
+    protected int id;
+    protected OADateTime created;
+    protected OADateTime created2;
     protected ApplicationType applicationType;
     protected boolean useApplicationTypeSearch;
     protected ApplicationTypeSearch searchApplicationType;
     protected int maxResults;
 
+    @OAProperty(displayName = "Client Port", displayLength = 6, uiColumnLength = 11, format = "###")
+    public int getClientPort() {
+        return clientPort;
+    }
+    public void setClientPort(int newValue) {
+        int old = clientPort;
+        fireBeforePropertyChange(P_ClientPort, old, newValue);
+        this.clientPort = newValue;
+        firePropertyChange(P_ClientPort, old, this.clientPort);
+    }
+      
+    @OAProperty(displayName = "Http Port", displayLength = 6, uiColumnLength = 9, format = "###")
+    public int getHttpPort() {
+        return httpPort;
+    }
+    public void setHttpPort(int newValue) {
+        int old = httpPort;
+        fireBeforePropertyChange(P_HttpPort, old, newValue);
+        this.httpPort = newValue;
+        firePropertyChange(P_HttpPort, old, this.httpPort);
+    }
+      
+    @OAProperty(displayName = "Https Port", displayLength = 6, uiColumnLength = 10, format = "###")
+    public int getHttpsPort() {
+        return httpsPort;
+    }
+    public void setHttpsPort(int newValue) {
+        int old = httpsPort;
+        fireBeforePropertyChange(P_HttpsPort, old, newValue);
+        this.httpsPort = newValue;
+        firePropertyChange(P_HttpsPort, old, this.httpsPort);
+    }
+      
     @OAProperty(displayLength = 6)
     public int getId() {
         return id;
@@ -55,20 +82,8 @@ public class ServerApplicationSearch extends OAObject {
         fireBeforePropertyChange(P_Id, old, newValue);
         this.id = newValue;
         firePropertyChange(P_Id, old, this.id);
-        if (isLoading()) return;
-        if (id > id2) setId2(this.id);
-    } 
-    public int getId2() {
-        return id2;
     }
-    public void setId2(int newValue) {
-        int old = id2;
-        fireBeforePropertyChange(P_Id2, old, newValue);
-        this.id2 = newValue;
-        firePropertyChange(P_Id2, old, this.id2);
-        if (isLoading()) return;
-        if (id > id2) setId(this.id2);
-    }
+      
     @OAProperty(defaultValue = "new OADateTime()", displayLength = 15)
     public OADateTime getCreated() {
         return created;
@@ -78,76 +93,23 @@ public class ServerApplicationSearch extends OAObject {
         fireBeforePropertyChange(P_Created, old, newValue);
         this.created = newValue;
         firePropertyChange(P_Created, old, this.created);
-    }
-      
-    @OAProperty(displayName = "Client Port", displayLength = 6, uiColumnLength = 11, format = "#")
-    public int getClientPort() {
-        return clientPort;
-    }
-    public void setClientPort(int newValue) {
-        int old = clientPort;
-        fireBeforePropertyChange(P_ClientPort, old, newValue);
-        this.clientPort = newValue;
-        firePropertyChange(P_ClientPort, old, this.clientPort);
         if (isLoading()) return;
-        if (clientPort > clientPort2) setClientPort2(this.clientPort);
+        if (created != null) {
+            if (created2 == null) setCreated2(this.created.addDays(1));
+            else if (created.compareTo(created2) > 0) setCreated2(this.created.addDays(1));
+        }
     } 
-    public int getClientPort2() {
-        return clientPort2;
+    public OADateTime getCreated2() {
+        return created2;
     }
-    public void setClientPort2(int newValue) {
-        int old = clientPort2;
-        fireBeforePropertyChange(P_ClientPort2, old, newValue);
-        this.clientPort2 = newValue;
-        firePropertyChange(P_ClientPort2, old, this.clientPort2);
-        if (isLoading()) return;
-        if (clientPort > clientPort2) setClientPort(this.clientPort2);
-    }
-    @OAProperty(displayName = "Http Port", displayLength = 6, uiColumnLength = 9, format = "#")
-    public int getHttpPort() {
-        return httpPort;
-    }
-    public void setHttpPort(int newValue) {
-        int old = httpPort;
-        fireBeforePropertyChange(P_HttpPort, old, newValue);
-        this.httpPort = newValue;
-        firePropertyChange(P_HttpPort, old, this.httpPort);
-        if (isLoading()) return;
-        if (httpPort > httpPort2) setHttpPort2(this.httpPort);
-    } 
-    public int getHttpPort2() {
-        return httpPort2;
-    }
-    public void setHttpPort2(int newValue) {
-        int old = httpPort2;
-        fireBeforePropertyChange(P_HttpPort2, old, newValue);
-        this.httpPort2 = newValue;
-        firePropertyChange(P_HttpPort2, old, this.httpPort2);
-        if (isLoading()) return;
-        if (httpPort > httpPort2) setHttpPort(this.httpPort2);
-    }
-    @OAProperty(displayName = "Https Port", displayLength = 6, uiColumnLength = 10, format = "#")
-    public int getHttpsPort() {
-        return httpsPort;
-    }
-    public void setHttpsPort(int newValue) {
-        int old = httpsPort;
-        fireBeforePropertyChange(P_HttpsPort, old, newValue);
-        this.httpsPort = newValue;
-        firePropertyChange(P_HttpsPort, old, this.httpsPort);
-        if (isLoading()) return;
-        if (httpsPort > httpsPort2) setHttpsPort2(this.httpsPort);
-    } 
-    public int getHttpsPort2() {
-        return httpsPort2;
-    }
-    public void setHttpsPort2(int newValue) {
-        int old = httpsPort2;
-        fireBeforePropertyChange(P_HttpsPort2, old, newValue);
-        this.httpsPort2 = newValue;
-        firePropertyChange(P_HttpsPort2, old, this.httpsPort2);
-        if (isLoading()) return;
-        if (httpsPort > httpsPort2) setHttpsPort(this.httpsPort2);
+    public void setCreated2(OADateTime newValue) {
+        OADateTime old = created2;
+        fireBeforePropertyChange(P_Created2, old, newValue);
+        this.created2 = newValue;
+        firePropertyChange(P_Created2, old, this.created2);
+        if (created != null && created2 != null) {
+            if (created.compareTo(created2) > 0) setCreated(this.created2);
+        }
     }
 
     public int getMaxResults() {
@@ -188,33 +150,26 @@ public class ServerApplicationSearch extends OAObject {
     }
 
     public void reset() {
-        setId(0);
-        setNull(P_Id);
-        setId2(0);
-        setNull(P_Id2);
-        setCreated(null);
         setClientPort(0);
         setNull(P_ClientPort);
-        setClientPort2(0);
-        setNull(P_ClientPort2);
         setHttpPort(0);
         setNull(P_HttpPort);
-        setHttpPort2(0);
-        setNull(P_HttpPort2);
         setHttpsPort(0);
         setNull(P_HttpsPort);
-        setHttpsPort2(0);
-        setNull(P_HttpsPort2);
+        setId(0);
+        setNull(P_Id);
+        setCreated(null);
+        setCreated2(null);
         setApplicationType(null);
         setUseApplicationTypeSearch(false);
     }
 
     public boolean isDataEntered() {
-        if (!isNull(P_Id)) return true;
-        if (getCreated() != null) return true;
         if (!isNull(P_ClientPort)) return true;
         if (!isNull(P_HttpPort)) return true;
         if (!isNull(P_HttpsPort)) return true;
+        if (!isNull(P_Id)) return true;
+        if (getCreated() != null) return true;
         if (getApplicationType() != null) return true;
         if (getUseApplicationTypeSearch()) return true;
         return false;
@@ -245,61 +200,37 @@ public class ServerApplicationSearch extends OAObject {
         String sortOrder = null;
         Object[] args = new Object[0];
         OAFinder finder = null;
-        if (!isNull(P_Id)) {
-            if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_Id2) && id != id2) {
-                sql += ServerApplication.P_Id + " >= ?";
-                args = OAArray.add(Object.class, args, getId());
-                sql += " AND " + ServerApplication.P_Id + " <= ?";
-                args = OAArray.add(Object.class, args, getId2());
-            }
-            else {
-                sql += ServerApplication.P_Id + " = ?";
-                args = OAArray.add(Object.class, args, getId());
-            }
-        }
-        if (created != null) {
-            if (sql.length() > 0) sql += " AND ";
-            sql += ServerApplication.P_Created + " = ?";
-            args = OAArray.add(Object.class, args, this.created);
-        }
         if (!isNull(P_ClientPort)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_ClientPort2) && clientPort != clientPort2) {
-                sql += ServerApplication.P_ClientPort + " >= ?";
-                args = OAArray.add(Object.class, args, getClientPort());
-                sql += " AND " + ServerApplication.P_ClientPort + " <= ?";
-                args = OAArray.add(Object.class, args, getClientPort2());
-            }
-            else {
-                sql += ServerApplication.P_ClientPort + " = ?";
-                args = OAArray.add(Object.class, args, getClientPort());
-            }
+            sql += ServerApplication.P_ClientPort + " = ?";
+            args = OAArray.add(Object.class, args, this.clientPort);
         }
         if (!isNull(P_HttpPort)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_HttpPort2) && httpPort != httpPort2) {
-                sql += ServerApplication.P_HttpPort + " >= ?";
-                args = OAArray.add(Object.class, args, getHttpPort());
-                sql += " AND " + ServerApplication.P_HttpPort + " <= ?";
-                args = OAArray.add(Object.class, args, getHttpPort2());
-            }
-            else {
-                sql += ServerApplication.P_HttpPort + " = ?";
-                args = OAArray.add(Object.class, args, getHttpPort());
-            }
+            sql += ServerApplication.P_HttpPort + " = ?";
+            args = OAArray.add(Object.class, args, this.httpPort);
         }
         if (!isNull(P_HttpsPort)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_HttpsPort2) && httpsPort != httpsPort2) {
-                sql += ServerApplication.P_HttpsPort + " >= ?";
-                args = OAArray.add(Object.class, args, getHttpsPort());
-                sql += " AND " + ServerApplication.P_HttpsPort + " <= ?";
-                args = OAArray.add(Object.class, args, getHttpsPort2());
+            sql += ServerApplication.P_HttpsPort + " = ?";
+            args = OAArray.add(Object.class, args, this.httpsPort);
+        }
+        if (!isNull(P_Id)) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += ServerApplication.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
+        if (created != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (created2 != null && !created.equals(created2)) {
+                sql += ServerApplication.P_Created + " >= ?";
+                args = OAArray.add(Object.class, args, this.created);
+                sql += " AND " + ServerApplication.P_Created + " <= ?";
+                args = OAArray.add(Object.class, args, this.created2);
             }
             else {
-                sql += ServerApplication.P_HttpsPort + " = ?";
-                args = OAArray.add(Object.class, args, getHttpsPort());
+                sql += ServerApplication.P_Created + " = ?";
+                args = OAArray.add(Object.class, args, this.created);
             }
         }
         if (!useApplicationTypeSearch && getApplicationType() != null) {
@@ -333,61 +264,37 @@ public class ServerApplicationSearch extends OAObject {
         final String prefix = fromName + ".";
         String sql = "";
         Object[] args = new Object[0];
-        if (!isNull(P_Id)) {
-            if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_Id2) && id != id2) {
-                sql += prefix + ServerApplication.P_Id + " >= ?";
-                args = OAArray.add(Object.class, args, getId());
-                sql += " AND " + prefix + ServerApplication.P_Id + " <= ?";
-                args = OAArray.add(Object.class, args, getId2());
-            }
-            else {
-                sql += prefix + ServerApplication.P_Id + " = ?";
-                args = OAArray.add(Object.class, args, getId());
-            }
-        }
-        if (created != null) {
-            if (sql.length() > 0) sql += " AND ";
-            sql += prefix + ServerApplication.P_Created + " = ?";
-            args = OAArray.add(Object.class, args, this.created);
-        }
         if (!isNull(P_ClientPort)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_ClientPort2) && clientPort != clientPort2) {
-                sql += prefix + ServerApplication.P_ClientPort + " >= ?";
-                args = OAArray.add(Object.class, args, getClientPort());
-                sql += " AND " + prefix + ServerApplication.P_ClientPort + " <= ?";
-                args = OAArray.add(Object.class, args, getClientPort2());
-            }
-            else {
-                sql += prefix + ServerApplication.P_ClientPort + " = ?";
-                args = OAArray.add(Object.class, args, getClientPort());
-            }
+            sql += prefix + ServerApplication.P_ClientPort + " = ?";
+            args = OAArray.add(Object.class, args, this.clientPort);
         }
         if (!isNull(P_HttpPort)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_HttpPort2) && httpPort != httpPort2) {
-                sql += prefix + ServerApplication.P_HttpPort + " >= ?";
-                args = OAArray.add(Object.class, args, getHttpPort());
-                sql += " AND " + prefix + ServerApplication.P_HttpPort + " <= ?";
-                args = OAArray.add(Object.class, args, getHttpPort2());
-            }
-            else {
-                sql += prefix + ServerApplication.P_HttpPort + " = ?";
-                args = OAArray.add(Object.class, args, getHttpPort());
-            }
+            sql += prefix + ServerApplication.P_HttpPort + " = ?";
+            args = OAArray.add(Object.class, args, this.httpPort);
         }
         if (!isNull(P_HttpsPort)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_HttpsPort2) && httpsPort != httpsPort2) {
-                sql += prefix + ServerApplication.P_HttpsPort + " >= ?";
-                args = OAArray.add(Object.class, args, getHttpsPort());
-                sql += " AND " + prefix + ServerApplication.P_HttpsPort + " <= ?";
-                args = OAArray.add(Object.class, args, getHttpsPort2());
+            sql += prefix + ServerApplication.P_HttpsPort + " = ?";
+            args = OAArray.add(Object.class, args, this.httpsPort);
+        }
+        if (!isNull(P_Id)) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += prefix + ServerApplication.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
+        if (created != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (created2 != null && !created.equals(created2)) {
+                sql += prefix + ServerApplication.P_Created + " >= ?";
+                args = OAArray.add(Object.class, args, this.created);
+                sql += " AND " + prefix + ServerApplication.P_Created + " <= ?";
+                args = OAArray.add(Object.class, args, this.created2);
             }
             else {
-                sql += prefix + ServerApplication.P_HttpsPort + " = ?";
-                args = OAArray.add(Object.class, args, getHttpsPort());
+                sql += prefix + ServerApplication.P_Created + " = ?";
+                args = OAArray.add(Object.class, args, this.created);
             }
         }
         if (!useApplicationTypeSearch && getApplicationType() != null) {

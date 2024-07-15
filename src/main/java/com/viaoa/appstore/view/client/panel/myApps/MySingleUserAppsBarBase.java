@@ -47,7 +47,7 @@ public class MySingleUserAppsBarBase {
         getTree();
         OATreeTitleNode ttNode;
     
-        // AppUserSingleApps - My Single User Applications - 
+        // AppUserSingleApps - Single User Apps - 
         AppUserModel modelAppUser = new AppUserModel(ModelDelegate.getLocalAppUserHub());
         AppUserJfc jfcAppUser = new AppUserJfc(modelAppUser) {
             JPanel panx;
@@ -86,7 +86,7 @@ public class MySingleUserAppsBarBase {
         ttNode = jfcSingleApps.getTreeTitleNode();
         tree.add(ttNode);
         ttNode.add(jfcSingleApps.getTreeNode());
-        cardPanel.add(new JLabel("loading My Single User Applications ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), CARD_AppUserSingleApps);
+        cardPanel.add(new JLabel("loading Single User Apps ...", Resource.getJarIcon("wait.png"), JLabel.CENTER), CARD_AppUserSingleApps);
     }
     protected OATree getTree() {
         if (tree != null) return tree;

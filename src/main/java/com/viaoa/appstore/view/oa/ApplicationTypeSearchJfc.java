@@ -309,32 +309,6 @@ public class ApplicationTypeSearchJfc {
         OADateComboBox dcbo;
         OACheckBox chk;
     
-        lbl = new JLabel("Id:");
-        txt = createIdTextField();
-        txt.setLabel(lbl);
-        panel.add(lbl, gc);
-        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
-        panx.add(new JLabel("From: "));
-        panx.add(txt);
-        panx.add(new JLabel("To: "));
-        txt = createId2TextField();
-        panx.add(txt);
-        gc.gridwidth = gc.REMAINDER;
-        panel.add(panx, gc);
-        gc.gridwidth = 1;
-    
-    
-        lbl = new JLabel("Created:");
-        dcbo = createCreatedDateComboBox();
-        dcbo.setLabel(lbl);
-        panel.add(lbl, gc);
-        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
-        panx.add(dcbo);
-        gc.gridwidth = gc.REMAINDER;
-        panel.add(panx, gc);
-        gc.gridwidth = 1;
-    
-    
         lbl = new JLabel("Name:");
         txt = createNameTextField();
         txt.setLabel(lbl);
@@ -362,10 +336,6 @@ public class ApplicationTypeSearchJfc {
         txt.setLabel(lbl);
         panel.add(lbl, gc);
         panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
-        panx.add(new JLabel("From: "));
-        panx.add(txt);
-        panx.add(new JLabel("To: "));
-        txt = createClientPort2TextField();
         panx.add(txt);
         gc.gridwidth = gc.REMAINDER;
         panel.add(panx, gc);
@@ -377,10 +347,6 @@ public class ApplicationTypeSearchJfc {
         txt.setLabel(lbl);
         panel.add(lbl, gc);
         panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
-        panx.add(new JLabel("From: "));
-        panx.add(txt);
-        panx.add(new JLabel("To: "));
-        txt = createHttpPort2TextField();
         panx.add(txt);
         gc.gridwidth = gc.REMAINDER;
         panel.add(panx, gc);
@@ -392,11 +358,77 @@ public class ApplicationTypeSearchJfc {
         txt.setLabel(lbl);
         panel.add(lbl, gc);
         panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("Download Url:");
+        txt = createDownloadUrlTextField();
+        txt.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("App Directory:");
+        txt = createAppDirectoryTextField();
+        txt.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("Jar File Name:");
+        txt = createJarFileNameTextField();
+        txt.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("Main Class:");
+        txt = createMainClassTextField();
+        txt.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("Id:");
+        txt = createIdTextField();
+        txt.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("Created:");
+        dcbo = createCreatedDateComboBox();
+        dcbo.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
         panx.add(new JLabel("From: "));
-        panx.add(txt);
+        panx.add(dcbo);
         panx.add(new JLabel("To: "));
-        txt = createHttpsPort2TextField();
-        panx.add(txt);
+        dcbo = createCreated2DateComboBox();
+        panx.add(dcbo);
         gc.gridwidth = gc.REMAINDER;
         panel.add(panx, gc);
         gc.gridwidth = 1;
@@ -463,31 +495,6 @@ public class ApplicationTypeSearchJfc {
     }
     
     
-    public OATextField createIdTextField() {
-        OATextField txt = new OATextField(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_Id, 6);
-        txt.addEnabledOnlyIfNew();
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(8);
-        // setup(txt);
-        return txt;
-    }
-    public OATextField createId2TextField() {
-        OATextField txt = new OATextField(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_Id2, 6);
-        txt.addEnabledOnlyIfNew();
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(8);
-        // setup(txt);
-        return txt;
-    }
-    
-    public OADateComboBox createCreatedDateComboBox() {
-        OADateComboBox dcbo = new OADateComboBox(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_Created, 15);
-        dcbo.setMaximumColumns(22);
-        OATextField txt = new OATextField(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_Created, 10);
-        dcbo.setEditor(txt);
-        return dcbo;
-    }
-    
     public OATextField createNameTextField() {
         OATextField txt = new OATextField(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_Name, 14);
         txt.setMinimumColumns(0);
@@ -512,25 +519,9 @@ public class ApplicationTypeSearchJfc {
         // setup(txt);
         return txt;
     }
-    public OATextField createClientPort2TextField() {
-        OATextField txt = new OATextField(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_ClientPort2, 4);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(8);
-        txt.setFormat("#");
-        // setup(txt);
-        return txt;
-    }
     
     public OATextField createHttpPortTextField() {
         OATextField txt = new OATextField(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_HttpPort, 6);
-        txt.setMinimumColumns(0);
-        txt.setMaximumColumns(8);
-        txt.setFormat("#");
-        // setup(txt);
-        return txt;
-    }
-    public OATextField createHttpPort2TextField() {
-        OATextField txt = new OATextField(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_HttpPort2, 6);
         txt.setMinimumColumns(0);
         txt.setMaximumColumns(8);
         txt.setFormat("#");
@@ -546,13 +537,62 @@ public class ApplicationTypeSearchJfc {
         // setup(txt);
         return txt;
     }
-    public OATextField createHttpsPort2TextField() {
-        OATextField txt = new OATextField(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_HttpsPort2, 4);
+    
+    public OATextField createDownloadUrlTextField() {
+        OATextField txt = new OATextField(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_DownloadUrl, 35);
         txt.setMinimumColumns(0);
-        txt.setMaximumColumns(6);
-        txt.setFormat("#");
+        txt.setMaximumColumns(120);
+        txt.setToolTipText("ex: https://github.com/ViaOA/oaappstore-run/raw/master");
         // setup(txt);
         return txt;
+    }
+    
+    public OATextField createAppDirectoryTextField() {
+        OATextField txt = new OATextField(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_AppDirectory, 14);
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(45);
+        // setup(txt);
+        return txt;
+    }
+    
+    public OATextField createJarFileNameTextField() {
+        OATextField txt = new OATextField(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_JarFileName, 15);
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(70);
+        // setup(txt);
+        return txt;
+    }
+    
+    public OATextField createMainClassTextField() {
+        OATextField txt = new OATextField(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_MainClass, 20);
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(75);
+        // setup(txt);
+        return txt;
+    }
+    
+    public OATextField createIdTextField() {
+        OATextField txt = new OATextField(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_Id, 6);
+        txt.addEnabledOnlyIfNew();
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(8);
+        // setup(txt);
+        return txt;
+    }
+    
+    public OADateComboBox createCreatedDateComboBox() {
+        OADateComboBox dcbo = new OADateComboBox(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_Created, 15);
+        dcbo.setMaximumColumns(22);
+        OATextField txt = new OATextField(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_Created, 10);
+        dcbo.setEditor(txt);
+        return dcbo;
+    }
+    public OADateComboBox createCreated2DateComboBox() {
+        OADateComboBox dcbo = new OADateComboBox(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_Created2, 15);
+        dcbo.setMaximumColumns(22);
+        OATextField txt = new OATextField(getModel().getApplicationTypeSearchHub(), ApplicationTypeSearch.P_Created2, 10);
+        dcbo.setEditor(txt);
+        return dcbo;
     }
     
     public OATextField createMaxResultsTextField() {

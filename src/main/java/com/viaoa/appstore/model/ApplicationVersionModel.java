@@ -27,8 +27,6 @@ public class ApplicationVersionModel extends OAObjectModel {
     protected Hub<ApplicationVersion> hubMultiSelect;
     // detail hubs
     protected Hub<ApplicationType> hubApplicationType;
-    protected Hub<ServerApplication> hubServerApplications;
-    protected Hub<SingleApp> hubSingleApps;
     protected Hub<VersionFile> hubVersionFiles;
     
     // AddHubs used for references
@@ -36,8 +34,6 @@ public class ApplicationVersionModel extends OAObjectModel {
     
     // ObjectModels
     protected ApplicationTypeModel modelApplicationType;
-    protected ServerApplicationModel modelServerApplications;
-    protected SingleAppModel modelSingleApps;
     protected VersionFileModel modelVersionFiles;
     
     // selectFrom
@@ -45,8 +41,6 @@ public class ApplicationVersionModel extends OAObjectModel {
     
     // SearchModels used for references
     protected ApplicationTypeSearchModel modelApplicationTypeSearch;
-    protected ServerApplicationSearchModel modelServerApplicationsSearch;
-    protected SingleAppSearchModel modelSingleAppsSearch;
     
     public ApplicationVersionModel() {
         setDisplayName("Application Version");
@@ -73,18 +67,6 @@ public class ApplicationVersionModel extends OAObjectModel {
         // this is the owner, use detailHub
         hubApplicationType = getHub().getDetailHub(ApplicationVersion.P_ApplicationType);
         return hubApplicationType;
-    }
-    public Hub<ServerApplication> getServerApplications() {
-        if (hubServerApplications == null) {
-            hubServerApplications = getHub().getDetailHub(ApplicationVersion.P_ServerApplications);
-        }
-        return hubServerApplications;
-    }
-    public Hub<SingleApp> getSingleApps() {
-        if (hubSingleApps == null) {
-            hubSingleApps = getHub().getDetailHub(ApplicationVersion.P_SingleApps);
-        }
-        return hubSingleApps;
     }
     public Hub<VersionFile> getVersionFiles() {
         if (hubVersionFiles == null) {
@@ -141,70 +123,6 @@ public class ApplicationVersionModel extends OAObjectModel {
     
         return modelApplicationType;
     }
-    public ServerApplicationModel getServerApplicationsModel() {
-        if (modelServerApplications != null) return modelServerApplications;
-        modelServerApplications = new ServerApplicationModel(getServerApplications());
-        modelServerApplications.setDisplayName("Server Application");
-        modelServerApplications.setPluralDisplayName("Server Applications");
-        if (HubDetailDelegate.getIsFromSameMasterHub(getOriginalHub(), getServerApplications())) {
-            modelServerApplications.setCreateUI(false);
-        }
-        modelServerApplications.setForJfc(getForJfc());
-        modelServerApplications.setAllowNew(false);
-        modelServerApplications.setAllowSave(true);
-        modelServerApplications.setAllowAdd(true);
-        modelServerApplications.setAllowMove(false);
-        modelServerApplications.setAllowRemove(true);
-        modelServerApplications.setAllowDelete(false);
-        modelServerApplications.setAllowRefresh(false);
-        modelServerApplications.setAllowSearch(false);
-        modelServerApplications.setAllowHubSearch(true);
-        modelServerApplications.setAllowDownload(true);
-        modelServerApplications.setAllowGotoEdit(true);
-        modelServerApplications.setViewOnly(getViewOnly());
-        modelServerApplications.setAllowTableFilter(true);
-        modelServerApplications.setAllowTableSorting(true);
-        modelServerApplications.setAllowMultiSelect(false);
-        modelServerApplications.setAllowCopy(false);
-        modelServerApplications.setAllowCut(false);
-        modelServerApplications.setAllowPaste(false);
-        // call ApplicationVersion.serverApplicationsModelCallback(ServerApplicationModel) to be able to customize this model
-        OAObjectCallbackDelegate.onObjectCallbackModel(ApplicationVersion.class, ApplicationVersion.P_ServerApplications, modelServerApplications);
-    
-        return modelServerApplications;
-    }
-    public SingleAppModel getSingleAppsModel() {
-        if (modelSingleApps != null) return modelSingleApps;
-        modelSingleApps = new SingleAppModel(getSingleApps());
-        modelSingleApps.setDisplayName("Single App");
-        modelSingleApps.setPluralDisplayName("Single Apps");
-        if (HubDetailDelegate.getIsFromSameMasterHub(getOriginalHub(), getSingleApps())) {
-            modelSingleApps.setCreateUI(false);
-        }
-        modelSingleApps.setForJfc(getForJfc());
-        modelSingleApps.setAllowNew(true);
-        modelSingleApps.setAllowSave(true);
-        modelSingleApps.setAllowAdd(true);
-        modelSingleApps.setAllowMove(false);
-        modelSingleApps.setAllowRemove(true);
-        modelSingleApps.setAllowDelete(false);
-        modelSingleApps.setAllowRefresh(false);
-        modelSingleApps.setAllowSearch(false);
-        modelSingleApps.setAllowHubSearch(false);
-        modelSingleApps.setAllowDownload(true);
-        modelSingleApps.setAllowGotoEdit(true);
-        modelSingleApps.setViewOnly(getViewOnly());
-        modelSingleApps.setAllowTableFilter(true);
-        modelSingleApps.setAllowTableSorting(true);
-        modelSingleApps.setAllowMultiSelect(false);
-        modelSingleApps.setAllowCopy(false);
-        modelSingleApps.setAllowCut(false);
-        modelSingleApps.setAllowPaste(false);
-        // call ApplicationVersion.singleAppsModelCallback(SingleAppModel) to be able to customize this model
-        OAObjectCallbackDelegate.onObjectCallbackModel(ApplicationVersion.class, ApplicationVersion.P_SingleApps, modelSingleApps);
-    
-        return modelSingleApps;
-    }
     public VersionFileModel getVersionFilesModel() {
         if (modelVersionFiles != null) return modelVersionFiles;
         modelVersionFiles = new VersionFileModel(getVersionFiles());
@@ -214,7 +132,7 @@ public class ApplicationVersionModel extends OAObjectModel {
             modelVersionFiles.setCreateUI(false);
         }
         modelVersionFiles.setForJfc(getForJfc());
-        modelVersionFiles.setAllowNew(true);
+        modelVersionFiles.setAllowNew(false);
         modelVersionFiles.setAllowSave(true);
         modelVersionFiles.setAllowAdd(false);
         modelVersionFiles.setAllowMove(false);
@@ -268,16 +186,6 @@ public class ApplicationVersionModel extends OAObjectModel {
         modelApplicationTypeSearch = new ApplicationTypeSearchModel();
         HubSelectDelegate.adoptWhereHub(modelApplicationTypeSearch.getHub(), ApplicationVersion.P_ApplicationType, getHub());
         return modelApplicationTypeSearch;
-    }
-    public ServerApplicationSearchModel getServerApplicationsSearchModel() {
-        if (modelServerApplicationsSearch != null) return modelServerApplicationsSearch;
-        modelServerApplicationsSearch = new ServerApplicationSearchModel();
-        return modelServerApplicationsSearch;
-    }
-    public SingleAppSearchModel getSingleAppsSearchModel() {
-        if (modelSingleAppsSearch != null) return modelSingleAppsSearch;
-        modelSingleAppsSearch = new SingleAppSearchModel();
-        return modelSingleAppsSearch;
     }
     
     public HubCopy<ApplicationVersion> createHubCopy() {

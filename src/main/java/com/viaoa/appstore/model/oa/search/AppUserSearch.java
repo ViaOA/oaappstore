@@ -9,6 +9,7 @@ import com.viaoa.annotation.*;
 import com.viaoa.object.*;
 import com.viaoa.hub.*;
 import com.viaoa.util.*;
+import com.viaoa.util.OADate;
 import com.viaoa.datasource.*;
 import com.viaoa.filter.*;
 import com.viaoa.appstore.resource.Resource;
@@ -19,10 +20,75 @@ public class AppUserSearch extends OAObject {
 
     private static Logger LOG = Logger.getLogger(AppUserSearch.class.getName());
 
+    public static final String P_LoginId = "LoginId";
+    public static final String P_FirstName = "FirstName";
+    public static final String P_LastName = "LastName";
+    public static final String P_InactiveDate = "InactiveDate";
+    public static final String P_Id = "Id";
     public static final String P_MaxResults = "MaxResults";
 
+    protected String loginId;
+    protected String firstName;
+    protected String lastName;
+    protected OADate inactiveDate;
+    protected int id;
     protected int maxResults;
 
+    @OAProperty(displayName = "Login Id", maxLength = 24, displayLength = 12)
+    public String getLoginId() {
+        return loginId;
+    }
+    public void setLoginId(String newValue) {
+        String old = loginId;
+        fireBeforePropertyChange(P_LoginId, old, newValue);
+        this.loginId = newValue;
+        firePropertyChange(P_LoginId, old, this.loginId);
+    }
+      
+    @OAProperty(displayName = "First Name", maxLength = 30, displayLength = 12)
+    public String getFirstName() {
+        return firstName;
+    }
+    public void setFirstName(String newValue) {
+        String old = firstName;
+        fireBeforePropertyChange(P_FirstName, old, newValue);
+        this.firstName = newValue;
+        firePropertyChange(P_FirstName, old, this.firstName);
+    }
+      
+    @OAProperty(displayName = "Last Name", maxLength = 55, displayLength = 12)
+    public String getLastName() {
+        return lastName;
+    }
+    public void setLastName(String newValue) {
+        String old = lastName;
+        fireBeforePropertyChange(P_LastName, old, newValue);
+        this.lastName = newValue;
+        firePropertyChange(P_LastName, old, this.lastName);
+    }
+      
+    @OAProperty(displayName = "Inactive Date", displayLength = 8)
+    public OADate getInactiveDate() {
+        return inactiveDate;
+    }
+    public void setInactiveDate(OADate newValue) {
+        OADate old = inactiveDate;
+        fireBeforePropertyChange(P_InactiveDate, old, newValue);
+        this.inactiveDate = newValue;
+        firePropertyChange(P_InactiveDate, old, this.inactiveDate);
+    }
+      
+    @OAProperty(displayLength = 5)
+    public int getId() {
+        return id;
+    }
+    public void setId(int newValue) {
+        int old = id;
+        fireBeforePropertyChange(P_Id, old, newValue);
+        this.id = newValue;
+        firePropertyChange(P_Id, old, this.id);
+    }
+      
 
     public int getMaxResults() {
         return maxResults;
@@ -35,9 +101,20 @@ public class AppUserSearch extends OAObject {
     }
 
     public void reset() {
+        setLoginId(null);
+        setFirstName(null);
+        setLastName(null);
+        setInactiveDate(null);
+        setId(0);
+        setNull(P_Id);
     }
 
     public boolean isDataEntered() {
+        if (getLoginId() != null) return true;
+        if (getFirstName() != null) return true;
+        if (getLastName() != null) return true;
+        if (getInactiveDate() != null) return true;
+        if (!isNull(P_Id)) return true;
         return false;
     }
 
@@ -65,6 +142,49 @@ public class AppUserSearch extends OAObject {
         String sql = "";
         String sortOrder = null;
         Object[] args = new Object[0];
+        if (OAString.isNotEmpty(this.loginId)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(loginId);
+            if (val.indexOf("%") >= 0) {
+                sql += AppUser.P_LoginId + " LIKE ?";
+            }
+            else {
+                sql += AppUser.P_LoginId + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (OAString.isNotEmpty(this.firstName)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(firstName);
+            if (val.indexOf("%") >= 0) {
+                sql += AppUser.P_FirstName + " LIKE ?";
+            }
+            else {
+                sql += AppUser.P_FirstName + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (OAString.isNotEmpty(this.lastName)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(lastName);
+            if (val.indexOf("%") >= 0) {
+                sql += AppUser.P_LastName + " LIKE ?";
+            }
+            else {
+                sql += AppUser.P_LastName + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (inactiveDate != null) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += AppUser.P_InactiveDate + " = ?";
+            args = OAArray.add(Object.class, args, this.inactiveDate);
+        }
+        if (!isNull(P_Id)) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += AppUser.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
 
         if (OAString.isNotEmpty(extraWhere)) {
             if (sql.length() > 0) sql = "(" + sql + ") AND ";
@@ -86,6 +206,49 @@ public class AppUserSearch extends OAObject {
         final String prefix = fromName + ".";
         String sql = "";
         Object[] args = new Object[0];
+        if (OAString.isNotEmpty(this.loginId)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(loginId);
+            if (val.indexOf("%") >= 0) {
+                sql += prefix + AppUser.P_LoginId + " LIKE ?";
+            }
+            else {
+                sql += prefix + AppUser.P_LoginId + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (OAString.isNotEmpty(this.firstName)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(firstName);
+            if (val.indexOf("%") >= 0) {
+                sql += prefix + AppUser.P_FirstName + " LIKE ?";
+            }
+            else {
+                sql += prefix + AppUser.P_FirstName + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (OAString.isNotEmpty(this.lastName)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(lastName);
+            if (val.indexOf("%") >= 0) {
+                sql += prefix + AppUser.P_LastName + " LIKE ?";
+            }
+            else {
+                sql += prefix + AppUser.P_LastName + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
+        if (inactiveDate != null) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += prefix + AppUser.P_InactiveDate + " = ?";
+            args = OAArray.add(Object.class, args, this.inactiveDate);
+        }
+        if (!isNull(P_Id)) {
+            if (sql.length() > 0) sql += " AND ";
+            sql += prefix + AppUser.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
         select.add(sql, args);
     }
 

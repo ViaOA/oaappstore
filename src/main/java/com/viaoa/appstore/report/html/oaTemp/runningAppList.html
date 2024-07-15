@@ -15,6 +15,7 @@
                             <th style="width: 20px; text-align: right">#</th>
                             <th style="width: 75px; text-align: left"><nobr>Created</nobr></th>
                             <th style="width: 30px; text-align: right"><nobr>Pid</nobr></th>
+                            <th style="width: 75px; text-align: left"><nobr>Stopped</nobr></th>
                             <th>&nbsp;</th>
                         </tr>
                         <%=foreach%>
@@ -22,6 +23,7 @@
                             <td style="text-align: right"><%=#counter, '4R,'%></td>
                             <td style="text-align: left"><nobr><%=created, '15L.'%></nobr></td>
                             <td style="text-align: right"><nobr><%=pid, '6R,'%></nobr></td>
+                            <td style="text-align: left"><nobr><%=stopped, '15L.'%></nobr></td>
                             <td>&nbsp;</td>
                         </tr>
                         <%=end%>

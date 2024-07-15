@@ -268,8 +268,6 @@ public class AppUserSearchJfc {
     }
     
     protected JPanel createSearchPanel() {
-        // no search properties defined in model, for "+objectDef.getName()
-        if (getModel().getSearchFromHub() != null) return null;
         final JPanel panTop = new JPanel(new BorderLayout(0,0));
         panTop.add(new JScrollPane(createSearchInputPanel()), BorderLayout.CENTER);
         panTop.setBorder(new EmptyBorder(5,5,5,5));
@@ -308,6 +306,63 @@ public class AppUserSearchJfc {
         JLabel lbl;
         JButton cmd;
         OATextField txt;
+        OADateComboBox dcbo;
+        OACheckBox chk;
+    
+        lbl = new JLabel("Login Id:");
+        txt = createLoginIdTextField();
+        txt.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("First Name:");
+        txt = createFirstNameTextField();
+        txt.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("Last Name:");
+        txt = createLastNameTextField();
+        txt.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("Inactive Date:");
+        dcbo = createInactiveDateDateComboBox();
+        dcbo.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(dcbo);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("Id:");
+        txt = createIdTextField();
+        txt.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
         
         lbl = new JLabel("Max Results:");
         txt = createMaxResultsTextField();
@@ -369,6 +424,47 @@ public class AppUserSearchJfc {
         return panel;
     }
     
+    
+    public OATextField createLoginIdTextField() {
+        OATextField txt = new OATextField(getModel().getAppUserSearchHub(), AppUserSearch.P_LoginId, 12);
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(50);
+        // setup(txt);
+        return txt;
+    }
+    
+    public OATextField createFirstNameTextField() {
+        OATextField txt = new OATextField(getModel().getAppUserSearchHub(), AppUserSearch.P_FirstName, 12);
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(50);
+        // setup(txt);
+        return txt;
+    }
+    
+    public OATextField createLastNameTextField() {
+        OATextField txt = new OATextField(getModel().getAppUserSearchHub(), AppUserSearch.P_LastName, 12);
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(50);
+        // setup(txt);
+        return txt;
+    }
+    
+    public OADateComboBox createInactiveDateDateComboBox() {
+        OADateComboBox dcbo = new OADateComboBox(getModel().getAppUserSearchHub(), AppUserSearch.P_InactiveDate, 8);
+        dcbo.setMaximumColumns(14);
+        OATextField txt = new OATextField(getModel().getAppUserSearchHub(), AppUserSearch.P_InactiveDate, 10);
+        dcbo.setEditor(txt);
+        return dcbo;
+    }
+    
+    public OATextField createIdTextField() {
+        OATextField txt = new OATextField(getModel().getAppUserSearchHub(), AppUserSearch.P_Id, 5);
+        txt.addEnabledOnlyIfNew();
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(8);
+        // setup(txt);
+        return txt;
+    }
     
     public OATextField createMaxResultsTextField() {
         OATextField txt = new OATextField(getModel().getAppUserSearchHub(), AppUserSearch.P_MaxResults, 5);

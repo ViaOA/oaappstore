@@ -60,6 +60,10 @@ public class ServerPPx implements PPxInterface, Serializable {
         return pp + "." + Server.P_IpAddress;
     }
 
+    public String calcName() {
+        return pp + "." + Server.P_CalcName;
+    }
+
     @Override
     public String toString() {
         return pp;

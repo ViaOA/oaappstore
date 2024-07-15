@@ -19,22 +19,24 @@ public class ServerSearch extends OAObject {
 
     private static Logger LOG = Logger.getLogger(ServerSearch.class.getName());
 
+    public static final String P_Name = "Name";
     public static final String P_Host = "Host";
     public static final String P_IpAddress = "IpAddress";
-    public static final String P_Created = "Created";
     public static final String P_Id = "Id";
-    public static final String P_Id2 = "Id2";
+    public static final String P_Created = "Created";
+    public static final String P_Created2 = "Created2";
     public static final String P_Environment = "Environment";
     public static final String P_UseEnvironmentSearch = "UseEnvironmentSearch";
     public static final String P_ApplicationsApplicationType = "ApplicationsApplicationType";
     public static final String P_UseApplicationsApplicationTypeSearch = "UseApplicationsApplicationTypeSearch";
     public static final String P_MaxResults = "MaxResults";
 
+    protected String name;
     protected String host;
     protected String ipAddress;
-    protected OADateTime created;
     protected int id;
-    protected int id2;
+    protected OADateTime created;
+    protected OADateTime created2;
     protected Environment environment;
     protected boolean useEnvironmentSearch;
     protected EnvironmentSearch searchEnvironment;
@@ -43,6 +45,17 @@ public class ServerSearch extends OAObject {
     protected ApplicationTypeSearch searchApplicationsApplicationType;
     protected int maxResults;
 
+    @OAProperty(maxLength = 55, displayLength = 20, uiColumnLength = 18)
+    public String getName() {
+        return name;
+    }
+    public void setName(String newValue) {
+        String old = name;
+        fireBeforePropertyChange(P_Name, old, newValue);
+        this.name = newValue;
+        firePropertyChange(P_Name, old, this.name);
+    }
+      
     @OAProperty(maxLength = 45, displayLength = 20)
     public String getHost() {
         return host;
@@ -65,17 +78,6 @@ public class ServerSearch extends OAObject {
         firePropertyChange(P_IpAddress, old, this.ipAddress);
     }
       
-    @OAProperty(defaultValue = "new OADateTime()", displayLength = 15)
-    public OADateTime getCreated() {
-        return created;
-    }
-    public void setCreated(OADateTime newValue) {
-        OADateTime old = created;
-        fireBeforePropertyChange(P_Created, old, newValue);
-        this.created = newValue;
-        firePropertyChange(P_Created, old, this.created);
-    }
-      
     @OAProperty(displayLength = 6)
     public int getId() {
         return id;
@@ -85,19 +87,34 @@ public class ServerSearch extends OAObject {
         fireBeforePropertyChange(P_Id, old, newValue);
         this.id = newValue;
         firePropertyChange(P_Id, old, this.id);
-        if (isLoading()) return;
-        if (id > id2) setId2(this.id);
-    } 
-    public int getId2() {
-        return id2;
     }
-    public void setId2(int newValue) {
-        int old = id2;
-        fireBeforePropertyChange(P_Id2, old, newValue);
-        this.id2 = newValue;
-        firePropertyChange(P_Id2, old, this.id2);
+      
+    @OAProperty(defaultValue = "new OADateTime()", displayLength = 15)
+    public OADateTime getCreated() {
+        return created;
+    }
+    public void setCreated(OADateTime newValue) {
+        OADateTime old = created;
+        fireBeforePropertyChange(P_Created, old, newValue);
+        this.created = newValue;
+        firePropertyChange(P_Created, old, this.created);
         if (isLoading()) return;
-        if (id > id2) setId(this.id2);
+        if (created != null) {
+            if (created2 == null) setCreated2(this.created.addDays(1));
+            else if (created.compareTo(created2) > 0) setCreated2(this.created.addDays(1));
+        }
+    } 
+    public OADateTime getCreated2() {
+        return created2;
+    }
+    public void setCreated2(OADateTime newValue) {
+        OADateTime old = created2;
+        fireBeforePropertyChange(P_Created2, old, newValue);
+        this.created2 = newValue;
+        firePropertyChange(P_Created2, old, this.created2);
+        if (created != null && created2 != null) {
+            if (created.compareTo(created2) > 0) setCreated(this.created2);
+        }
     }
 
     public int getMaxResults() {
@@ -165,13 +182,13 @@ public class ServerSearch extends OAObject {
     }
 
     public void reset() {
+        setName(null);
         setHost(null);
         setIpAddress(null);
-        setCreated(null);
         setId(0);
         setNull(P_Id);
-        setId2(0);
-        setNull(P_Id2);
+        setCreated(null);
+        setCreated2(null);
         setEnvironment(null);
         setUseEnvironmentSearch(false);
         setApplicationsApplicationType(null);
@@ -179,10 +196,11 @@ public class ServerSearch extends OAObject {
     }
 
     public boolean isDataEntered() {
+        if (getName() != null) return true;
         if (getHost() != null) return true;
         if (getIpAddress() != null) return true;
-        if (getCreated() != null) return true;
         if (!isNull(P_Id)) return true;
+        if (getCreated() != null) return true;
         if (getEnvironment() != null) return true;
         if (getUseEnvironmentSearch()) return true;
         if (getApplicationsApplicationType() != null) return true;
@@ -215,6 +233,17 @@ public class ServerSearch extends OAObject {
         String sortOrder = null;
         Object[] args = new Object[0];
         OAFinder finder = null;
+        if (OAString.isNotEmpty(this.name)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(name);
+            if (val.indexOf("%") >= 0) {
+                sql += Server.P_Name + " LIKE ?";
+            }
+            else {
+                sql += Server.P_Name + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
         if (OAString.isNotEmpty(this.host)) {
             if (sql.length() > 0) sql += " AND ";
             String val = OAString.convertToLikeSearch(host);
@@ -237,22 +266,22 @@ public class ServerSearch extends OAObject {
             }
             args = OAArray.add(Object.class, args, val);
         }
-        if (created != null) {
-            if (sql.length() > 0) sql += " AND ";
-            sql += Server.P_Created + " = ?";
-            args = OAArray.add(Object.class, args, this.created);
-        }
         if (!isNull(P_Id)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_Id2) && id != id2) {
-                sql += Server.P_Id + " >= ?";
-                args = OAArray.add(Object.class, args, getId());
-                sql += " AND " + Server.P_Id + " <= ?";
-                args = OAArray.add(Object.class, args, getId2());
+            sql += Server.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
+        if (created != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (created2 != null && !created.equals(created2)) {
+                sql += Server.P_Created + " >= ?";
+                args = OAArray.add(Object.class, args, this.created);
+                sql += " AND " + Server.P_Created + " <= ?";
+                args = OAArray.add(Object.class, args, this.created2);
             }
             else {
-                sql += Server.P_Id + " = ?";
-                args = OAArray.add(Object.class, args, getId());
+                sql += Server.P_Created + " = ?";
+                args = OAArray.add(Object.class, args, this.created);
             }
         }
         if (!useEnvironmentSearch && getEnvironment() != null) {
@@ -296,6 +325,17 @@ public class ServerSearch extends OAObject {
         final String prefix = fromName + ".";
         String sql = "";
         Object[] args = new Object[0];
+        if (OAString.isNotEmpty(this.name)) {
+            if (sql.length() > 0) sql += " AND ";
+            String val = OAString.convertToLikeSearch(name);
+            if (val.indexOf("%") >= 0) {
+                sql += prefix + Server.P_Name + " LIKE ?";
+            }
+            else {
+                sql += prefix + Server.P_Name + " = ?";
+            }
+            args = OAArray.add(Object.class, args, val);
+        }
         if (OAString.isNotEmpty(this.host)) {
             if (sql.length() > 0) sql += " AND ";
             String val = OAString.convertToLikeSearch(host);
@@ -318,22 +358,22 @@ public class ServerSearch extends OAObject {
             }
             args = OAArray.add(Object.class, args, val);
         }
-        if (created != null) {
-            if (sql.length() > 0) sql += " AND ";
-            sql += prefix + Server.P_Created + " = ?";
-            args = OAArray.add(Object.class, args, this.created);
-        }
         if (!isNull(P_Id)) {
             if (sql.length() > 0) sql += " AND ";
-            if (!isNull(P_Id2) && id != id2) {
-                sql += prefix + Server.P_Id + " >= ?";
-                args = OAArray.add(Object.class, args, getId());
-                sql += " AND " + prefix + Server.P_Id + " <= ?";
-                args = OAArray.add(Object.class, args, getId2());
+            sql += prefix + Server.P_Id + " = ?";
+            args = OAArray.add(Object.class, args, this.id);
+        }
+        if (created != null) {
+            if (sql.length() > 0) sql += " AND ";
+            if (created2 != null && !created.equals(created2)) {
+                sql += prefix + Server.P_Created + " >= ?";
+                args = OAArray.add(Object.class, args, this.created);
+                sql += " AND " + prefix + Server.P_Created + " <= ?";
+                args = OAArray.add(Object.class, args, this.created2);
             }
             else {
-                sql += prefix + Server.P_Id + " = ?";
-                args = OAArray.add(Object.class, args, getId());
+                sql += prefix + Server.P_Created + " = ?";
+                args = OAArray.add(Object.class, args, this.created);
             }
         }
         if (!useEnvironmentSearch && getEnvironment() != null) {

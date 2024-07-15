@@ -52,7 +52,8 @@ public class SingleAppModel extends OAObjectModel {
     // SearchModels used for references
     protected ApplicationTypeSearchModel modelApplicationTypeSearch;
     protected ApplicationVersionSearchModel modelApplicationVersionSearch;
-    protected PropertyValueSearchModel modelPropertyValuesSearch;
+    protected AppUserSearchModel modelAppUserSearch;
+    protected RunningAppSearchModel modelRunningAppSearch;
     
     public SingleAppModel() {
         setDisplayName("Single App");
@@ -200,7 +201,7 @@ public class SingleAppModel extends OAObjectModel {
         modelAppUser.setAllowClear(false);
         modelAppUser.setAllowDelete(false);
         modelAppUser.setAllowSearch(false);
-        modelAppUser.setAllowHubSearch(false);
+        modelAppUser.setAllowHubSearch(true);
         modelAppUser.setAllowGotoEdit(false);
         OALinkInfo li = HubDetailDelegate.getLinkInfoFromDetailToMaster(getOriginalHub());
         modelAppUser.setCreateUI(li == null || !SingleApp.P_AppUser.equalsIgnoreCase(li.getName()) );
@@ -223,7 +224,7 @@ public class SingleAppModel extends OAObjectModel {
         modelRunningApp.setAllowClear(false);
         modelRunningApp.setAllowDelete(false);
         modelRunningApp.setAllowSearch(false);
-        modelRunningApp.setAllowHubSearch(false);
+        modelRunningApp.setAllowHubSearch(true);
         modelRunningApp.setAllowGotoEdit(true);
         modelRunningApp.setViewOnly(true);
         // call SingleApp.runningAppModelCallback(RunningAppModel) to be able to customize this model
@@ -242,10 +243,10 @@ public class SingleAppModel extends OAObjectModel {
         modelPropertyValues.setForJfc(getForJfc());
         modelPropertyValues.setAllowNew(true);
         modelPropertyValues.setAllowSave(true);
-        modelPropertyValues.setAllowAdd(true);
+        modelPropertyValues.setAllowAdd(false);
         modelPropertyValues.setAllowMove(false);
-        modelPropertyValues.setAllowRemove(true);
-        modelPropertyValues.setAllowDelete(false);
+        modelPropertyValues.setAllowRemove(false);
+        modelPropertyValues.setAllowDelete(true);
         modelPropertyValues.setAllowRefresh(false);
         modelPropertyValues.setAllowSearch(false);
         modelPropertyValues.setAllowHubSearch(false);
@@ -353,10 +354,17 @@ public class SingleAppModel extends OAObjectModel {
         modelApplicationVersionSearch.getApplicationVersionSearch().setExtraWhereFilter(filter);
         return modelApplicationVersionSearch;
     }
-    public PropertyValueSearchModel getPropertyValuesSearchModel() {
-        if (modelPropertyValuesSearch != null) return modelPropertyValuesSearch;
-        modelPropertyValuesSearch = new PropertyValueSearchModel();
-        return modelPropertyValuesSearch;
+    public AppUserSearchModel getAppUserSearchModel() {
+        if (modelAppUserSearch != null) return modelAppUserSearch;
+        modelAppUserSearch = new AppUserSearchModel();
+        HubSelectDelegate.adoptWhereHub(modelAppUserSearch.getHub(), SingleApp.P_AppUser, getHub());
+        return modelAppUserSearch;
+    }
+    public RunningAppSearchModel getRunningAppSearchModel() {
+        if (modelRunningAppSearch != null) return modelRunningAppSearch;
+        modelRunningAppSearch = new RunningAppSearchModel();
+        HubSelectDelegate.adoptWhereHub(modelRunningAppSearch.getHub(), SingleApp.P_RunningApp, getHub());
+        return modelRunningAppSearch;
     }
     
     public HubCopy<SingleApp> createHubCopy() {

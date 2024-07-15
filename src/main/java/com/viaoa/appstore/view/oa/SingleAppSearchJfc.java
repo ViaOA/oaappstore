@@ -41,6 +41,7 @@ public class SingleAppSearchJfc {
     private SingleAppSearchModel model;
     private JDialog dialog;
     protected SingleAppJfc jfcSingleApp;
+    protected ApplicationTypeJfc jfcApplicationType;
     
     protected boolean bShowResults;
     protected boolean bMultiSelect;
@@ -268,8 +269,6 @@ public class SingleAppSearchJfc {
     }
     
     protected JPanel createSearchPanel() {
-        // no search properties defined in model, for "+objectDef.getName()
-        if (getModel().getSearchFromHub() != null) return null;
         final JPanel panTop = new JPanel(new BorderLayout(0,0));
         panTop.add(new JScrollPane(createSearchInputPanel()), BorderLayout.CENTER);
         panTop.setBorder(new EmptyBorder(5,5,5,5));
@@ -308,6 +307,49 @@ public class SingleAppSearchJfc {
         JLabel lbl;
         JButton cmd;
         OATextField txt;
+        OADateComboBox dcbo;
+        OATableComboBox cboTable;
+        OACheckBox chk;
+    
+    
+        lbl = new JLabel("Application Type:");
+        cboTable = createApplicationTypeTableComboBox();
+        cboTable.setLabel(lbl, getModel().getSingleAppSearchHub());
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(cboTable);
+        cmd = createApplicationTypeCommand();
+        if (cmd != null) panx.add(cmd);
+        panx.add(createUseApplicationTypeSearchCheckBox());
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+        lbl = new JLabel("Id:");
+        txt = createIdTextField();
+        txt.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(txt);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
+    
+        lbl = new JLabel("Created:");
+        dcbo = createCreatedDateComboBox();
+        dcbo.setLabel(lbl);
+        panel.add(lbl, gc);
+        panx = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        panx.add(new JLabel("From: "));
+        panx.add(dcbo);
+        panx.add(new JLabel("To: "));
+        dcbo = createCreated2DateComboBox();
+        panx.add(dcbo);
+        gc.gridwidth = gc.REMAINDER;
+        panel.add(panx, gc);
+        gc.gridwidth = 1;
+    
         
         lbl = new JLabel("Max Results:");
         txt = createMaxResultsTextField();
@@ -370,12 +412,81 @@ public class SingleAppSearchJfc {
     }
     
     
+    public OATextField createIdTextField() {
+        OATextField txt = new OATextField(getModel().getSingleAppSearchHub(), SingleAppSearch.P_Id, 6);
+        txt.addEnabledOnlyIfNew();
+        txt.setMinimumColumns(0);
+        txt.setMaximumColumns(8);
+        // setup(txt);
+        return txt;
+    }
+    
+    public OADateComboBox createCreatedDateComboBox() {
+        OADateComboBox dcbo = new OADateComboBox(getModel().getSingleAppSearchHub(), SingleAppSearch.P_Created, 15);
+        dcbo.setMaximumColumns(22);
+        OATextField txt = new OATextField(getModel().getSingleAppSearchHub(), SingleAppSearch.P_Created, 10);
+        dcbo.setEditor(txt);
+        return dcbo;
+    }
+    public OADateComboBox createCreated2DateComboBox() {
+        OADateComboBox dcbo = new OADateComboBox(getModel().getSingleAppSearchHub(), SingleAppSearch.P_Created2, 15);
+        dcbo.setMaximumColumns(22);
+        OATextField txt = new OATextField(getModel().getSingleAppSearchHub(), SingleAppSearch.P_Created2, 10);
+        dcbo.setEditor(txt);
+        return dcbo;
+    }
+    
     public OATextField createMaxResultsTextField() {
         OATextField txt = new OATextField(getModel().getSingleAppSearchHub(), SingleAppSearch.P_MaxResults, 5);
         txt.setToolTipText("set the maximum rows to return");
         return txt;
     }
     
+    
+    public OATableComboBox createApplicationTypeTableComboBox() {
+        OATableComboBox cboTable = getApplicationTypeJfc().createTableComboBox();
+        return cboTable;
+    }
+    public JButton createApplicationTypeCommand() {
+        JButton cmd = null;
+        OAMultiButtonSplitButton mscmd = new OAMultiButtonSplitButton();
+        mscmd.setShowTextInSelectedButton(true);
+        mscmd.setAllowChangeMasterButton(false);
+        mscmd.setRequestFocusEnabled(false);
+        mscmd.setFocusPainted(false);
+        OAButton.setup(mscmd);
+        cmd = getApplicationTypeJfc().createSearchButton();
+        if (cmd != null) {
+            cmd.setText("Search ...");
+            mscmd.addButton(cmd);
+        }
+        cmd = getApplicationTypeJfc().createGotoEditButton();
+        if (cmd != null) {
+            mscmd.addButton(cmd);
+        }
+        boolean b = true;
+        Hub h;
+        h = getHub().getMasterHub();
+        if (h != null && h.getObjectClass().equals(AppUser.class)) {
+            b = false;
+        }
+        if (b) {
+            cmd = new OAButton(getModel().getSingleAppSearchHub());
+            ((OAButton) cmd).setUpdateObject(SingleAppSearch.P_ApplicationType, null);
+            cmd.setIcon(OAButton.getDefaultIcon(OAButton.CLEARAO));
+            ((OAButton) cmd).getController().getEnabledChangeListener().addAoNotNull(model.getApplicationTypeHub());
+            cmd.setText("Clear");
+            OAButton.setup(cmd);
+            mscmd.addButton(cmd);
+        }
+        return mscmd;
+    }
+    public OACheckBox createUseApplicationTypeSearchCheckBox() {
+        OACheckBox chk = new OACheckBox(getModel().getSingleAppSearchHub(), SingleAppSearch.P_UseApplicationTypeSearch);
+        chk.setText("use search");
+        chk.setToolTipText("include the Application Type search");
+        return chk;
+    }
     
     protected void setup(JTextComponent txt) {
         OATextController tc = new OATextController(txt, Resource.getSpellChecker(), true);
@@ -685,6 +796,21 @@ public class SingleAppSearchJfc {
     
     protected void performSearch() {
         getModel().performSearch();
+    }
+    public ApplicationTypeJfc getApplicationTypeJfc() {
+        if (jfcApplicationType != null) return jfcApplicationType;
+        jfcApplicationType = new ApplicationTypeJfc(getModel().getApplicationTypeModel()) {
+            @Override
+            protected ApplicationTypeSearchJfc getSearchJfc() {
+                if (jfcSearch != null) return jfcSearch;
+                SingleAppSearchJfc.this.getModel().getApplicationTypeSearchModel().getApplicationTypeSearch().setMaxResults(1000);
+                jfcSearch = new ApplicationTypeSearchJfc(SingleAppSearchJfc.this.getModel().getApplicationTypeSearchModel());
+                return jfcSearch;
+            }
+        };
+        jfcApplicationType.setLevel(getLevel()+1);
+        OAModelJfcUtil.registerOther(jfcApplicationType);
+        return jfcApplicationType;
     }
     
     public boolean wasSelected() {

@@ -246,6 +246,10 @@ public class SingleApp extends OAObject {
         // custom code
         SingleAppDelegate.run(this);
     }
+    @OAObjCallback(enabledProperty = SingleApp.P_ApplicationVersion+"."+ApplicationVersion.P_Completed
+    )
+    public void runCallback(OAObjectCallback cb) {
+    }
 
     public void load(ResultSet rs, int id) throws SQLException {
         this.id = id;

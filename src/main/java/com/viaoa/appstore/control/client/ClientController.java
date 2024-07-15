@@ -66,11 +66,12 @@ public abstract class ClientController {
 	private OADataSource dsClient;
 
     // Custom
-    private ClientProcessController controlClientProcess;
+    // qqqqqqqqqqq private ClientProcessController controlClientProcess;
 	// Custom
-    private ClientJarStoreController controlClientJarStore;
+//qqqqqqqq    private ClientJarStoreController controlClientJarStore;
+    
     // Custom
-    private RemoteClientJarStoreInterface remoteClientJarStore;
+    //private RemoteClientJarStoreInterface remoteClientJarStore;
 
 	private ClientSpellCheckController controlClientSpellCheck;
 	private SpellChecker spellChecker;
@@ -173,7 +174,7 @@ public abstract class ClientController {
 
 		// Custom
         LOG.fine("starting process controller, to manage running apps");
-        getClientProcessController();
+//qqqqqqqqqq        getClientProcessController();
 		
 		return true;
 	}
@@ -753,22 +754,7 @@ public abstract class ClientController {
 		if (controlRemote != null) return controlRemote;
 		
 		// Custom
-/*qqqqqqqqqqqqqqqqqqqqqq		
-        RemoteClientJarStoreInterface remoteClientJarStore = new RemoteClientJarStoreInterface() {
-            @Override
-            public int getRelease(ServerApplication serverApp) throws Exception {
-                int x = getClientJarStoreController().getRelease(appVer);
-                return x;
-            }
-
-            @Override
-            public void getJarFile(ApplicationVersion appVer) throws Exception {
-                getClientJarStoreController().getJarForServer(appVer);
-            }
-        };         
-		
-		    
-		controlRemote = new RemoteClientController(remoteClientJarStore) {
+		controlRemote = new RemoteClientController() {
 			protected @Override void onDisconnect(Exception e) {
 				ClientController.this.onClientDisconnect(e);
 			}
@@ -778,11 +764,11 @@ public abstract class ClientController {
 				return ClientController.this.getFrame();
 			}
 		};
-*/
 		return controlRemote;
 	}
 
     // Custom
+/*qqqqqqqqqqqqq	
     public ClientProcessController getClientProcessController() {
         if (controlClientProcess == null) {
             controlClientProcess = new ClientProcessController() {
@@ -794,7 +780,6 @@ public abstract class ClientController {
                     
                     ApplicationType appType = appVer.getApplicationType();
                     LOG.fine("checking and loading application version from server, application="+appType.getName());
-/*qqqqqqqqqqqqqqqqqqqqqq                    
                     int release = ClientController.this.getClientJarStoreController().getRelease(serverApp);
                     
                     if (appVer.getRelease() != release) {
@@ -803,22 +788,23 @@ public abstract class ClientController {
                     else {
                         ClientController.this.getClientJarStoreController().getJarFromServer(serverApp);
                     }
-*/                    
                 }
             };
         }
         return controlClientProcess;
     }
+*/                    
 	
 	
 	// Custom
+/*qqqqqqqq    
     protected ClientJarStoreController getClientJarStoreController() {
         if (controlClientJarStore == null) {
             controlClientJarStore = new ClientJarStoreController(OASync.getSyncClient().getRemoteMultiplexerClient().getMultiplexerClient());
         }
         return controlClientJarStore;
     }
-	
+*/	
     public void close() {
         close(false);
     }    

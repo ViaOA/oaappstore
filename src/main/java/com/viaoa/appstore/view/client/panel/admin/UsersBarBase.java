@@ -95,6 +95,7 @@ public class UsersBarBase {
         jfcAppUser.getModel().setAllowDownload(true);
         jfcAppUser.getModel().setAllowRemove(false);
         jfcAppUser.getModel().setAllowSearch(false);
+        jfcAppUser.getModel().setAllowHubSearch(true);
         jfcAppUser.getModel().setAllowNew(true);
         ttNode = jfcAppUser.getTreeTitleNode();
         tree.add(ttNode);

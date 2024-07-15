@@ -51,6 +51,7 @@ public class ServerModel extends OAObjectModel {
     protected ApplicationTypeSearchModel modelServerApplicationsPickFromApplicationTypeSearch;
     
     // SearchModels used for references
+    protected AppUserSearchModel modelAppUserSearch;
     protected EnvironmentSearchModel modelEnvironmentSearch;
     protected ServerApplicationSearchModel modelServerApplicationsSearch;
     
@@ -143,7 +144,7 @@ public class ServerModel extends OAObjectModel {
         modelAppUser.setAllowClear(false);
         modelAppUser.setAllowDelete(false);
         modelAppUser.setAllowSearch(false);
-        modelAppUser.setAllowHubSearch(false);
+        modelAppUser.setAllowHubSearch(true);
         modelAppUser.setAllowGotoEdit(false);
         modelAppUser.setViewOnly(true);
         // call Server.appUserModelCallback(AppUserModel) to be able to customize this model
@@ -286,6 +287,12 @@ public class ServerModel extends OAObjectModel {
     public ApplicationTypeSearchModel getServerApplicationsPickFromApplicationTypeSearchModel() {
         if (modelServerApplicationsPickFromApplicationTypeSearch != null) return modelServerApplicationsPickFromApplicationTypeSearch;
         return modelServerApplicationsPickFromApplicationTypeSearch;
+    }
+    public AppUserSearchModel getAppUserSearchModel() {
+        if (modelAppUserSearch != null) return modelAppUserSearch;
+        modelAppUserSearch = new AppUserSearchModel();
+        HubSelectDelegate.adoptWhereHub(modelAppUserSearch.getHub(), Server.P_AppUser, getHub());
+        return modelAppUserSearch;
     }
     public EnvironmentSearchModel getEnvironmentSearchModel() {
         if (modelEnvironmentSearch != null) return modelEnvironmentSearch;

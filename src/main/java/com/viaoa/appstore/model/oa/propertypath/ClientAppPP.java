@@ -45,6 +45,16 @@ public class ClientAppPP {
         return s;
     }
 
+    public static String autoLogin() {
+        String s = ClientApp.P_AutoLogin;
+        return s;
+    }
+
+    public static String calcName() {
+        String s = ClientApp.P_CalcName;
+        return s;
+    }
+
     public static String run() {
         String s = "run";
         return s;

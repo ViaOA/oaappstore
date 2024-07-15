@@ -56,8 +56,6 @@ public class ApplicationVersion extends OAObject {
      
     // Links to other objects.
     protected volatile transient ApplicationType applicationType;
-    protected transient Hub<ServerApplication> hubServerApplications;
-    protected transient Hub<SingleApp> hubSingleApps;
     protected transient Hub<VersionFile> hubVersionFiles;
      
     public ApplicationVersion() {
@@ -98,7 +96,7 @@ public class ApplicationVersion extends OAObject {
         firePropertyChange(P_Created, old, this.created);
     }
 
-    @OAProperty(maxLength = 12, displayLength = 6)
+    @OAProperty(maxLength = 12, displayLength = 6, isProcessed = true)
     @OAColumn(name = "Version", maxLength = 12)
     public String getVersion() {
         return version;
@@ -110,7 +108,7 @@ public class ApplicationVersion extends OAObject {
         firePropertyChange(P_Version, old, this.version);
     }
 
-    @OAProperty(displayLength = 6, uiColumnLength = 7, format = "#")
+    @OAProperty(displayLength = 6, uiColumnLength = 7, format = "#", isProcessed = true)
     @OAColumn(name = "Release", sqlType = java.sql.Types.INTEGER)
     public int getRelease() {
         return release;
@@ -150,7 +148,9 @@ public class ApplicationVersion extends OAObject {
         displayName = "Application Type", 
         reverseName = ApplicationType.P_ApplicationVersions, 
         required = true, 
+        isProcessed = true, 
         allowCreateNew = false, 
+        allowAddExisting = false, 
         fkeys = {@OAFkey(fromProperty = P_ApplicationTypeId, toProperty = ApplicationType.P_Id)}
     )
     public ApplicationType getApplicationType() {
@@ -178,25 +178,23 @@ public class ApplicationVersion extends OAObject {
     @OAMany(
         displayName = "Server Applications", 
         toClass = ServerApplication.class, 
-        reverseName = ServerApplication.P_ApplicationVersion
+        reverseName = ServerApplication.P_ApplicationVersion, 
+        createMethod = false
     )
-    public Hub<ServerApplication> getServerApplications() {
-        if (hubServerApplications == null) {
-            hubServerApplications = (Hub<ServerApplication>) getHub(P_ServerApplications);
-        }
-        return hubServerApplications;
+    private Hub<ServerApplication> getServerApplications() {
+        // oamodel has createMethod set to false, this method exists only for annotations.
+        return null;
     }
 
     @OAMany(
         displayName = "Single Apps", 
         toClass = SingleApp.class, 
-        reverseName = SingleApp.P_ApplicationVersion
+        reverseName = SingleApp.P_ApplicationVersion, 
+        createMethod = false
     )
-    public Hub<SingleApp> getSingleApps() {
-        if (hubSingleApps == null) {
-            hubSingleApps = (Hub<SingleApp>) getHub(P_SingleApps);
-        }
-        return hubSingleApps;
+    private Hub<SingleApp> getSingleApps() {
+        // oamodel has createMethod set to false, this method exists only for annotations.
+        return null;
     }
 
     @OAMany(
@@ -204,6 +202,7 @@ public class ApplicationVersion extends OAObject {
         toClass = VersionFile.class, 
         owner = true, 
         reverseName = VersionFile.P_ApplicationVersion, 
+        isProcessed = true, 
         cascadeSave = true, 
         cascadeDelete = true
     )
