@@ -1,32 +1,5 @@
 
 
-
-Notes:
-
-
-GitHubNewReleaseController
-
-ClientProcessController
-
-ServerJarStoreController
-JarStoreController
-
-
-
-Applications:
-
-OABuilder, oabldr, com.viaoa.builder.control.StartupController, 1g
-   download url:  https://github.com/ViaOA/oabuilder-run/raw/master/executable-jar
-   3.2.8  202402260
-
-
-
-
-
-
-
-==================
-
 	
 Building:
 	uses maven (pom.xml)	
@@ -84,9 +57,35 @@ WebServer / REST / Swagger
 	
 	Note: port is based on property value:  JettyPort, default is 8080.  The console displays ports at server startup. 
 
+
+
+
 Images for JFC application
 
 
+
+
+================= Add application to OAAppStore =================
+
+This is to use any OA Application from OAAppStore
+
+see: OAAppStore-Installer, for the App Store Windows (uses jpackage) installer.  
+
+    create jar files
+    maven clean install
+
+    copy oaappstore-1.0.2.jar to OAAppStore-Run/jarstore/com/viaoa/oaappstore
+
+    // OAAppStore project only
+    the maven install also created the file "oaappstore.jar" - which is an uber jar with everything except com.viaoa.**
+       if there has been "outside" (not oa) jar dependency changes, then the project needs to use the new dependencies
+           copy oaappstore.jar to OAAppStore-Run/jarstore/com/viaoa/dependency-uber-1.0.XX.jar
+    
+    if there are new oa-* jar files, then copy them to OAAppStore-Run/jarstore/com/viaoa
+     
+    update OAAppStore-Run/appstore/[project url]/version.ini
+        update version, release and the files to download
+        release needs to match the value from file values.properties "release" property
 
 
 

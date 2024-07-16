@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
     <groupId>com.viaoa</groupId>
     <artifactId>oaappstore</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<packaging>jar</packaging>
 
 	<name>OAAppStore</name>
@@ -40,12 +40,12 @@
         <dependency>
             <groupId>com.viaoa</groupId>
             <artifactId>oa-jfc</artifactId>
-            <version>3.7.8</version>
+            <version>3.7.9</version>
         </dependency>
         <dependency>
             <groupId>com.viaoa</groupId>
             <artifactId>oa-web</artifactId>
-            <version>3.7.8</version>
+            <version>3.7.9</version>
         </dependency>
 
         <dependency>
