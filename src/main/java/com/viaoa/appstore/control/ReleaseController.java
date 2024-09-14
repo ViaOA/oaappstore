@@ -125,7 +125,8 @@ public class ReleaseController {
             }
 
 //qqqqqqqqqqqqqqqqqqq            
-//qqqqqqqqqqqqqqqqqqqqqqqqq this check needs to be removed after current users get new update qqqqqqq            
+//qqqqqqqqqqqqqqqqqqqqqqqqq this check can be removed after current users get new updated to version 1.0.2
+            
             if (fn.contains("/oaappstore/")) {
                 s = urlDownload + "/" + fn;
             }
@@ -140,8 +141,8 @@ public class ReleaseController {
             dis = new DataInputStream(new BufferedInputStream(conn.getInputStream()));
             
             
-  //qqqqqqqqqqqqqqqqqqq            
-  //qqqqqqqqqqqqqqqqqqqqqqqqq this check needs to be removed after current users get new update qqqqqqq            
+//qqqqqqqqqqqqqqqqqqq            
+//qqqqqqqqqqqqqqqqqqqqqqqqq this check can be removed after current users get new updated to version 1.0.2
             if (fn.contains("/oaappstore/")) {
                 s = "app/" + fn;
             }
